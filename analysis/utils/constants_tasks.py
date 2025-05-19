@@ -360,10 +360,4 @@ def load_missing_tasks(load_path):
     return missing_tasks
 
 MISSING_EVALS = load_missing_tasks(Path(DATA_DIR) / "aws_missing_tasks.json")
-MISSING_EVALS = MISSING_EVALS # launched first batch
-
-# MISSING_EVALS = [
-#     ('qwen2.5-72b', ['hellaswag:rc::olmes:full']),
-#     ('llama3-70b', ['hellaswag:rc::olmes:full']),
-#     ('llama3.1-70b', ['hellaswag:rc::olmes:full']),
-# ]
+MISSING_EVALS = MISSING_EVALS

@@ -5,6 +5,10 @@ ROOT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'analysis', 'data')
 PLOT_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'img')
 
+# Create directories if they don't exist
+os.makedirs(DATA_DIR, exist_ok=True)
+os.makedirs(PLOT_DIR, exist_ok=True)
+
 # Load observational model sizes data
 with open(os.path.join(ROOT_DIR, 'analysis/utils/model_sizes.json')) as f:
     MODEL_SIZES = json.load(f)

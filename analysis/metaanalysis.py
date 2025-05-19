@@ -19,7 +19,7 @@ from table import display_task_variants
 from datadecide import compute_2_class, get_compute, plot_task_accuracy
 from utils import get_title_from_task, extract_size, extract_flops
 from utils.constants_models import DDOS_MODEL_NAMES
-from analysis.utils.constants_olmes import PRIMARY_METRICS_OLMES
+from utils.constants_olmes import PRIMARY_METRICS_OLMES
 
 from ladder_wrapper import sort_experiment_names
 from download.preprocess import is_excluded_from_lite

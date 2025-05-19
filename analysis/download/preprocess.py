@@ -19,7 +19,7 @@ sys.path.append(str(parent_dir))
 
 from utils import DATA_DIR, weka_to_gcs, fix_model_path
 from utils.constants_tasks import RC_TASKS_OLMES, MC_TASKS_OLMES, GEN_TASKS_OLMES, MINERVA_COT
-from analysis.utils.constants_olmes import PRIMARY_METRICS_OLMES
+from utils.constants_olmes import PRIMARY_METRICS_OLMES
 
 # Metrics to use when converting to table:
 METRICS_TO_KEEP = [

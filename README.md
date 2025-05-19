@@ -14,6 +14,9 @@ pip install -e "deps/OLMo-ladder.[plotting]"
 # Install eval code
 git clone -b signal-to-noise https://github.com/allenai/oe-eval-internal deps/oe-eval-internal
 pip install -e "deps/oe-eval-internal.[all]"
+
+# Download seed / data order evals
+python analysis/utils/comet_utils.py --workspace ai2 --project olmo2-model-ladder-davidh --output-dir analysis/data/random_seeds --output-filename olmo2_random_seeds.csv
 ```
 
 ### Download Model Ladder Data

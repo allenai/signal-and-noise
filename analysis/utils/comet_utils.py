@@ -228,6 +228,12 @@ def parse_arguments():
         help='Directory to save the output plots'
     )
 
+    parser.add_argument(
+        '--output-filename',
+        type=str,
+        help='Optional: Base filename for output CSVs. If not provided, uses project name.'
+    )
+
     return parser.parse_args()
 
 def main():
@@ -259,12 +265,10 @@ def main():
     if not experiments:
         return
     
+    output_filename = args.project if not args.output_filename else args.output_filename
+    
     # First save all data to CSV files
-    save_metrics_to_csv(experiments, output_dir, args.project)
-
-    # # Plot metrics
-    # plot_all_metrics(experiments, output_dir)
-    # print(f"\nAll plots and CSV files have been saved to {output_dir}")
+    save_metrics_to_csv(experiments, output_dir, output_filename)
 
 if __name__ == "__main__":
     # python analysis/utils/comet_utils.py --workspace ai2 --project olmo2-model-ladder-davidh --output-dir analysis/data/random_seeds
