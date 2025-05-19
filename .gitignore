@@ -1,0 +1,15 @@
+analysis/data
+olmo-repos/
+data/
+__pycache__/
+workspace/
+olmes_requests/
+.tmp/
+.venv/
+gcp-service-account.json
+*.DS_Store
+*.pdf
+*.png
+*.pkl
+generation/existing-methods/AutoBencher/MATH
+generation/existing-methods/AutoBencher/KI

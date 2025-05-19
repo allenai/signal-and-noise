@@ -1,0 +1,7 @@
+openai
+accelerate
+transformers
+anthropic
+pyautogen
+beautifulsoup4
+torch

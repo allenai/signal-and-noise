@@ -1,0 +1,537 @@
+{
+  "deepseek-ai/DeepSeek-V3-Base": {
+    "toks_T": 14.8,
+    "active_params_B": 671.0,
+    "total_params_B": 37.0
+  },
+  "deepseek-ai/DeepSeek-V3-0324": {
+    "toks_T": null,
+    "active_params_B": 671.0,
+    "total_params_B": 37.0
+  },
+  "deepseek-ai/DeepSeek-V2": {
+    "toks_T": 8.1,
+    "active_params_B": 236.0,
+    "total_params_B": 21.0
+  },
+  "deepseek-ai/DeepSeek-V2-Lite": {
+    "toks_T": 5.7,
+    "active_params_B": 16.0,
+    "total_params_B": 2.4
+  },
+  "deepseek-ai/DeepSeek-V2.5": {
+    "toks_T": null,
+    "active_params_B": 236.0,
+    "total_params_B": 21.0
+  },
+  "deepseek-ai/DeepSeek-V2.5-1210": {
+    "toks_T": null,
+    "active_params_B": 236.0,
+    "total_params_B": 21.0
+  },
+  "deepseek-ai/deepseek-llm-67b-base": {
+    "toks_T": 2.0,
+    "active_params_B": 67.0,
+    "total_params_B": 67.0
+  },
+  "deepseek-ai/deepseek-llm-7b-base": {
+    "toks_T": 2.0,
+    "active_params_B": 7.0,
+    "total_params_B": 7.0
+  },
+  "deepseek-ai/deepseek-moe-16b-base": {
+    "toks_T": 2.0,
+    "active_params_B": 2.0,
+    "total_params_B": 16.0
+  },
+  "Qwen/Qwen2.5-0.5B": {
+    "toks_T": 18.0,
+    "active_params_B": 0.5,
+    "total_params_B": 0.5
+  },
+  "Qwen/Qwen2.5-1.5B": {
+    "toks_T": 18.0,
+    "active_params_B": 1.5,
+    "total_params_B": 1.5
+  },
+  "Qwen/Qwen2.5-3B": {
+    "toks_T": 18.0,
+    "active_params_B": 3.0,
+    "total_params_B": 3.0
+  },
+  "Qwen/Qwen2.5-7B": {
+    "toks_T": 18.0,
+    "active_params_B": 7.0,
+    "total_params_B": 7.0
+  },
+  "Qwen/Qwen2.5-14B": {
+    "toks_T": 18.0,
+    "active_params_B": 14.0,
+    "total_params_B": 14.0
+  },
+  "Qwen/Qwen2.5-32B": {
+    "toks_T": 18.0,
+    "active_params_B": 32.0,
+    "total_params_B": 32.0
+  },
+  "Qwen/Qwen2.5-72B": {
+    "toks_T": 18.0,
+    "active_params_B": 72.0,
+    "total_params_B": 72.0
+  },
+  "Qwen/Qwen2-72B": {
+    "toks_T": 7.0,
+    "active_params_B": 72.0,
+    "total_params_B": 72.0
+  },
+  "Qwen/Qwen2-7B": {
+    "toks_T": 7.0,
+    "active_params_B": 7.0,
+    "total_params_B": 7.0
+  },
+  "Qwen/Qwen2-1.5B": {
+    "toks_T": 7.0,
+    "active_params_B": 1.5,
+    "total_params_B": 1.5
+  },
+  "Qwen/Qwen2-0.5B": {
+    "toks_T": 12.0,
+    "active_params_B": 0.5,
+    "total_params_B": 0.5
+  },
+  "Qwen/Qwen1.5-110B": {
+    "toks_T": null,
+    "active_params_B": 110.0,
+    "total_params_B": 110.0
+  },
+  "Qwen/Qwen1.5-72B": {
+    "toks_T": 4.0,
+    "active_params_B": 72.0,
+    "total_params_B": 72.0
+  },
+  "Qwen/Qwen1.5-32B": {
+    "toks_T": 4.0,
+    "active_params_B": 32.0,
+    "total_params_B": 32.0
+  },
+  "Qwen/Qwen1.5-7B": {
+    "toks_T": 4.0,
+    "active_params_B": 7.0,
+    "total_params_B": 7.0
+  },
+  "Qwen/Qwen1.5-4B": {
+    "toks_T": 2.4,
+    "active_params_B": 4.0,
+    "total_params_B": 4.0
+  },
+  "Qwen/Qwen1.5-1.8B": {
+    "toks_T": 2.4,
+    "active_params_B": 1.8,
+    "total_params_B": 1.8
+  },
+  "Qwen/Qwen1.5-0.5B": {
+    "toks_T": 2.4,
+    "active_params_B": 0.5,
+    "total_params_B": 0.5
+  },
+  "Qwen/CodeQwen1.5-7B": {
+    "toks_T": null,
+    "active_params_B": 7.0,
+    "total_params_B": 7.0
+  },
+  "Qwen/Qwen-72B": {
+    "toks_T": 3.0,
+    "active_params_B": 72.0,
+    "total_params_B": 72.0
+  },
+  "Qwen/Qwen-14B": {
+    "toks_T": 3.0,
+    "active_params_B": 14.0,
+    "total_params_B": 14.0
+  },
+  "Qwen/Qwen-7B": {
+    "toks_T": 2.4,
+    "active_params_B": 7.0,
+    "total_params_B": 7.0
+  },
+  "Qwen/Qwen-1_8B": {
+    "toks_T": null,
+    "active_params_B": 1.8,
+    "total_params_B": 1.8
+  },
+  "mistralai/Mistral-7B-v0.1": {
+    "toks_T": null,
+    "active_params_B": 7.0,
+    "total_params_B": 7.0
+  },
+  "mistralai/Mistral-7B-v0.3": {
+    "toks_T": null,
+    "active_params_B": 7.0,
+    "total_params_B": 7.0
+  },
+  "mistralai/Mixtral-8x7B-v0.1": {
+    "toks_T": null,
+    "active_params_B": 7.0,
+    "total_params_B": 56.0
+  },
+  "mistralai/Codestral-22B-v0.1": {
+    "toks_T": null,
+    "active_params_B": 22.0,
+    "total_params_B": 22.0
+  },
+  "mistralai/Mathstral-7B-v0.1": {
+    "toks_T": null,
+    "active_params_B": 7.0,
+    "total_params_B": 7.0
+  },
+  "mistralai/Mixtral-8x22B-v0.1": {
+    "toks_T": null,
+    "active_params_B": 22.0,
+    "total_params_B": 176.0
+  },
+  "mistralai/Mistral-Nemo-Base-2407": {
+    "toks_T": null,
+    "active_params_B": 12.0,
+    "total_params_B": 12.0
+  },
+  "mistralai/Mistral-Small-24B-Base-2501": {
+    "toks_T": null,
+    "active_params_B": 24.0,
+    "total_params_B": 24.0
+  },
+  "mistralai/Mistral-Small-3.1-24B-Base-2503": {
+    "toks_T": null,
+    "active_params_B": 24.0,
+    "total_params_B": 24.0
+  },
+  "nvidia/Nemotron-4-340B-Base": {
+    "toks_T": 9.0,
+    "active_params_B": 340.0,
+    "total_params_B": 340.0
+  },
+  "nvidia/nemotron-3-8b-base-4k": {
+    "toks_T": 3.8,
+    "active_params_B": 8.0,
+    "total_params_B": 8.0
+  },
+  "01-ai/Yi-6B": {
+    "toks_T": 3.0,
+    "active_params_B": 6.0,
+    "total_params_B": 6.0
+  },
+  "01-ai/Yi-9B": {
+    "toks_T": 3.8,
+    "active_params_B": 9.0,
+    "total_params_B": 9.0
+  },
+  "01-ai/Yi-34B": {
+    "toks_T": 3.0,
+    "active_params_B": 34.0,
+    "total_params_B": 34.0
+  },
+  "01-ai/Yi-1.5-6B": {
+    "toks_T": 3.6,
+    "active_params_B": 6.0,
+    "total_params_B": 6.0
+  },
+  "01-ai/Yi-1.5-9B": {
+    "toks_T": 3.6,
+    "active_params_B": 9.0,
+    "total_params_B": 9.0
+  },
+  "01-ai/Yi-1.5-34B": {
+    "toks_T": 3.6,
+    "active_params_B": 34.0,
+    "total_params_B": 34.0
+  },
+  "HuggingFaceTB/SmolLM-135M": {
+    "toks_T": 0.6,
+    "active_params_B": 0.135,
+    "total_params_B": 0.135
+  },
+  "HuggingFaceTB/SmolLM-360M": {
+    "toks_T": 0.6,
+    "active_params_B": 0.36,
+    "total_params_B": 0.36
+  },
+  "HuggingFaceTB/SmolLM-1.7B": {
+    "toks_T": 1.0,
+    "active_params_B": 1.7,
+    "total_params_B": 1.7
+  },
+  "HuggingFaceTB/SmolLM2-135M": {
+    "toks_T": 2.0,
+    "active_params_B": 0.135,
+    "total_params_B": 0.135
+  },
+  "HuggingFaceTB/SmolLM2-360M": {
+    "toks_T": 4.0,
+    "active_params_B": 0.36,
+    "total_params_B": 0.36
+  },
+  "HuggingFaceTB/SmolLM2-1.7B": {
+    "toks_T": 11.0,
+    "active_params_B": 1.7,
+    "total_params_B": 1.7
+  },
+  "google/gemma-3-1b-pt": {
+    "toks_T": 2.0,
+    "active_params_B": 1.0,
+    "total_params_B": 1.0
+  },
+  "google/gemma-3-4b-pt": {
+    "toks_T": 12.0,
+    "active_params_B": 4.0,
+    "total_params_B": 4.0
+  },
+  "google/gemma-3-12b-pt": {
+    "toks_T": 12.0,
+    "active_params_B": 12.0,
+    "total_params_B": 12.0
+  },
+  "google/gemma-3-27b-pt": {
+    "toks_T": 14.0,
+    "active_params_B": 27.0,
+    "total_params_B": 27.0
+  },
+  "google/gemma-2-2b": {
+    "toks_T": 2.0,
+    "active_params_B": 2.0,
+    "total_params_B": 2.0
+  },
+  "google/gemma-2-9b": {
+    "toks_T": 8.0,
+    "active_params_B": 9.0,
+    "total_params_B": 9.0
+  },
+  "google/gemma-2-27b": {
+    "toks_T": 13.0,
+    "active_params_B": 27.0,
+    "total_params_B": 27.0
+  },
+  "google/gemma-2b": {
+    "toks_T": 6.0,
+    "active_params_B": 2.0,
+    "total_params_B": 2.0
+  },
+  "google/gemma-7b": {
+    "toks_T": 6.0,
+    "active_params_B": 7.0,
+    "total_params_B": 7.0
+  },
+  "microsoft/phi-1": {
+    "toks_T": 0.054,
+    "active_params_B": 1.3,
+    "total_params_B": 1.3
+  },
+  "microsoft/phi-1_5": {
+    "toks_T": 0.15,
+    "active_params_B": 1.3,
+    "total_params_B": 1.3
+  },
+  "microsoft/phi-4": {
+    "toks_T": 9.8,
+    "active_params_B": 14.0,
+    "total_params_B": 14.0
+  },
+  "microsoft/Orca-2-7b": {
+    "toks_T": 0.3,
+    "active_params_B": 7.0,
+    "total_params_B": 7.0
+  },
+  "microsoft/Orca-2-13b": {
+    "toks_T": 0.3,
+    "active_params_B": 13.0,
+    "total_params_B": 13.0
+  },
+  "EleutherAI/pythia-14m": {
+    "toks_T": 0.3,
+    "active_params_B": 0.014,
+    "total_params_B": 0.014
+  },
+  "EleutherAI/pythia-70m": {
+    "toks_T": 0.3,
+    "active_params_B": 0.07,
+    "total_params_B": 0.07
+  },
+  "EleutherAI/pythia-160m": {
+    "toks_T": 0.3,
+    "active_params_B": 0.16,
+    "total_params_B": 0.16
+  },
+  "EleutherAI/pythia-410m": {
+    "toks_T": 0.3,
+    "active_params_B": 0.41,
+    "total_params_B": 0.41
+  },
+  "EleutherAI/pythia-1b": {
+    "toks_T": 0.3,
+    "active_params_B": 1.0,
+    "total_params_B": 1.0
+  },
+  "EleutherAI/pythia-1.4b": {
+    "toks_T": 0.3,
+    "active_params_B": 1.4,
+    "total_params_B": 1.4
+  },
+  "EleutherAI/pythia-2.8b": {
+    "toks_T": 0.3,
+    "active_params_B": 2.8,
+    "total_params_B": 2.8
+  },
+  "EleutherAI/pythia-6.9b": {
+    "toks_T": 0.3,
+    "active_params_B": 6.9,
+    "total_params_B": 6.9
+  },
+  "EleutherAI/pythia-12b": {
+    "toks_T": 0.3,
+    "active_params_B": 12.0,
+    "total_params_B": 12.0
+  },
+  "huggyllama/llama-7b": {
+    "toks_T": 1.0,
+    "active_params_B": 7.0,
+    "total_params_B": 7.0
+  },
+  "huggyllama/llama-13b": {
+    "toks_T": 1.0,
+    "active_params_B": 13.0,
+    "total_params_B": 13.0
+  },
+  "huggyllama/llama-30b": {
+    "toks_T": 1.4,
+    "active_params_B": 30.0,
+    "total_params_B": 30.0
+  },
+  "huggyllama/llama-65b": {
+    "toks_T": 1.4,
+    "active_params_B": 65.0,
+    "total_params_B": 65.0
+  },
+  "meta-llama/Llama-3.2-1B": {
+    "toks_T": 9.0,
+    "active_params_B": 1.0,
+    "total_params_B": 1.0
+  },
+  "meta-llama/Llama-3.2-3B": {
+    "toks_T": 9.0,
+    "active_params_B": 3.0,
+    "total_params_B": 3.0
+  },
+  "meta-llama/Llama-3.1-8B": {
+    "toks_T": 15.0,
+    "active_params_B": 8.0,
+    "total_params_B": 8.0
+  },
+  "meta-llama/Llama-3.1-70B": {
+    "toks_T": 15.0,
+    "active_params_B": 70.0,
+    "total_params_B": 70.0
+  },
+  "meta-llama/Llama-3.1-405B": {
+    "toks_T": 15.0,
+    "active_params_B": 405.0,
+    "total_params_B": 405.0
+  },
+  "meta-llama/Meta-Llama-3-8B": {
+    "toks_T": 15.0,
+    "active_params_B": 8.0,
+    "total_params_B": 8.0
+  },
+  "meta-llama/Llama-2-7b": {
+    "toks_T": 2.0,
+    "active_params_B": 7.0,
+    "total_params_B": 7.0
+  },
+  "meta-llama/Llama-2-13b": {
+    "toks_T": 2.0,
+    "active_params_B": 13.0,
+    "total_params_B": 13.0
+  },
+  "meta-llama/Llama-2-70b": {
+    "toks_T": 2.0,
+    "active_params_B": 70.0,
+    "total_params_B": 70.0
+  },
+  "TRI-ML/DCLM-1B": {
+    "toks_T": 4.3,
+    "active_params_B": 1.4,
+    "total_params_B": 1.4
+  },
+  "apple/DCLM-7B": {
+    "toks_T": 2.5,
+    "active_params_B": 7.0,
+    "total_params_B": 7.0
+  },
+  "stabilityai/stablelm-2-1_6b": {
+    "toks_T": 2.0,
+    "active_params_B": 1.6,
+    "total_params_B": 1.6
+  },
+  "stabilityai/stablelm-2-12b": {
+    "toks_T": 2.0,
+    "active_params_B": 12.0,
+    "total_params_B": 12.0
+  },
+  "stabilityai/stablelm-base-alpha-7b": {
+    "toks_T": 1.5,
+    "active_params_B": 7.0,
+    "total_params_B": 7.0
+  },
+  "stabilityai/stablelm-3b-4e1t": {
+    "toks_T": 1.0,
+    "active_params_B": 3.0,
+    "total_params_B": 3.0
+  },
+  "allenai/OLMo-1B-0724-hf": {
+    "toks_T": 3.0,
+    "active_params_B": 1.3,
+    "total_params_B": 1.3
+  },
+  "allenai/OLMo-7B-0724-hf": {
+    "toks_T": 2.75,
+    "active_params_B": 7.0,
+    "total_params_B": 7.0
+  },
+  "allenai/OLMo-7B-0424-hf": {
+    "toks_T": 2.5,
+    "active_params_B": 7.0,
+    "total_params_B": 7.0
+  },
+  "allenai/OLMo-7B-Twin-2T-hf": {
+    "toks_T": 2.0,
+    "active_params_B": 7.0,
+    "total_params_B": 7.0
+  },
+  "allenai/OLMo-7B-hf": {
+    "toks_T": 2.5,
+    "active_params_B": 7.0,
+    "total_params_B": 7.0
+  },
+  "allenai/OLMo-1B-hf": {
+    "toks_T": 3.0,
+    "active_params_B": 1.0,
+    "total_params_B": 1.0
+  },
+  "allenai/OLMo-2-0325-32B": {
+    "toks_T": 6.0,
+    "active_params_B": 32.0,
+    "total_params_B": 32.0
+  },
+  "allenai/OLMo-2-1124-13B": {
+    "toks_T": 5.0,
+    "active_params_B": 13.0,
+    "total_params_B": 13.0
+  },
+  "allenai/OLMo-2-1124-7B": {
+    "toks_T": 4.0,
+    "active_params_B": 7.0,
+    "total_params_B": 7.0
+  },
+  "allenai/OLMo-2-0425-1B": {
+    "toks_T": 4.0,
+    "active_params_B": 1.5,
+    "total_params_B": 1.5
+  }
+}
