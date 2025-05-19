@@ -140,7 +140,6 @@ TASK_LIST_ALL += [ # Custom suites to prevent gRPC overload on Beaker
 #     "weka://oe-eval-default/ai2-llm/checkpoints/OLMo-ladder/davidh/prox_fineweb_pro-20M-5xC/step14584-unsharded-hf",
 #     "weka://oe-eval-default/ai2-llm/checkpoints/OLMo-ladder/davidh/prox_fineweb_pro-4M-5xC/step5735-unsharded-hf",
 # ]
-# TASK_LIST_ALL = [task for task in TASK_LIST_ALL if 'mmlu_' not in task] # exclude MMLU (long arg lists may crash beaker! https://github.com/allenai/beaker/issues/5530)
 # MODEL_LIST_ALL = [
 #     # "weka://oe-eval-default/ai2-llm/checkpoints/OLMo-large/peteish32/step720000",
 #     # "weka://oe-eval-default/ai2-llm/checkpoints/OLMo-large/peteish32/step705000",

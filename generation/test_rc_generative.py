@@ -30,7 +30,6 @@ def main():
         "fewshot_seed": None,
         "batch_size": "16",
         "max_batch_size": 32,
-        "output_dir": '/Users/dhei/ai2/new-evals/workspace',
         "cached_output_dir": None,
         "remote_output_dir": 's3://ai2-llm/eval-results/downstream/metaeval/local_testing',
         "num_recorded_inputs": 3,

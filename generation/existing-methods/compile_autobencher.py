@@ -112,7 +112,7 @@ def main():
     # # Also push to personal repo
     # push_parquet_to_hf(
     #     parquet_file_path=parquet_path,
-    #     hf_dataset_name="davidheineman/autobencher-knowledge-qa",
+    #     hf_dataset_name="YOUR_HF_ID/autobencher-knowledge-qa",
     #     private=False,
     #     overwrite=True
     # )
@@ -126,7 +126,7 @@ def main():
 
     push_parquet_to_hf(
         parquet_file_path=parquet_path,
-        hf_dataset_name="davidheineman/autobencher-math",
+        hf_dataset_name="YOUR_HF_ID/autobencher-math",
         private=False,
         overwrite=True
     )
