@@ -19,6 +19,7 @@ sys.path.append(str(parent_dir))
 
 from utils import DATA_DIR, weka_to_gcs, fix_model_path
 from utils.constants_tasks import RC_TASKS_OLMES, MC_TASKS_OLMES, GEN_TASKS_OLMES, MINERVA_COT
+from analysis.utils.constants_olmes import PRIMARY_METRICS_OLMES
 
 # Metrics to use when converting to table:
 METRICS_TO_KEEP = [
@@ -242,7 +243,6 @@ def process_predictions(file_path):
             entry['exact_match'] = float(entry['exact_match'])
 
         # If primary_score does not exist, add it
-        from constants_olmes import PRIMARY_METRICS_OLMES
         primary_metric_key = PRIMARY_METRICS_OLMES.get(task_name, None)
         if primary_metric_key is None: 
             primary_metric_key = 'acc_per_char'
