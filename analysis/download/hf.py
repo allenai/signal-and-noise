@@ -90,7 +90,7 @@ def download_parquet_from_hf(hf_dataset_name, file_name, local_path):
 
 def pull_predictions_from_hf(repo_id, split_name, local_path=DATA_DIR):
     file_name = f'data/{split_name}-00000-of-00001.parquet'
-    if 'all' in file_name: file_name = file_name.replace('-00000-of-00001', '').replace('data/', '') # backwards compatibility with my tech debt :(
+    if 'all' in file_name: file_name = file_name.replace('-00000-of-00001', '')
     download_parquet_from_hf(repo_id, file_name, local_path)
     local_file_name = os.path.join(local_path, file_name)
     return local_file_name

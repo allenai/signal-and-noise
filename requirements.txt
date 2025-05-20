@@ -16,3 +16,4 @@ seaborn
 statsmodels
 tqdm
 wandb
+jupyter

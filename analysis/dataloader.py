@@ -3,7 +3,6 @@ import pandas as pd
 import warnings
 import duckdb
 
-# from db import get_slice_db, get_nd_array_db, get_instance_db
 from db import get_slice_db, get_nd_array_db, get_instance_db
 
 def get_slice(df, mix=None, model=None, task=None, step=None, size=None, seed=None):
