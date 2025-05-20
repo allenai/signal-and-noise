@@ -19,18 +19,13 @@ Note: This supplimentary submission already comes with all the code. The dataset
 
 - TODO
 
-The resulting tree of data should appear as follows:
+Once downloaded, the resulting tree of data should appear as follows:
 
 ```
 analysis/data
-├── consistent_ranking
-│   └── data
-│       └── benchmarks-00000-of-00001.parquet
-├── consistent_ranking_small
-│   └── data
-│       └── benchmarks-00000-of-00001.parquet
-├── data
-│   └── benchmarks-00000-of-00001.parquet
-└── random_seeds
-    └── olmo2_random_seeds.parquet
+├── benchmarks.parquet
+├── consistent_ranking.parquet
+├── consistent_ranking_small.parquet
+├── instancesmedium.parquet
+└── olmo2_random_seeds.parquet
 ```
