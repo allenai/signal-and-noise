@@ -86,37 +86,6 @@ def merge_datasets(path, pattern, filename):
 
 
 def main():
-    # # Push knowledge QA
-    # path = 'AutoBencher/KI/'
-    # pattern = r'.*\.\d+\.KI_questions.json'
-    # filename = 'combined_ki_questions'
-
-    # # parquet_path = merge_datasets(path, pattern, filename)
-
-    # # Override the ID with a unique ID for each entry
-    # parquet_path = f"AutoBencher/data/{filename}.parquet"
-    # df = pd.read_parquet(parquet_path)
-    # ids = []
-    # for idx, root_category in enumerate(df['root_category']):
-    #     ids.append(f"{root_category}_{idx}")
-    # df['id'] = ids
-    # df.to_parquet(parquet_path)
-    
-    # push_parquet_to_hf(
-    #     parquet_file_path=parquet_path,
-    #     hf_dataset_name="allenai/autobencher-knowledge-qa",
-    #     private=True,
-    #     overwrite=True
-    # )
-
-    # # Also push to personal repo
-    # push_parquet_to_hf(
-    #     parquet_file_path=parquet_path,
-    #     hf_dataset_name="YOUR_HF_ID/autobencher-knowledge-qa",
-    #     private=False,
-    #     overwrite=True
-    # )
-
     # Push math
     path = 'AutoBencher/MATH/'
     pattern = r'.\d+.*.questions_final.json'

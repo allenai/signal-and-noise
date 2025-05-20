@@ -72,42 +72,6 @@ def download_branches(repo_id, branches, dest_dir):
 
 
 if __name__ == '__main__':
-    """
-    python scripts/download_checkpoints_hf.py --repo-id allenai/OLMo-2-1124-7B --save-dir OLMo-medium/peteish7 --num-checkpoints 150
-    python scripts/download_checkpoints_hf.py --repo-id allenai/OLMo-2-1124-13B --save-dir OLMo-medium/peteish13-highlr --num-checkpoints 150
-    python scripts/download_checkpoints_hf.py --repo-id allenai/OLMo-2-0325-32B --save-dir OLMo-large/peteish32 --num-checkpoints 150
-
-    python scripts/download_checkpoints_hf.py --repo-id allenai/OLMo-Ladder-190M-5xC --save-dir OLMo-ladder/190M-5xC
-    python scripts/download_checkpoints_hf.py --repo-id allenai/OLMo-Ladder-370M-5xC --save-dir OLMo-ladder/370M-5xC
-    python scripts/download_checkpoints_hf.py --repo-id allenai/OLMo-Ladder-760M-5xC --save-dir OLMo-ladder/760M-5xC
-    python scripts/download_checkpoints_hf.py --repo-id allenai/OLMo-Ladder-1B-5xC --save-dir OLMo-ladder/1B-5xC
-    python scripts/download_checkpoints_hf.py --repo-id allenai/OLMo-Ladder-3B-5xC --save-dir OLMo-ladder/3B-5xC
-
-    python scripts/download_checkpoints_hf.py --repo-id allenai/OLMo-Ladder-190M-1xC --save-dir OLMo-ladder/190M-1xC
-    python scripts/download_checkpoints_hf.py --repo-id allenai/OLMo-Ladder-370M-1xC --save-dir OLMo-ladder/370M-1xC
-    python scripts/download_checkpoints_hf.py --repo-id allenai/OLMo-Ladder-760M-1xC --save-dir OLMo-ladder/760M-1xC
-    python scripts/download_checkpoints_hf.py --repo-id allenai/OLMo-Ladder-1B-1xC --save-dir OLMo-ladder/1B-1xC
-    python scripts/download_checkpoints_hf.py --repo-id allenai/OLMo-Ladder-3B-1xC --save-dir OLMo-ladder/3B-1xC
-
-    python scripts/download_checkpoints_hf.py --repo-id allenai/OLMo-Ladder-190M-0.5xC --save-dir OLMo-ladder/190M-0.5xC
-    python scripts/download_checkpoints_hf.py --repo-id allenai/OLMo-Ladder-370M-0.5xC --save-dir OLMo-ladder/370M-0.5xC
-    python scripts/download_checkpoints_hf.py --repo-id allenai/OLMo-Ladder-760M-0.5xC --save-dir OLMo-ladder/760M-0.5xC
-    python scripts/download_checkpoints_hf.py --repo-id allenai/OLMo-Ladder-1B-0.5xC --save-dir OLMo-ladder/1B-0.5xC
-    python scripts/download_checkpoints_hf.py --repo-id allenai/OLMo-Ladder-3B-0.5xC --save-dir OLMo-ladder/3B-0.5xC
-
-    python scripts/download_checkpoints_hf.py --repo-id allenai/OLMo-Ladder-190M-2xC --save-dir OLMo-ladder/190M-2xC
-    python scripts/download_checkpoints_hf.py --repo-id allenai/OLMo-Ladder-370M-2xC --save-dir OLMo-ladder/370M-2xC
-    python scripts/download_checkpoints_hf.py --repo-id allenai/OLMo-Ladder-760M-2xC --save-dir OLMo-ladder/760M-2xC
-    python scripts/download_checkpoints_hf.py --repo-id allenai/OLMo-Ladder-1B-2xC --save-dir OLMo-ladder/1B-2xC
-    python scripts/download_checkpoints_hf.py --repo-id allenai/OLMo-Ladder-3B-2xC --save-dir OLMo-ladder/3B-2xC
-
-    python scripts/download_checkpoints_hf.py --repo-id allenai/OLMo-Ladder-190M-10xC --save-dir OLMo-ladder/190M-10xC
-    python scripts/download_checkpoints_hf.py --repo-id allenai/OLMo-Ladder-370M-10xC --save-dir OLMo-ladder/370M-10xC
-    python scripts/download_checkpoints_hf.py --repo-id allenai/OLMo-Ladder-760M-10xC --save-dir OLMo-ladder/760M-10xC
-    python scripts/download_checkpoints_hf.py --repo-id allenai/OLMo-Ladder-1B-10xC --save-dir OLMo-ladder/1B-10xC
-    python scripts/download_checkpoints_hf.py --repo-id allenai/OLMo-Ladder-3B-10xC --save-dir OLMo-ladder/3B-10xC
-    """
-
     parser = argparse.ArgumentParser(description='Download OLMo checkpoints from Hugging Face')
     parser.add_argument('--repo-id', type=str, required=True,
                       help='Hugging Face repo ID to download from')
