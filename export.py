@@ -22,7 +22,7 @@ with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
     dir_sizes = {}
     
     for dirpath, dirnames, filenames in os.walk(root_dir):
-        dirnames[:] = [d for d in dirnames if not d.startswith('.') and d != 'img' and d != 'data']
+        dirnames[:] = [d for d in dirnames if not d.startswith('.') and d != 'img' and d != 'data' and d != '__pycache__']
         
         relpath = os.path.relpath(dirpath, root_dir)
         if relpath == '.':

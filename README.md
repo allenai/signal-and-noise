@@ -17,7 +17,7 @@ pip install -e ".[all]"
 
 Note: This supplimentary submission already comes with all the code. The datasets are too large to submit under the 100MB limit supplimentary material, this is hosted as follows. As-per the NeurIPS guidelines for large datasets (https://neurips.cc/Conferences/2025/DataHostingGuidelines), we published an anonymized URL in the Harvard Dataverse, which is accessible here: 
 
-- TODO
+- https://dataverse.harvard.edu/previewurl.xhtml?token=d5947913-fbdd-4a06-8876-1fd2fdead31f
 
 Once downloaded, the resulting tree of data should appear as follows:
 
@@ -26,6 +26,5 @@ analysis/data
 ├── benchmarks.parquet
 ├── consistent_ranking.parquet
 ├── consistent_ranking_small.parquet
-├── instancesmedium.parquet
 └── olmo2_random_seeds.parquet
 ```
