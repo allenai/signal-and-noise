@@ -203,7 +203,7 @@ def process_predictions(file_path):
     request_ids_to_bytes = None
     if 'consistent_ranking' in str(file_path):
         # Load the requests file to compute BPB
-        requests_folder = '/oe-eval-default/davidh/metaeval/analysis/data/consistent_ranking/eval-results/downstream/eval-for-consistent-ranking/baseline-150M-5xC-2/step38157-unsharded-hf'
+        requests_folder = 'downstream/eval-for-consistent-ranking/baseline-150M-5xC-2/step38157-unsharded-hf'
         file_name = Path(file_path).name.replace('predictions.jsonl', 'requests.jsonl')
         requests_path = f"{requests_folder}/{Path(file_path).parent.name}/{file_name}"
         requests = process_jsonl(requests_path)
@@ -489,7 +489,7 @@ def load_file(file_data, _type, load_lite_tasks=None):
         if 'predictions.jsonl' not in file_path or 'peteish-moreeval-rerun-1B-1xC' not in file_path:
             return []
         # Load the requests file to compute BPB
-        requests_folder = '/oe-eval-default/davidh/metaeval/analysis/data/aws/eval-results/downstream/metaeval/OLMo-ladder/peteish-moreeval-rerun-1B-1xC/step16279-unsharded-hf'
+        requests_folder = 'data/aws/eval-results/downstream/metaeval/OLMo-ladder/peteish-moreeval-rerun-1B-1xC/step16279-unsharded-hf'
         file_name = Path(file_path).name.replace('predictions.jsonl', 'requests.jsonl') # /{Path(file_path).parent.name}
         requests_path = f"{requests_folder}/{file_name}"
 
@@ -509,7 +509,7 @@ def load_file(file_data, _type, load_lite_tasks=None):
         # If OLMES, get the small requests file
         olmes_requests_ids = None
         if '::olmes' in task_alias:
-            olmes_requests_folder = '/oe-eval-default/davidh/metaeval/analysis/download/olmes_requests/EleutherAI/pythia-160m'
+            olmes_requests_folder = 'analysis/download/olmes_requests/EleutherAI/pythia-160m'
             file_name = Path(file_path).name
             olmes_small_requests_path = f"{olmes_requests_folder}/{file_name}"
             if os.path.exists(olmes_small_requests_path):
@@ -553,16 +553,16 @@ def load_file(file_data, _type, load_lite_tasks=None):
 
         # NOTE: FOR S3 data, we don't have it in Weka, so need to download
         if 's3:' in str(model_path):
-            model_path = str(model_path).replace('s3:/ai2-llm/', '')
+            model_path = str(model_path).replace('s3:/ANON-llm/', '')
             model_path = model_path.replace('-hf', '') # usually the base model dir has the config.yaml
-            local_path = f'/root/ai2/metaeval/analysis/data/.configs/{model_path}'
+            local_path = f'/root/ANON/metaeval/analysis/data/.configs/{model_path}'
             if not os.path.exists(local_path) and 'metrics.json' in file_path:
                 # use AWS to download to .reddit/[path]/config.yaml, if it doesn't exist
-                # E.g., s3:/ai2-llm/checkpoints/reddit-2g-ablations/redDC-5050-llama1-mix-Cx5-20241008/step61989-hf/config.yaml
+                # E.g., s3:/ANON-llm/checkpoints/reddit-2g-ablations/redDC-5050-llama1-mix-Cx5-20241008/step61989-hf/config.yaml
                 s3_client = boto3.client('s3')
                 print(model_path + ' -> ' + local_path)
                 os.makedirs(os.path.dirname(local_path), exist_ok=True)
-                s3_client.download_file('ai2-llm', model_path, local_path)
+                s3_client.download_file('ANON-llm', model_path, local_path)
             model_path = Path(local_path)
 
         if not model_path.exists():

@@ -271,5 +271,4 @@ def main():
     save_metrics_to_csv(experiments, output_dir, output_filename)
 
 if __name__ == "__main__":
-    # python analysis/utils/comet_utils.py --workspace ai2 --project olmo2-model-ladder-davidh --output-dir analysis/data/random_seeds
     main()

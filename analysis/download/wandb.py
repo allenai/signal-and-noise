@@ -16,7 +16,7 @@ def get_name_size_length(run_name: str):
 def download_model_ladder(run_name: Literal['amberish', 'peteish']='peteish', use_cache=False):
     ''' 
     Download Akshita's model ladder runs 
-    https://wandb.ai/ai2-llm/olmo-ladder/table
+    https://wandb.ai/ANON-llm/olmo-ladder/table
     '''
     import itertools
     if run_name == 'peteish':
@@ -30,7 +30,7 @@ def download_model_ladder(run_name: Literal['amberish', 'peteish']='peteish', us
     
     WANDB_RESULTS = f"{DATA_DIR}/wandb/{model_tag}"
 
-    run_names = [f"ai2-llm/olmo-ladder/{model_tag}-{size}-{length}" for size, length in model_sizes]
+    run_names = [f"ANON-llm/olmo-ladder/{model_tag}-{size}-{length}" for size, length in model_sizes]
 
     file_paths = {}
 
@@ -69,7 +69,7 @@ def download_model_ladder(run_name: Literal['amberish', 'peteish']='peteish', us
 def download_ian_in_loop(use_cache=True):
     ''' 
     Download Ian's 1B 1T runs 
-    https://wandb.ai/ai2-llm/cheap_decisions/table
+    https://wandb.ai/ANON-llm/cheap_decisions/table
     '''
     WANDB_RESULTS = f"{DATA_DIR}/wandb/cheap_decisions"
 
@@ -83,7 +83,7 @@ def download_ian_in_loop(use_cache=True):
     ]
 
     run_names = [
-        f"ai2-llm/cheap_decisions/{model_name}" for model_name in IAN_MODELS
+        f"ANON-llm/cheap_decisions/{model_name}" for model_name in IAN_MODELS
     ]
     
     IAN_EVAL_KEYS = [

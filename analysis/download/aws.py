@@ -35,7 +35,6 @@ def download_file(s3_client, bucket_name, key, local_dir, excluded_file_names):
             return  # Skip download if the file already exists and has the same size
 
     # Fix GCS path setup
-    local_path = local_path.replace('gs://ai2-llm/checkpoints/davidh', '')
     local_path = local_path.replace('step928646-hf-vllm-2', 'step928646-hf') # naming issue for peteish7
 
     os.makedirs(os.path.dirname(local_path), exist_ok=True)
@@ -115,19 +114,7 @@ def mirror_s3_to_local(bucket_name, s3_prefix, local_dir, max_threads=100, exclu
 
 
 def main():
-    """
-    Mirror AWS bucket to a local folder
-    https://us-east-1.console.aws.amazon.com/s3/buckets/ai2-llm?prefix=eval-results/downstream/metaeval/OLMo-ladder/&region=us-east-1&bucketType=general
-    """
-    # # #### GET REQUESTS FROM METAEVAL PROJECT FOR QUESTION TEXT ####
-    # bucket_name = 'ai2-llm'
-    # s3_prefix = 'eval-results/downstream/metaeval/OLMo-ladder/peteish-moreeval-rerun-1B-1xC/step16279-unsharded-hf/'
-    # folder_name = 'aws'
-    # local_dir = f'{DATA_DIR}/{folder_name}'
-    # mirror_s3_to_local(bucket_name, s3_prefix, local_dir, max_threads=100, excluded_file_names=[])
-    # # #############################################################
-
-    bucket_name = 'ai2-llm'
+    bucket_name = 'ANON'
     s3_prefix = 'eval-results/downstream/metaeval/'
     folder_name = 'aws'
 

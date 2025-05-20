@@ -112,13 +112,13 @@ if __name__ == '__main__':
     parser.add_argument('--repo-id', type=str, required=True,
                       help='Hugging Face repo ID to download from')
     parser.add_argument('--save-dir', type=str, required=True,
-                      help='Directory name to save checkpoints under /oe-eval-default/ai2-llm/checkpoints/')
+                      help='Directory name to save checkpoints under ANON/checkpoints/')
     parser.add_argument('--num-checkpoints', type=int, default=None,
                       help='Number of evenly spaced checkpoints to download (default: None)')
 
     args = parser.parse_args()
 
-    dest_dir = f'/oe-eval-default/ai2-llm/checkpoints/{args.save_dir}'
+    dest_dir = f'ANON/checkpoints/{args.save_dir}'
     os.makedirs(dest_dir, exist_ok=True) # Create destination directory if it doesn't exist
 
     # Get and print evenly spaced branches

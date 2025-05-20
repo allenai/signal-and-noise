@@ -3,51 +3,16 @@ Code for "Signal and Noise: A Framework for Reducing Uncertainty in Language Mod
 ### Quick Start
 
 ```sh
-git lfs install # .ipynb files are tracked with git lfs! (brew install git-lfs)
 pip install -r requirements.txt
-mkdir deps # directory for olmo repos
 
-# Install scaling law code
-git clone -b signal-to-noise https://github.com/allenai/OLMo-ladder deps/OLMo-ladder
-pip install -e "deps/OLMo-ladder.[plotting]"
+cd deps/OLMo-ladder
+pip install -e ".[plotting]"
 
-# Install eval code
-git clone -b signal-to-noise https://github.com/allenai/oe-eval-internal deps/oe-eval-internal
-pip install -e "deps/oe-eval-internal.[all]"
-
-# Download seed / data order evals
-python analysis/utils/comet_utils.py --workspace ai2 --project olmo2-model-ladder-davidh --output-dir analysis/data/random_seeds --output-filename olmo2_random_seeds.csv
+# Install eval library (not necessary for analysis code)
+git clone https://github.com/allenai/olmes deps/olmes
+cd deps/olmes
+pip install -e ".[all]"
 ```
 
-### Download Model Ladder Data
-```sh
-# Download wandb logs (see OLMo library for all downloads)
-python olmo/scaling/scaling_laws/download_wandb_logs.py -n 'ai2-llm/olmo-ladder/peteish-moreeval-3B-1xC' -y validation-and-downstream-v2 -o scripts/scaling/data/peteish-moreeval/3B-1xC.csv
-python olmo/scaling/scaling_laws/download_wandb_logs.py -n 'ai2-llm/olmo-ladder/peteish-moreeval-3B-2xC' -y validation-and-downstream-v2 -o scripts/scaling/data/peteish-moreeval/3B-2xC.csv
-python olmo/scaling/scaling_laws/download_wandb_logs.py -n 'ai2-llm/olmo-ladder/peteish-moreeval-3B-5xC' -y validation-and-downstream-v2 -o scripts/scaling/data/peteish-moreeval/3B-5xC.csv
-python olmo/scaling/scaling_laws/download_wandb_logs.py -n 'ai2-llm/olmo-ladder/peteish-moreeval-3B-10xC' -y validation-and-downstream-v2 -o scripts/scaling/data/peteish-moreeval/3B-10xC.csv
+Note: This supplimentary submission already comes with all the code. The datasets are too large to submit under the 100MB limit supplimentary material, this is hosted as follows. As-per the NeurIPS guidelines for large datasets (https://neurips.cc/Conferences/2025/DataHostingGuidelines), we published an anonymized URL in the Harvard Dataverse, which is accessible here: 
 
-# Sanity check: Run variance analysis + predictions
-python scripts/scaling/variance_analysis.py -k v2_main_variance -c scripts/scaling/final_variance.json -o figure/peteish-moreeval/variance.pdf --last_n_points 10 --run_prediction
-python scripts/scaling/step2.py -k v2_main -c scripts/scaling/step2.json -o figure/peteish-moreeval/step2_main.pdf --skip_perc 0.1 --moving_avg 5
-```
-
-### Launching & Processing Evals
-```sh
-python scripts/launch_evals.py # launch evals on beaker
-python analysis/download/aws.py # sync from s3
-python analysis/download/preprocess.py # convert to .parquet
-
-# Detatch from current session
-nohup python scripts/launch_eval.py > /tmp/out.out 2>&1 & tail -f /tmp/out.out
-nohup python analysis/download/aws.py > /tmp/out.out 2>&1 & tail -f /tmp/out.out
-
-# (in case I need it)
-nohup python analysis/download/preprocess.py > /tmp/out.out 2>&1 & tail -f /tmp/out.out
-nohup python analysis/download/hf.py > /tmp/out.out 2>&1 & tail -f /tmp/out.out
-nohup python scripts/download_checkpoints.py > /tmp/out.out 2>&1 & tail -f /tmp/out.out
-nohup python scripts/weight_merging/merge.py > /tmp/merge.out 2>&1 & tail -f /tmp/merge.out
-
-# Convert checkpoints
-nohup ./scripts/convert_checkpoints_peteish.sh > /tmp/out.out 2>&1 & tail -f /tmp/out.out
-```

@@ -31,7 +31,6 @@ def main():
         "batch_size": "16",
         "max_batch_size": 32,
         "cached_output_dir": None,
-        "remote_output_dir": 's3://ai2-llm/eval-results/downstream/metaeval/local_testing',
         "num_recorded_inputs": 3,
         "gsheet": None,
         "hf_save_dir": None,
