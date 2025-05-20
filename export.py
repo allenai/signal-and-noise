@@ -21,6 +21,12 @@ if os.path.exists(zip_path):
 with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
     dir_sizes = {}
     
+    # Add README.md and requirements.txt from root directory if they exist
+    root_files = ['README.md', 'requirements.txt']
+    for file in root_files:
+        if os.path.exists(file):
+            zipf.write(file, file)
+    
     for dirpath, dirnames, filenames in os.walk(root_dir):
         dirnames[:] = [d for d in dirnames if not d.startswith('.') and d != 'img' and d != 'data' and d != '__pycache__']
         
