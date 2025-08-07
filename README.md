@@ -29,15 +29,15 @@ Our core signal to noise calculation can be produced in a few lines. Given a sco
 import numpy as np
 
 def signal_to_noise_ratio(signal_scores: np.ndarray, noise_scores: np.ndarray) -> float:
-    # signal = \max_{j,k} |m_j - m_k| / m̄
+    """
+    signal = \max_{j,k} |m_j - m_k| / m̄
+    noise = σ_m / m̄
+    snr = signal / noise
+    """"
     dispersion = np.max([np.abs(mj - mk) for mj in signal_scores for mk in signal_scores])
     signal = dispersion / np.mean(signal_scores)
-    
-    # noise = σ_m / m̄
     noise = np.std(noise_scores) / np.mean(noise_scores)
-
     snr = signal / noise
-    
     return snr
 ```
 
