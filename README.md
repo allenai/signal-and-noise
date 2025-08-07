@@ -23,7 +23,7 @@ pip install -e .
 
 ### Calculating SNR
 
-Our core signal to noise calculation can be produced in a few lines, given a scores from a population of models (`signal_scores`) and intermediate checkpoints (`noise_scores`):
+Our core signal to noise calculation can be produced in a few lines. Given a scores from a population of models (`signal_scores`) and intermediate checkpoints (`noise_scores`), pseudocode is as follows:
 
 ```python
 import numpy as np
