@@ -7,7 +7,7 @@
   <a href="">
     <img alt="Paper URL" src="https://img.shields.io/badge/paper-arxiv-red">
   </a>
-  <a href="">
+  <a href="https://huggingface.co/datasets/allenai/signal-and-noise">
     <img alt="Huggingface URL" src="https://img.shields.io/badge/data-huggingface-yellow">
   </a>
 </p>
