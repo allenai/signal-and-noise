@@ -12,7 +12,7 @@
   </a>
 </p>
 
-Code and data for reproducing results in the signal and noise paper.
+Our work studies the ratio between *signal*, a benchmark's ability to separate models; and *noise*, a benchmark's sensitivity to random variability during training steps. 
 
 **Setup**
 
@@ -23,7 +23,7 @@ pip install -e .
 
 ### Calculating SNR
 
-The core finding of our work is the ratio between *signal*, a benchmark's ability to separate models; and *noise*, a benchmark's sensitivity to random variability during training steps. Given a set of models scores representing signal and noise, this will reproduce our metric:
+Our core signal to noise calculation can be produced in a few lines, given a scores from a population of models (`signal_scores`) and intermediate checkpoints (`noise_scores`):
 
 ```python
 import numpy as np
@@ -41,9 +41,13 @@ def signal_to_noise_ratio(signal_scores: np.ndarray, noise_scores: np.ndarray) -
     return snr
 ```
 
-### Launching Evaluation on a New Benchmark
+---
+
+### Evaluating a benchmark
 
 **@davidheineman TODO ADD THIS**
+
+---
 
 ### Reproducing tables & figures
 
