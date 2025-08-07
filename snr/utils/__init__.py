@@ -10,7 +10,7 @@ os.makedirs(DATA_DIR, exist_ok=True)
 os.makedirs(PLOT_DIR, exist_ok=True)
 
 # Load observational model sizes data
-with open(os.path.join(ROOT_DIR, 'analysis/utils/model_sizes.json')) as f:
+with open(os.path.join(ROOT_DIR, 'snr/utils/model_sizes.json')) as f:
     MODEL_SIZES = json.load(f)
 
 def get_selected_tasks(tasks):

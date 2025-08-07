@@ -21,10 +21,51 @@ git clone https://github.com/allenai/signal-and-noise
 pip install -e .
 ```
 
-TODO
+### Calculating SNR
 
-[ ] Add description for each notebook
-[ ] Add guide on launching evals
+The core finding of our work is the ratio between *signal*, a benchmark's ability to separate models; and *noise*, a benchmark's sensitivity to random variability during training steps. Given a set of models scores representing signal and noise, this will reproduce our metric:
+
+```python
+import numpy as np
+
+def signal_to_noise_ratio(signal_scores: np.ndarray, noise_scores: np.ndarray) -> float:
+    # signal = \max_{j,k} |m_j - m_k| / m̄
+    dispersion = np.max([np.abs(mj - mk) for mj in signal_scores for mk in signal_scores])
+    signal = dispersion / np.mean(signal_scores)
+    
+    # noise = σ_m / m̄
+    noise = np.std(noise_scores) / np.mean(noise_scores)
+
+    snr = signal / noise
+    
+    return snr
+```
+
+### Launching Evaluation on a New Benchmark
+
+**@davidheineman TODO ADD THIS**
+
+### Reproducing tables & figures
+
+The [`analysis/`](./analysis/) folder contains notebooks to reproduce the core findings of our work. Here is a brief description of each:
+
+```sh
+── analysis
+   ├── datadecide.ipynb
+   ├── plots.ipynb
+   ├── sample_size.ipynb
+   ├── smooth_last_n.ipynb
+   ├── smooth_metric.ipynb
+   ├── smooth_subtasks.ipynb
+   ├── snr_variants.ipynb
+   └── table.ipynb
+```
+
+### Citation
+
+```
+TODO
+```
 
 <!-- ```sh
 mkdir deps # directory for olmo repos
