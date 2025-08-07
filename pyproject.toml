@@ -53,8 +53,8 @@ include-package-data = true
 snr = ["py.typed", "*.txt"]
 
 [tool.setuptools.packages.find]
-where = ["src"]
-include = ["*"]
+where = ["."]
+include = ["snr*"]
 exclude = []
 
 [tool.black]

@@ -14,12 +14,17 @@
 
 Code and data for reproducing results in the signal and noise paper.
 
-### Setup
+**Setup**
 
 ```sh
-git clone https://github.com/allenai/oe-eval-internal/tree/signal-to-noise
+git clone https://github.com/allenai/signal-and-noise
 pip install -e .
 ```
+
+TODO
+
+[ ] Add description for each notebook
+[ ] Add guide on launching evals
 
 <!-- ```sh
 mkdir deps # directory for olmo repos
