@@ -13,3 +13,4 @@ gcp-service-account.json
 *.pkl
 generation/existing-methods/AutoBencher/MATH
 generation/existing-methods/AutoBencher/KI
+*.egg-info

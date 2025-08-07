@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "snr"
-dynamic = ["version"]
+version = "0.1.0"
 readme = "README.md"
 description = ""
 authors = [
@@ -52,12 +52,9 @@ include-package-data = true
 [tool.setuptools.package-data]
 snr = ["py.typed", "*.txt"]
 
-[tool.setuptools.dynamic]
-version = { attr = "snr.version.VERSION" }
-
 [tool.setuptools.packages.find]
 where = ["src"]
-include = ["snr*"]
+include = ["*"]
 exclude = []
 
 [tool.black]
