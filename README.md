@@ -45,7 +45,7 @@ def signal_to_noise_ratio(signal_scores: np.ndarray, noise_scores: np.ndarray) -
 
 ### Evaluating a benchmark
 
-**@davidheineman TODO ADD THIS**
+**@davidheineman TODO: How to evaluate YOUR benchmark with our tool**
 
 ---
 
@@ -55,14 +55,14 @@ The [`analysis/`](./analysis/) folder contains notebooks to reproduce the core f
 
 ```sh
 ── analysis
-   ├── datadecide.ipynb
-   ├── plots.ipynb
-   ├── sample_size.ipynb
-   ├── smooth_last_n.ipynb
-   ├── smooth_metric.ipynb
-   ├── smooth_subtasks.ipynb
-   ├── snr_variants.ipynb
-   └── table.ipynb
+   ├── datadecide.ipynb      # (Sec. 1 ,3 + Appendix) Corr. between SNR and decision accuracy
+   ├── plots.ipynb           # (Sec. 3 + Appendix)    Corr. between SNR and scaling laws
+   ├── table.ipynb           # (Sec. 5) Intervention: Average last n checkpoints to reduce SNR
+   ├── smooth_last_n.ipynb   # (Sec. 5) Intervention: Average checkpoints when early stopping to reduce SNR
+   ├── smooth_metric.ipynb   # (Sec. 5) Intervention: Track BPB to reduce SNR
+   ├── smooth_subtasks.ipynb # (Sec. 5) Intervention: Filter subtasks by their SNR
+   ├── sample_size.ipynb     # (Appendix) Reducing sample size
+   ├── snr_variants.ipynb    # (Appendix) Alternative measures for signal and noise
 ```
 
 ### Citation
