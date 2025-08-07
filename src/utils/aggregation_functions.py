@@ -2,6 +2,7 @@ import numpy as np
 import scipy
 from scipy.spatial import KDTree
 from scipy.special import psi
+from scipy.stats import median_abs_deviation
 
 def rel_std_snr( step_noise, data_scores, data_noise, data_scores_last_n ):
     spread = np.mean(data_noise)
@@ -246,6 +247,62 @@ def rel_differential_entropy_knn(step_noise, data_scores, data_noise, data_score
     rel_noise = noise / np.mean(data_scores_last_n)
     return rel_signal, rel_noise, rel_signal / rel_noise
 
+def iqr_snr(step_noise, data_scores, data_noise, data_scores_last_n):
+    """Interquartile Range (IQR)"""
+    data_scores = np.asarray(data_scores)
+    q75, q25 = np.percentile(data_scores, [75, 25])
+    iqr = q75 - q25
+
+    signal = iqr
+    noise = np.mean(step_noise)
+    rel_noise = noise / np.mean(data_scores_last_n)
+
+    rel_signal = signal / np.mean(data_scores_last_n)
+
+    return rel_signal, rel_noise, rel_signal / rel_noise
+
+def tukey_snr(step_noise, data_scores, data_noise, data_scores_last_n):
+    data_scores = np.asarray(data_scores)
+    n = len(data_scores)
+    sorted_data = np.sort(data_scores)
+
+    depths = np.minimum(
+        np.searchsorted(sorted_data, data_scores, side='right') / n,
+        1 - np.searchsorted(sorted_data, data_scores, side='left') / n
+    )
+    q75, q25 = np.percentile(depths, [75, 25])
+    signal = q75 - q25
+
+    data_scores_last_n = np.asarray(data_scores_last_n)
+    depths_last = np.minimum(
+        np.searchsorted(sorted_data, data_scores_last_n, side='right') / n,
+        1 - np.searchsorted(sorted_data, data_scores_last_n, side='left') / n
+    )
+    noise = np.mean(step_noise)
+    rel_noise = noise / np.mean(depths_last)
+
+    rel_signal = signal / np.mean(data_scores_last_n)
+
+    return rel_signal, rel_noise, rel_signal / rel_noise
+
+def projection_snr(step_noise, data_scores, data_noise, data_scores_last_n):
+    data_scores = np.asarray(data_scores)
+    med = np.median(data_scores)
+    mad = median_abs_deviation(data_scores, scale='normal')
+
+    depths = 1 / (1 + np.abs(data_scores - med) / mad)
+    q75, q25 = np.percentile(depths, [75, 25])
+    signal = q75 - q25
+
+    data_scores_last_n = np.asarray(data_scores_last_n)
+    depths_last = 1 / (1 + np.abs(data_scores_last_n - med) / mad)
+    noise = np.mean(step_noise)
+    rel_noise = noise / np.mean(depths_last)
+
+    rel_signal = signal / np.mean(data_scores_last_n)
+
+    return rel_signal, rel_noise, rel_signal / rel_noise
+
 
 AGGREGATION_FUNCTIONS = [
     {
@@ -408,20 +465,68 @@ AGGREGATION_FUNCTIONS = [
         "snr_xlabel": "SNR = Data Robust Range / Step Rel. Std",
         "func": robust_range_snr,
     },
-    # {
-    #     "title": "Differential Entropy",
-    #     "latex": r"$h(X) = \psi(n) - \psi(k) + \log(V_d) + \frac{1}{n}\sum_i \log(\epsilon_i)$",
-    #     "signal_xlabel": "Step-to-Step Rel. Std",
-    #     "noise_xlabel": "Data Recipe Diff Entropy",
-    #     "snr_xlabel": "SNR = Data Diff Entropy / Step Rel. Std",
-    #     "func": differential_entropy_knn,
-    # },
-    # {
-    #     "title": "Relative Differential Entropy",
-    #     "latex": r"$h(X)/\mu$",
-    #     "signal_xlabel": "Step-to-Step Rel. Std", 
-    #     "noise_xlabel": "Data Recipe Rel Diff Entropy",
-    #     "snr_xlabel": "SNR = Data Rel Diff Entropy / Step Rel. Std",
-    #     "func": rel_differential_entropy_knn,
-    # }
+    {
+        "title": "Rel. Std. Dev.",
+        "latex": r"$\sigma/\mu$",
+        "signal_xlabel": "Step-to-Step Rel. Std",
+        "noise_xlabel": "Data Recipe Rel. Std",
+        "snr_xlabel": "SNR = Data Rel. Std / Step Rel. Std",
+        "func": rel_std_snr,
+    },
+    {
+        "title": "Rel. Dispersion",
+        "latex": r"$\max_{i,j} |c_i - c_j|/\bar{c}$",
+        "signal_xlabel": "Step-to-Step Rel. Std",
+        "noise_xlabel": "Data Recipe Rel. Dispersion",
+        "snr_xlabel": "SNR = Data Rel. Dispersion / Step Rel. Std",
+        "func": rel_dispersion_snr,
+    },
+    {
+        "title": "Median Absolute Deviation",
+        "latex": r"$\text{median}(|c_i - \text{median}(c)|)$",
+        "signal_xlabel": "Step-to-Step Rel. Std",
+        "noise_xlabel": "Data Recipe MAD",
+        "snr_xlabel": "SNR = Data MAD / Step Rel. Std",
+        "func": mad_snr,
+    },
+    {
+        "title": "Interquartile Range",
+        "latex": r"$Q_3 - Q_1$",
+        "signal_xlabel": "Step-to-Step Rel. Std",
+        "noise_xlabel": "Data Recipe IQR",
+        "snr_xlabel": "SNR = Data IQR / Step Rel. Std",
+        "func": iqr_snr,
+    },
+    {
+        "title": "Quartile Deviation",
+        "latex": r"$(Q_3 - Q_1)/2$",
+        "signal_xlabel": "Step-to-Step Rel. Std",
+        "noise_xlabel": "Data Recipe Quartile Dev",
+        "snr_xlabel": "SNR = Data Quartile Dev / Step Rel. Std",
+        "func": quartile_deviation_snr,
+    },
+    {
+        "title": "Robust Range",
+        "latex": r"$P_{95} - P_5$",
+        "signal_xlabel": "Step-to-Step Rel. Std",
+        "noise_xlabel": "Data Recipe Robust Range",
+        "snr_xlabel": "SNR = Data Robust Range / Step Rel. Std",
+        "func": robust_range_snr,
+    },
+    {
+        "title": "Halfspace Depth", # aka Tukey Depth 
+        "latex": r"$\min\left( F_n(x),\ 1 - F_n(x) \right)$ where $F_n(x) = \frac{1}{n} \sum_{i=1}^n \mathbb{I}[c_i \leq x]$",
+        "signal_xlabel": "Step-to-Step Rel. Std",
+        "noise_xlabel": "Data Recipe Halfspace Depth",
+        "snr_xlabel": "SNR = Data Halfspace Depth / Step Rel. Std",
+        "func": tukey_snr,
+    },
+    {
+        "title": "Projection Depth",
+        "latex": r"$\left( 1 + \frac{|x - \text{med}(c)|}{\text{MAD}(c)} \right)^{-1}$",
+        "signal_xlabel": "Step-to-Step Rel. Std",
+        "noise_xlabel": "Data Recipe Projection Depth",
+        "snr_xlabel": "SNR = Data Projection Depth / Step Rel. Std",
+        "func": projection_snr,
+    },
 ]

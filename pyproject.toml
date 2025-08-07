@@ -1,0 +1,150 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "snr"
+dynamic = ["version"]
+readme = "README.md"
+description = ""
+authors = [
+    { name = "David Heineman", email = "davidh@allenai.org" }
+]
+requires-python = ">=3.9"
+license = { file = "LICENSE" }
+dependencies = [
+    "adjustText",
+    "boto3",
+    "comet_ml",
+    "datasets",
+    "duckdb",
+    "huggingface_hub",
+    "ipykernel",
+    "ipython",
+    "matplotlib",
+    "numpy",
+    "openai",
+    "pandas",
+    "psutil",
+    "scipy",
+    "seaborn",
+    "statsmodels",
+    "tqdm",
+    "wandb",
+    "jupyter",
+]
+
+[project.urls]
+Homepage = "https://github.com/allenai/signal-and-noise"
+
+[project.optional-dependencies]
+beaker = [
+    "beaker-py",
+    "GitPython>=3.0,<4.0",
+]
+all = [
+    "snr[beaker]",
+]
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.package-data]
+snr = ["py.typed", "*.txt"]
+
+[tool.setuptools.dynamic]
+version = { attr = "snr.version.VERSION" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["snr*"]
+exclude = []
+
+[tool.black]
+line-length = 100
+include = '\.pyi?$'
+exclude = '''
+(
+      __pycache__
+    | \.git
+    | \.mypy_cache
+    | \.pytest_cache
+    | \.vscode
+    | \.venv
+    | \bdist\b
+    | \bdoc\b
+    | scratch/
+)
+'''
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+
+[tool.ruff]
+line-length = 115
+
+[tool.ruff.lint]
+ignore = ["F403", "F405", "E501"]
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".venv",
+    "venv",
+    ".mypy_cache",
+    "__pycache__",
+    ".nox",
+    ".pants.d",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "doc",
+    "pretrain_data",
+    "inference",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"**/__init__.py" = ["F401"]
+
+[tool.pyright]
+reportPrivateImportUsage = false
+
+[tool.mypy]
+ignore_missing_imports = true
+no_site_packages = true
+check_untyped_defs = true
+no_namespace_packages = true
+disable_error_code = "has-type"
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+strict_optional = false
+
+[tool.pytest.ini_options]
+testpaths = "tests/"
+python_classes = [
+  "Test*",
+  "*Test",
+]
+log_format = "%(asctime)s - %(levelname)s - %(name)s - %(message)s"
+log_level = "DEBUG"
+log_cli = false
+log_cli_level = "DEBUG"
+markers = [
+    "gpu",
+]
+filterwarnings = [
+    'ignore::FutureWarning:huggingface_hub\.file_download',
+    'ignore::DeprecationWarning:pkg_resources',
+    'ignore::DeprecationWarning:google\.rpc',
+    'ignore::FutureWarning:torch\.distributed\.checkpoint\.default_planner',
+]

@@ -1,4 +1,28 @@
-Code for "Signal and Noise: A Framework for Reducing Uncertainty in Language Model Evaluation", currently under submission.
+### Signal and Noise: A Framework for Reducing Uncertainty in Language Model Evaluation
+
+<p align="center">
+  <a href="https://github.com/allenai/signal-and-noise/blob/main/LICENSE">
+    <img alt="GitHub License" src="https://img.shields.io/github/license/allenai/signal-and-noise">
+  </a>
+  <a href="">
+    <img alt="Paper URL" src="https://img.shields.io/badge/paper-link-blue">
+  </a>
+</p>
+
+Code and data for reproducing results in the signal and noise paper.
+
+```sh
+pip install -r requirements.txt
+
+# Install the custom version of https://github.com/allenai/OLMo-ladder
+cd deps/OLMo-ladder
+pip install -e ".[plotting]"
+
+# Install eval library (not necessary for analysis code)
+git clone https://github.com/allenai/olmes deps/olmes
+cd deps/olmes
+pip install -e ".[all]"
+```
 
 ### Quick Start
 
