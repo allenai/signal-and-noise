@@ -11,24 +11,14 @@
 
 Code and data for reproducing results in the signal and noise paper.
 
+### Setup
+
 ```sh
-pip install -r requirements.txt
-
-# Install the custom version of https://github.com/allenai/OLMo-ladder
-cd deps/OLMo-ladder
-pip install -e ".[plotting]"
-
-# Install eval library (not necessary for analysis code)
-git clone https://github.com/allenai/olmes deps/olmes
-cd deps/olmes
-pip install -e ".[all]"
+git clone https://github.com/allenai/oe-eval-internal/tree/signal-to-noise
+pip install -e .
 ```
 
-### Quick Start
-
-```sh
-git lfs install # .ipynb files are tracked with git lfs! (brew install git-lfs)
-pip install -r requirements.txt
+<!-- ```sh
 mkdir deps # directory for olmo repos
 
 # Install scaling law code
@@ -42,6 +32,8 @@ pip install -e "deps/oe-eval-internal.[all]"
 # Download seed / data order evals
 python analysis/utils/comet_utils.py --workspace ai2 --project olmo2-model-ladder-davidh --output-dir analysis/data/random_seeds --output-filename olmo2_random_seeds.csv
 ```
+
+---
 
 ### Download Model Ladder Data
 ```sh
@@ -74,4 +66,4 @@ nohup python scripts/weight_merging/merge.py > /tmp/merge.out 2>&1 & tail -f /tm
 
 # Convert checkpoints
 nohup ./scripts/convert_checkpoints_peteish.sh > /tmp/out.out 2>&1 & tail -f /tmp/out.out
-```
+``` -->
