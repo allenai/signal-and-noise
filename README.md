@@ -55,7 +55,8 @@ The [`analysis/`](./analysis/) folder contains notebooks to reproduce the core f
 
 ```sh
 ── analysis
-   ├── datadecide.ipynb      # (Sec. 1 ,3 + Appendix) Corr. between SNR and decision accuracy
+   ├── quick_start.ipynb     # Demo analysis notebook for our results
+   ├── datadecide.ipynb      # (Sec. 1, 3 + Appendix) Corr. between SNR and decision accuracy
    ├── plots.ipynb           # (Sec. 3 + Appendix)    Corr. between SNR and scaling laws
    ├── table.ipynb           # (Sec. 5) Intervention: Average last n checkpoints to reduce SNR
    ├── smooth_last_n.ipynb   # (Sec. 5) Intervention: Average checkpoints when early stopping to reduce SNR
