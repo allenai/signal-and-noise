@@ -2,10 +2,13 @@
 
 <p align="center">
   <a href="https://github.com/allenai/signal-and-noise/blob/main/LICENSE">
-    <img alt="GitHub License" src="https://img.shields.io/github/license/allenai/signal-and-noise">
+    <img alt="GitHub License" src="https://img.shields.io/badge/license-Apache 2.0-green">
   </a>
   <a href="">
-    <img alt="Paper URL" src="https://img.shields.io/badge/paper-link-blue">
+    <img alt="Paper URL" src="https://img.shields.io/badge/paper-arxiv-red">
+  </a>
+  <a href="">
+    <img alt="Huggingface URL" src="https://img.shields.io/badge/data-huggingface-yellow">
   </a>
 </p>
 
