@@ -14,3 +14,4 @@ gcp-service-account.json
 generation/existing-methods/AutoBencher/MATH
 generation/existing-methods/AutoBencher/KI
 *.egg-info
+release
