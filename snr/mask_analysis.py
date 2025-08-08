@@ -3,7 +3,6 @@
 import warnings
 import numpy as np
 import pandas as pd
-from scipy import stats
 from tqdm import tqdm
 
 from dataloader import get_nd_array
@@ -24,7 +23,6 @@ def compute_snr(step_scores, datadecide_scores, step_mask, dd_mask):
     final_30_means = step_to_step_means[-30:]
 
     # Signal
-    # rel_signal = np.std(datadecide_means) / np.mean(datadecide_means)
     rel_signal = np.std(datadecide_means) / np.mean(final_30_means)
 
     # Noise
@@ -126,13 +124,6 @@ def compute_pred_error(
         run_step1=False, run_step2=False,
         last_n_method_train='final', last_n_method_eval='all', last_n=30
     )
-
-    # # Calculate margin-of-error using the set of ladder errors
-    # confidence_level = 0.95
-    # data = np.array(rel_errors_stacked)
-    # n = len(data)
-    # std_error = np.std(data, ddof=1) / np.sqrt(n)
-    # margin_of_error = std_error * stats.t.ppf((1 + confidence_level) / 2, n - 1)
 
     std = np.std(np.array(rel_errors_stacked), ddof=1)
 

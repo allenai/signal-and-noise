@@ -1,37 +1,27 @@
 from concurrent.futures import ProcessPoolExecutor
-from pathlib import Path
-import os, sys, itertools
-sys.path.append(os.path.dirname(os.getcwd()))
-from utils import DATA_DIR, PLOT_DIR, ROOT_DIR
-
+import os, itertools
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from scipy import stats
-
 from tqdm import tqdm
 
-from dataloader import get_slice, get_nd_array
-from ladder_wrapper import run_ladder
-from stats import compute_significance, compute_total_variation, kendall_tau_a
-from table import display_task_variants
+from snr.utils import ROOT_DIR
+from snr.dataloader import get_slice
+from snr.ladder_wrapper import run_ladder
+from snr.stats import compute_total_variation
+from snr.datadecide import compute_2_class, get_compute, plot_task_accuracy
+from snr.utils import get_title_from_task, extract_size, extract_flops
+from snr.utils.constants_models import DDOS_MODEL_NAMES
+from snr.utils.constants_olmes import PRIMARY_METRICS_OLMES
+from snr.ladder_wrapper import sort_experiment_names
+from snr.download.preprocess import is_excluded_from_lite
 
-from datadecide import compute_2_class, get_compute, plot_task_accuracy
-from utils import get_title_from_task, extract_size, extract_flops
-from utils.constants_models import DDOS_MODEL_NAMES
-from utils.constants_olmes import PRIMARY_METRICS_OLMES
-
-from ladder_wrapper import sort_experiment_names
-from download.preprocess import is_excluded_from_lite
-from db import connect_db_backend
-
-# import os
 os.environ["MallocStackLogging"] = "0" # disable malloc logs for macos
 
 DEFAULT_LADDER_CONFIG_PATH = f'{ROOT_DIR}/analysis/utils/ladder_config.json'
 
 ALL_METRICS = ['logits_per_char_corr', 'primary_score']
-# REVERSED_METRICS = ['margin_per_byte', 'norm_correct_prob_per_byte', 'correct_prob_per_byte', 'correct_logit_per_byte', 'logits_per_char_corr', 'logits_per_byte_corr']
 REVERSED_METRICS = ['margin_per_byte', 'norm_correct_prob_per_byte', 'correct_prob_per_byte', 'correct_logit_per_byte', 'logits_per_byte_corr']
 
 DDOS_SIZES = ['4M', '20M', '60M', '90M', '150M', '300M', '530M', '750M', '1B']
@@ -40,11 +30,8 @@ DDOS_COMPUTE_SIZES = tuple(get_compute(size) for size in DDOS_SIZES)
 def get_perf_size(df, size, task, metric, models=DDOS_MODEL_NAMES, agg_method='max_n'):
     """ Get performance of all models at a specific size """
     _slice: pd.DataFrame = get_slice(df, task=task)
-    # display(_slice)
     _slice = _slice[(_slice['model'].isin(models))]
-    # display(_slice)
     _slice = _slice[((_slice['size'] == size))]
-    # display(_slice)
     if len(_slice) == 0:
         raise AssertionError(f"Slice is empty for models: {models}")
     if isinstance(task, str):
@@ -207,13 +194,6 @@ def construct_2class_table(
                 small_scale = small_scale['mix']
                 target_scale = target_scale['mix']
 
-                # top_10_mixes = target_scale.tail(10)
-                # target_scale = target_scale[target_scale.index.isin(top_10_mixes)]
-                # small_scale = small_scale[small_scale.index.isin(top_10_mixes)]
-                # print(top_10_mixes)
-                # print(target_scale)
-                # print(small_scale)
-
                 if metric in REVERSED_METRICS and target_metric not in REVERSED_METRICS: small_scale = reversed(small_scale)
                 try:
                     accuracy = compute_2_class(small_scale, target_scale)
@@ -224,7 +204,6 @@ def construct_2class_table(
             # Get tokens/compute of small scale
             step_slice = _slice[_slice['step'] == float(step)]
             step_slice = step_slice.reset_index(drop=True)
-            # tokens = step_slice['tokens'][0]
             try:
                 compute = get_compute(step_slice['size'][0])
             except Exception as e:
@@ -237,7 +216,6 @@ def construct_2class_table(
                 'step': [step], 
                 'task': [str(task)],
                 'accuracy': [accuracy],
-                # 'tokens': [tokens],
                 'compute': [compute]
             })
             new_entry = new_entry.dropna(axis=1, how='all')            
@@ -251,10 +229,6 @@ def construct_2class_table(
     # Create pivot tables with size in specified order
     acc_pivot = best_acc_df.pivot(index='task', columns=['size', 'compute'], values='accuracy')[model_sizes]
     metric_pivot = best_metric_df.pivot(index='task', columns=['size', 'compute'], values='metric')[model_sizes]
-
-    # # Add average row
-    # if agg_method_pred == 'sample' or agg_method_target == 'sample':
-    #     acc_pivot.loc['average'] = acc_pivot.mean()
 
     return two_class, acc_pivot, metric_pivot
 
@@ -349,7 +323,7 @@ def get_task_correlations(df_benchmarks, selected_tasks, pred_metric='logits_per
 def run_analysis(
         df, task, ladder_models, external_ladder_models, eval_ladder_models, 
         metric='primary_score', axes=None, small_fig=False, 
-        run_irt=False, ladder_config_path=DEFAULT_LADDER_CONFIG_PATH
+        ladder_config_path=DEFAULT_LADDER_CONFIG_PATH
     ):
     results = {}
 
@@ -569,28 +543,6 @@ def run_analysis(
             "rel_error:step_1:13B:c4_to_primary": rel_error_step_1, 
             "rel_error:stacked:13B:c4_to_primary": rel_error_stacked, 
         })
-
-        if run_irt:
-            try:
-                # Stacked prediction -- BPB -> IRT ability
-                rel_error_step_1, _, rel_error_stacked = run_ladder(
-                    df,
-                    task, 
-                    train_models=ladder_models,
-                    eval_models=["peteish7", "peteish13-highlr"],
-                    intermediate_task_name=task,
-                    # intermediate_feature="logits_per_byte_corr",
-                    downstream_feature="theta_primary_score", # theta_bpb, theta_primary_score
-                    config_path=ladder_config_path,
-                )
-                results.update({
-                    "rel_error:step_1:7B:bpb_to_irt": rel_error_step_1[0], 
-                    "rel_error:step_1:13B:bpb_to_irt": rel_error_step_1[1], 
-                    "rel_error:stacked:7B:bpb_to_irt": rel_error_stacked[0], 
-                    "rel_error:stacked:13B:bpb_to_irt": rel_error_stacked[1], 
-                })
-            except Exception as e:
-                print(task, 'failed to fit IRT model', e)
     except Exception as e:
         print(task, 'failed on ladder fits', e)
         # raise RuntimeError(task, 'failed on ladder fits', e)
@@ -650,8 +602,6 @@ def run_analysis(
 
         # Additional metric calculations
         additional_metrics = ['primary_score', 'logits_per_char_corr', 'logits_per_byte_corr']
-        if run_irt: 
-            additional_metrics += ['theta_bpb', 'theta_primary_score']
         for additional_metric in additional_metrics:
             try:
                 tv, _ = compute_total_variation(
@@ -738,8 +688,6 @@ def run_analysis(
         })
 
         additional_metrics = ['primary_score', 'logits_per_char_corr', 'logits_per_byte_corr']
-        if run_irt: 
-            additional_metrics += ['theta_bpb', 'theta_primary_score']
         for additional_metric in additional_metrics:
             two_class, acc_pivot_bpb, metric_pivot = construct_2class_table(
                 df, [task], 
@@ -798,11 +746,6 @@ def run_analysis(
                 
                 results[f'rel_std:{snr_metric}:{size}'] = data_rel_std
                 results[f'snr:{snr_metric}:{size}'] = snr
-            # else:
-            #     print(f'Cannot compute snr for size={size}, metric={snr_metric}')
-            #     print(f'mean:{snr_metric}:{size}' in results)
-            #     print(f'std_dev:{snr_metric}:{size}' in results)
-            #     print(f'step_rel_std:last30:{snr_metric}:{size}' in results)
     
     # Total cost of evaluation
     try:
@@ -833,163 +776,10 @@ def run_analysis(
     return results
 
 
-def compute_instance_analysis(
-    df_instances, 
-    task, 
-    aggregators=['micro', 'macro'], 
-    metrics=['logits_per_byte_corr', 'primary_score'], 
-    sizes=DDOS_SIZES, # ['4M', '20M', ..., '750M', '1B'],
-    alpha=1e-4, # 0.05
-    target_power=0.8,
-    quiet=False
-    ):
-    task_name = get_title_from_task(task)
-
-    if isinstance(df_instances, str):
-        df_instances = connect_db_backend(df_instances)
-    
-    results = {}
-    
-    for aggregator in aggregators:
-        for metric in metrics:
-            for size in sizes:
-                for binarize in [False, True]:
-                    try:
-                        models = [model for model in DDOS_MODEL_NAMES if size in model] # e.g., 150M
-                        _, out, _ = compute_significance(
-                            df_instances, models=models, metric=metric, aggregator=aggregator,
-                            step=None, last_n=1, alpha=alpha, tasks=[task], binarize=binarize, quiet=True
-                        )
-                        plt.close()
-                        mixes_A, scores_A, p_values_A, sig_clusters_A = out[task_name]
-
-                        if isinstance(p_values_A, float) and p_values_A == float('-inf'):
-                            # If we cannot binarize scores, return
-                            continue
-
-                        # Compute metric scores
-                        valid_p_values = p_values_A[~np.isnan(p_values_A)]
-                        perc_sig = np.sum(valid_p_values <= alpha) / len(valid_p_values)
-
-                        results.update({
-                            "task": task_name,
-                            f"num_sig_clusters:{metric}:{aggregator}:{size}:{('binary' if binarize else 'non_binary')}": max(sig_clusters_A),
-                            f"perc_sig:{metric}:{aggregator}:{size}:{('binary' if binarize else 'non_binary')}": perc_sig,
-                        })
-                    except Exception as e:
-                        raise RuntimeError(task_name, f'failed to compute significance test for aggregator={aggregator} on metric={metric}', e)
-    
-    # Compute instance-level agreement rate
-    aggregator = 'micro'
-    for metric in metrics:
-        for size in sizes:
-            instance_names, mixes, scores = get_nd_array(
-                df_instances, 'model', 
-                metric=metric, 
-                task=task, 
-                model=[m for m in DDOS_MODEL_NAMES if size in m],
-                return_index=True
-            )
-
-            n_models, n_instances = scores.shape
-
-            # Hard agreement - exact matches
-            matches = scores[:, None, :] == scores[None, :, :]  # Shape: (n_models, n_models, n_instances)
-            mask = np.triu(np.ones((n_models, n_models)), k=1)  # Upper triangular mask to avoid duplicates
-            exact_agreement_rate = np.mean(matches[mask.astype(bool)])
-
-            # Soft agreement - average diff
-            diffs = np.abs(scores[:, None, :] - scores[None, :, :])  # Shape: (n_models, n_models, n_instances) 
-            max_diff = np.max(np.abs(scores))
-            normalized_diffs = 1 - (diffs / max_diff)
-            soft_agreement_rate = np.mean(normalized_diffs[mask.astype(bool)])
-
-            results.update({
-                f'hard_agreement:{metric}:{aggregator}:{size}': exact_agreement_rate,
-                f'soft_agreement:{metric}:{aggregator}:{size}': soft_agreement_rate
-            })
-
-            continue
-
-            # Compute Fisher information using IRT scores
-            irt_path = Path(DATA_DIR) / "irt" / f"{task_name}.json"
-            if irt_path.exists():
-                try:
-                    sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/irt') # Add IRT code to PATH
-                    from irt_utils.irt_inference import load_irt_params, test_information
-                    from stats import compute_irt
-
-                    train_instance_names, discriminations, difficulties = load_irt_params(
-                        load_path=irt_path,
-                    )
-                    irt_params = (difficulties, discriminations, train_instance_names)
-
-                    thetas = compute_irt(irt_params, instance_names, scores, metric)
-                    thetas = thetas.tolist()
-                    tif = test_information(thetas, discriminations, difficulties)
-                    avg_tif = np.mean(tif)
-                    
-                    results.update({
-                        f'mean_information:{metric}:{aggregator}:{size}': avg_tif
-                    })
-                except Exception as e:
-                    print(f'failed to compute fisher information for task_name={task_name} aggregator={aggregator} on metric={metric}: {e}')
-
-            # Check if results are {0, 1}. If results are [0, 1], then we binarize
-            binary_scores = scores
-            is_binary = np.all(np.logical_or(scores == 0, scores == 1))
-            if not is_binary and np.all((scores >= 0) & (scores <= 1)):
-                binary_scores = (scores > 0.5).astype(float) # binarize with threshold 0.5
-                is_binary = True
-
-            if is_binary:
-                # Compute MDE in parallel (warning: causes lots of deadlocks)
-                n_models, n_instances = binary_scores.shape
-                mdes = np.full((n_models, n_models), np.nan)
-
-                args = []
-                for i in range(n_models):
-                    for j in range(i+1, n_models):
-                        baseline_acc = np.mean(binary_scores[i])
-                        agreement_rate = np.mean(binary_scores[i] == binary_scores[j])
-                        args.append((
-                            baseline_acc,
-                            agreement_rate, 
-                            n_instances, 
-                            target_power # default=0.8
-                        ))
-
-                from utils.power import calculate_mde # need to reimport for pickle
-                with ProcessPoolExecutor() as executor:
-                    mde_resp = list(tqdm(
-                        executor.map(calculate_mde, *zip(*args)),
-                        total=len(args),
-                        desc="Computing MDE",
-                        disable=quiet
-                    ))
-
-                idx = 0
-                for i in range(n_models):
-                    for j in range(i+1, n_models):
-                        mdes[i,j] = mde_resp[idx]
-                        idx += 1
-                
-                mean_mde = np.nanmean(mdes)
-
-                results.update({
-                    f'mean_mde_binary:{metric}:{aggregator}:{size}': mean_mde
-                })
-
-    return results
-
-
 def compute_metaproperties(
-        df_benchmarks, df_instances, selected_tasks, 
-        run_irt=False, run_instance_analysis=False, 
+        df_benchmarks, selected_tasks, 
         use_parallel=True, quiet=False
     ):
-    ALPHA=1e-4
-
     task_names = [get_title_from_task(task) for task in selected_tasks]
 
     # Get model names from df_benchmarks
@@ -1023,7 +813,6 @@ def compute_metaproperties(
             'ladder_models': ladder_models,
             'eval_ladder_models': ladder_models + llama_3_models,
             'external_ladder_models': external_models,
-            'run_irt': run_irt
         })
     
     if not use_parallel:
@@ -1040,30 +829,6 @@ def compute_metaproperties(
                 (f.result() for f in futures),
                 total=len(benchmark_args),
                 desc="Computing benchmark properties"
-            ))
-
-    # Run instance analysis
-    if run_instance_analysis:
-        instance_args = []
-        for task in selected_tasks:
-            aggregators = ['micro', 'macro', 'irt'] if run_irt else ['micro', 'macro']
-            instance_args.append({
-                'df_instances': df_instances,
-                'task': task,
-                'aggregators': aggregators,
-                'alpha': ALPHA,
-                'quiet': quiet
-            })
-
-        with ProcessPoolExecutor() as executor:
-            futures = []
-            for kwargs in instance_args:
-                futures.append(executor.submit(compute_instance_analysis, **kwargs))
-            
-            instance_results = list(tqdm(
-                (f.result() for f in futures),
-                total=len(instance_args),
-                desc="Computing instance properties"
             ))
 
     # Create dataframe, filling in missing results as -inf

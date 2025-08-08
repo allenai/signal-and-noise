@@ -1,6 +1,4 @@
-from matplotlib import pyplot as plt
 import numpy as np
-from scipy.interpolate import UnivariateSpline
 
 FONTSIZE = 8
 
@@ -14,23 +12,6 @@ TASK_KEY_MAP = {
     "openbookqa": "openbookqa_test_5shot",
     "winogrande": "winogrande_val_5shot",
     "piqa": "piqa_val_5shot",
-}
-
-SIZE_COLORS = {
-    '4M': 'brown',
-    '6M': '#7f7f7f',  # gray
-    '8M': '#17becf',  # cyan
-    '10M': '#bcbd22', # olive
-    '14M': '#e377c2', # pink
-    '16M': '#8c564b', # brown
-    '20M': 'black',
-    '60M': 'teal',
-    '90M': 'pink',
-    '150M': '#1f77b4',
-    '300M': '#2ca02c',
-    '530M': '#ff7f0e',
-    '750M': '#d62728',
-    '1B': '#9467bd'
 }
 
 FULL_SCHEDULE = {
@@ -125,74 +106,3 @@ def get_slice(df, model, task):
         return df.iloc[0:0]
     df = df.reset_index()
     return df
-
-
-def plot_task_accuracy(ax: plt.Axes, two_class_results, task, sizes, show_legend=False, size_colors=SIZE_COLORS):
-    # First plot all scatter points
-    all_x = []
-    all_y = []
-    for size in list(size_colors.keys()):
-        if size not in two_class_results.index.tolist():
-            continue
-        data = two_class_results.loc[size]
-        x = np.array(two_class_results.columns, dtype=np.float64)
-        y = np.array(data.values, dtype=np.float64)
-        
-        # Plot scatter points with consistent colors
-        ax.scatter(x, y, marker='o', label=f'{size}', s=5, color=size_colors[size])
-        
-        # Collect valid points for overall spline
-        mask = ~np.isnan(y) & ~np.isnan(x) & ~np.isneginf(y) & ~np.isneginf(x)
-        all_x.extend(x[mask])
-        all_y.extend(y[mask])
-    
-    # Add interpolating spline, ignoring nans
-    mask = ~np.isnan(all_y) & ~np.isnan(all_x)
-    if np.sum(mask) >= 3:  # Need at least 4 points for cubic spline
-        all_x = np.array(np.array(all_x)[mask]) # exclude compute=0
-        all_y = np.array(np.array(all_y)[mask]) # exclude compute=0
-
-        x_nonzero = all_x != 0
-        all_x = all_x[x_nonzero] # exclude x=0 values
-        all_y = all_y[x_nonzero] # exclude x=0 values
-        
-        # Sort points by x value
-        sort_idx = np.argsort(all_x)
-        all_x = all_x[sort_idx]
-        all_y = all_y[sort_idx]
-        
-        # Fit smoothed B-spline with high smoothing parameter
-        x_smooth = np.logspace(np.log10(min(all_x)), np.log10(max(all_x)), len(all_x))
-        # Use UnivariateSpline with high smoothing for a smoother fit
-        spline = UnivariateSpline(np.log10(all_x), all_y, s=len(all_x))
-        y_smooth = spline(np.log10(x_smooth))
-
-        ax.plot(x_smooth, y_smooth, color='k', linestyle='--', label='spline', linewidth=1)
-    
-    # Add random baseline
-    ax.axhline(y=0.5, color='r', linestyle='-', label='random', linewidth=0.5)
-    
-    ax.set_xlabel('Compute')
-    ax.set_ylabel('2-class Accuracy')
-    ax.set_title(f'{task}')
-    ax.set_xscale('log', base=10)
-    if show_legend: ax.legend(loc='lower right', fontsize=10, ncols=2)
-
-    # Add vertical lines at specific FLOPS values with matching colors and accuracies
-    for size in list(size_colors.keys()):
-        if size not in two_class_results.index.tolist():
-            continue
-        try:
-            flops = two_class_results.loc[size].dropna().index[0]
-            acc = two_class_results.loc[size].get(np.float64(flops), np.nan)
-            if not np.isnan(acc) and not np.isneginf(acc):
-                ax.axvline(x=flops, color=size_colors[size], linestyle=':', alpha=0.7)
-                ax.text(
-                    flops, 0.98, ' ' + ('1.' if acc == 1 else f'{acc:.2f}').lstrip('0'), 
-                    rotation=0, color=size_colors[size], ha='left', va='bottom', fontsize=8)
-            else:
-                # raise FileNotFoundError(f'Not all results found for task={task}, size={size}')
-                raise FileNotFoundError(f'Not all results found for task={task}, size={size}')
-        except Exception as e:
-            # raise RuntimeError(f'Cant graph cheap decisions lines: {e}')
-            print(f'Cant graph cheap decisions lines: {e}')

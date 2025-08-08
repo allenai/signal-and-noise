@@ -3,115 +3,16 @@ import matplotlib.colors as mcolors
 import numpy as np
 import pandas as pd
 from typing import List, Tuple
-import math
-
 from scipy import stats
-from dataloader import get_slice
-from utils import get_title_from_task, get_pretty_task_name
+from scipy.interpolate import UnivariateSpline
+
+from snr.dataloader import get_slice
+from snr.utils import get_title_from_task, get_pretty_task_name
+from snr.utils.constants_plot import CATEGORY_COLORS, SIZE_COLORS, TASK_CATEGORIES
 
 # Global dictionary to store colors for labels
 LABEL_COLOR_MAP = {}
 COLOR_IDX = {'col': 0}
-
-# Category coloring for plotting
-TASK_CATEGORIES = {
-    'hellaswag': 'language',
-    'winogrande': 'language',
-
-    'arc_challenge': 'knowledge',
-    'arc_easy': 'knowledge', 
-    'boolq': 'knowledge',
-    'csqa': 'knowledge',
-    'openbookqa': 'knowledge',
-    'piqa': 'knowledge',
-    'socialiqa': 'knowledge',
-    'drop': 'knowledge',
-    'jeopardy': 'knowledge',
-    'squad': 'knowledge', 
-    'triviaqa': 'knowledge',
-    'olmes_core9': 'knowledge',
-    'mmlu': 'knowledge',
-    'olmes_core9_mc': 'knowledge',
-    'mmlu_mc': 'knowledge',
-    'olmes_gen': 'knowledge',
-    'autobencher': 'knowledge',
-    'autobencher:mc': 'knowledge',
-    'mmlu_pro': 'knowledge',
-    'agi_eval': 'knowledge',
-    'medmcqa': 'knowledge',
-
-    'gsm8k': 'math',
-    'minerva': 'math',
-    'minerva_math_algebra': 'math',
-    'minerva_math_counting_and_probability': 'math',
-    'minerva_math_geometry': 'math',
-    'minerva_math_intermediate_algebra': 'math',
-    'minerva_math_number_theory': 'math',
-    'minerva_math_prealgebra': 'math',
-    'minerva_math_precalculus': 'math',
-    'gsm_plus': 'math',
-    'gsm_symbolic_main': 'math',
-    'gsm_symbolic_p1': 'math',
-    'minerva_math_500': 'math',
-    'gsm_symbolic_p2': 'math',
-
-    'mbpp': 'code',
-    'mbppplus': 'code',
-    'codex_humaneval': 'code',
-    'codex_humanevalplus': 'code',
-
-    'bbh': 'reasoning',
-    
-    'paloma_c4_en': 'loss',
-    'paloma_m2d2_s2orc_unsplit': 'loss',
-
-    # Pertubed benchmarks
-    'hellaswag:distractors': 'language:distractors',
-    'winogrande:distractors': 'language:distractors',
-    'hellaswag:para': 'language:para',
-    'winogrande:para': 'language:para',
-    'hellaswag:enlarge': 'language:enlarge',
-    'winogrande:enlarge': 'language:enlarge',
-
-    'arc_challenge:distractors': 'knowledge:distractors',
-    'arc_easy:distractors': 'knowledge:distractors', 
-    'boolq:distractors': 'knowledge:distractors',
-    'csqa:distractors': 'knowledge:distractors',
-    'openbookqa:distractors': 'knowledge:distractors',
-    'piqa:distractors': 'knowledge:distractors',
-    'socialiqa:distractors': 'knowledge:distractors',
-    'arc_challenge:para': 'knowledge:para',
-    'arc_easy:para': 'knowledge:para', 
-    'boolq:para': 'knowledge:para',
-    'csqa:para': 'knowledge:para',
-    'openbookqa:para': 'knowledge:para',
-    'piqa:para': 'knowledge:para',
-    'socialiqa:para': 'knowledge:para',
-    'arc_challenge:enlarge': 'knowledge:enlarge',
-    'arc_easy:enlarge': 'knowledge:enlarge', 
-    'boolq:enlarge': 'knowledge:enlarge',
-    'csqa:enlarge': 'knowledge:enlarge',
-    'openbookqa:enlarge': 'knowledge:enlarge',
-    'piqa:enlarge': 'knowledge:enlarge',
-    'socialiqa:enlarge': 'knowledge:enlarge',
-}
-CATEGORIES = set(TASK_CATEGORIES.values())
-
-CATEGORY_COLORS = {
-    'language': '#2ecc71',
-    'language:enlarge': '#27ae60',
-    'language:para': '#1abc9c',
-    'language:distractors': '#16a085',
-    'knowledge': '#3498db', 
-    'knowledge:enlarge': '#2980b9',
-    'knowledge:para': '#2574a9',
-    'knowledge:distractors': '#216a94',
-    'math': '#e74c3c',
-    'code': '#9b59b6',
-    'loss': '#f1c40f',
-}
-CATEGORY_COLORS_SMALL = {cat: color for cat, color in CATEGORY_COLORS.items() if ':' not in cat}
-
 
 def get_valid_points(df_results, x_col, y_col, z_col=None):
     """ Helper function to get valid points from rows in a df """
@@ -1016,3 +917,74 @@ def format_axes(axes: np.ndarray):
     for ax in axes.flatten():
         ax.xaxis.set_major_formatter(plt.FuncFormatter(format_func))
         ax.grid(True, alpha=0.3)
+
+
+def plot_task_accuracy(ax: plt.Axes, two_class_results, task, sizes, show_legend=False, size_colors=SIZE_COLORS):
+    # First plot all scatter points
+    all_x = []
+    all_y = []
+    for size in list(size_colors.keys()):
+        if size not in two_class_results.index.tolist():
+            continue
+        data = two_class_results.loc[size]
+        x = np.array(two_class_results.columns, dtype=np.float64)
+        y = np.array(data.values, dtype=np.float64)
+        
+        # Plot scatter points with consistent colors
+        ax.scatter(x, y, marker='o', label=f'{size}', s=5, color=size_colors[size])
+        
+        # Collect valid points for overall spline
+        mask = ~np.isnan(y) & ~np.isnan(x) & ~np.isneginf(y) & ~np.isneginf(x)
+        all_x.extend(x[mask])
+        all_y.extend(y[mask])
+    
+    # Add interpolating spline, ignoring nans
+    mask = ~np.isnan(all_y) & ~np.isnan(all_x)
+    if np.sum(mask) >= 3:  # Need at least 4 points for cubic spline
+        all_x = np.array(np.array(all_x)[mask]) # exclude compute=0
+        all_y = np.array(np.array(all_y)[mask]) # exclude compute=0
+
+        x_nonzero = all_x != 0
+        all_x = all_x[x_nonzero] # exclude x=0 values
+        all_y = all_y[x_nonzero] # exclude x=0 values
+        
+        # Sort points by x value
+        sort_idx = np.argsort(all_x)
+        all_x = all_x[sort_idx]
+        all_y = all_y[sort_idx]
+        
+        # Fit smoothed B-spline with high smoothing parameter
+        x_smooth = np.logspace(np.log10(min(all_x)), np.log10(max(all_x)), len(all_x))
+        # Use UnivariateSpline with high smoothing for a smoother fit
+        spline = UnivariateSpline(np.log10(all_x), all_y, s=len(all_x))
+        y_smooth = spline(np.log10(x_smooth))
+
+        ax.plot(x_smooth, y_smooth, color='k', linestyle='--', label='spline', linewidth=1)
+    
+    # Add random baseline
+    ax.axhline(y=0.5, color='r', linestyle='-', label='random', linewidth=0.5)
+    
+    ax.set_xlabel('Compute')
+    ax.set_ylabel('2-class Accuracy')
+    ax.set_title(f'{task}')
+    ax.set_xscale('log', base=10)
+    if show_legend: ax.legend(loc='lower right', fontsize=10, ncols=2)
+
+    # Add vertical lines at specific FLOPS values with matching colors and accuracies
+    for size in list(size_colors.keys()):
+        if size not in two_class_results.index.tolist():
+            continue
+        try:
+            flops = two_class_results.loc[size].dropna().index[0]
+            acc = two_class_results.loc[size].get(np.float64(flops), np.nan)
+            if not np.isnan(acc) and not np.isneginf(acc):
+                ax.axvline(x=flops, color=size_colors[size], linestyle=':', alpha=0.7)
+                ax.text(
+                    flops, 0.98, ' ' + ('1.' if acc == 1 else f'{acc:.2f}').lstrip('0'), 
+                    rotation=0, color=size_colors[size], ha='left', va='bottom', fontsize=8)
+            else:
+                # raise FileNotFoundError(f'Not all results found for task={task}, size={size}')
+                raise FileNotFoundError(f'Not all results found for task={task}, size={size}')
+        except Exception as e:
+            # raise RuntimeError(f'Cant graph cheap decisions lines: {e}')
+            print(f'Cant graph cheap decisions lines: {e}')

@@ -1,24 +1,21 @@
 from concurrent.futures import ProcessPoolExecutor
-import os, copy
+import copy
 import random
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 from tqdm import tqdm
 from collections import defaultdict
-from dataloader import get_nd_array
-from download.preprocess import SIZE_PREFIXES, SIZE_PREFIXES_FIX, str_find
 
-from utils.constants_ladder import DATA_BY_NAME_LADDER
+from snr.dataloader import get_nd_array
+from snr.download.preprocess import SIZE_PREFIXES, SIZE_PREFIXES_FIX, str_find
+from snr.utils.constants_ladder import DATA_BY_NAME_LADDER
 
 from scaling.utils import FinalConfig
-from scaling.utils import get_final_configs, get_step2_data_by_name
-from scaling.utils import get_final_configs, get_step1_data_by_name
-
+from scaling.utils import get_final_configs
+from scaling.utils import get_final_configs
 from fitting.step1 import fit_step1, predict_step1, plot_step1, str_chinchilla_n_d_fit
 from fitting.step2 import fit_step2, predict_step2, plot_step2
 from fitting.predict import predict_chained, plot_chained, str_chained_fit
-
 from fitting.step1_flops import fit_step1 as fit_step1_flops, predict_step1 as predict_step1_flops, plot_step1 as plot_step1_flops, str_chinchilla_flops_fit
 from fitting.predict_flops import predict_chained_flops, plot_chained as plot_chained_flops, str_chained_fit as str_chained_fit_flops
 from fitting.single_step import fit_single_step, predict_single_step, plot_single_step, str_combined_fit
