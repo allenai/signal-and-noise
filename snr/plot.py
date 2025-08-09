@@ -7,8 +7,8 @@ from scipy import stats
 from scipy.interpolate import UnivariateSpline
 
 from snr.dataloader import get_slice
-from snr.utils import get_title_from_task, get_pretty_task_name
-from snr.utils.constants_plot import CATEGORY_COLORS, SIZE_COLORS, TASK_CATEGORIES
+from snr.constants import get_title_from_task, get_pretty_task_name
+from snr.constants.plot import CATEGORY_COLORS, SIZE_COLORS, TASK_CATEGORIES
 
 # Global dictionary to store colors for labels
 LABEL_COLOR_MAP = {}

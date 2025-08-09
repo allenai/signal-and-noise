@@ -5,7 +5,7 @@ import pandas as pd
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from huggingface_hub import HfApi, login, hf_hub_download
-from utils import DATA_DIR
+from constants import DATA_DIR
 
 
 def convert_csv_to_parquet(csv_file_path):

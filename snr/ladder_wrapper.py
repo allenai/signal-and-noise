@@ -8,7 +8,7 @@ from collections import defaultdict
 
 from snr.dataloader import get_nd_array
 from snr.download.preprocess import SIZE_PREFIXES, SIZE_PREFIXES_FIX, str_find
-from snr.utils.constants_ladder import DATA_BY_NAME_LADDER
+from snr.constants.ladder import DATA_BY_NAME_LADDER
 
 from scaling.utils import FinalConfig
 from scaling.utils import get_final_configs

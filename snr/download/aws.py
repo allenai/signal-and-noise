@@ -1,9 +1,7 @@
 import sys
 import os
-import re
-import json
 from pathlib import Path
-from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor, as_completed
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from tqdm import tqdm
 import boto3
 
@@ -11,7 +9,7 @@ import boto3
 parent_dir = Path(__file__).resolve().parent.parent
 sys.path.append(str(parent_dir))
 
-from utils import DATA_DIR
+from constants import DATA_DIR
 
 EXCLUDED_FILE_NAMES = [
     'requests.jsonl',

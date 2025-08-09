@@ -8,8 +8,8 @@ from tqdm import tqdm
 from dataloader import get_nd_array
 from ladder_wrapper import run_ladder
 from datadecide import decision_acc_fast
-from utils import ROOT_DIR, get_title_from_task
-from utils.constants_models import DDOS_MODEL_NAMES
+from constants import ROOT_DIR, get_title_from_task
+from snr.constants.models import DDOS_MODEL_NAMES
 from concurrent.futures import ProcessPoolExecutor
 import functools
 import random

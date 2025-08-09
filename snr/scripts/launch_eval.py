@@ -5,28 +5,28 @@ from pathlib import Path
 parent_dir = Path(__file__).resolve().parent.parent
 sys.path.append(str(parent_dir))
 
-from snr.utils import weka_to_gcs
+from snr.constants import weka_to_gcs
 
-from snr.utils.constants_models import MODEL_LADDER_LIST, MODEL_LIST_MIXES_FINAL, MODEL_LIST_MIXES_FINAL_EXTENDED, MODEL_LIST_INTERMEDIATE, MODEL_LIST_INTERMEDIATE_13B, MODEL_LIST_MIXES, OE_EVAL_BASE_MODELS, OE_EVAL_INSTRUCT_MODELS, OE_EVAL_ALL_MODELS, OE_EVAL_BASE_MODELS_EXTENDED, OE_EVAL_BASE_MODELS_EXTENDED_2, MODEL_LIST_INTERMEDIATE_7B, MODEL_LIST_FINAL_30_1B, MODEL_LIST_FINAL_30_13B, MODEL_LIST_INTERMEDIATE_32B, MODEL_LIST_SEED_RUNS
-from snr.utils.constants_model_ckpts import MODEL_LIST_FINAL_SIX_CKPTS, DATADECIDE_FINAL_FIVE_CKPTS, MODEL_MERGED_DATADECIDE, MODEL_MERGED_LADDER
-from snr.utils.constants_models import WEKA_CLUSTERS, GCP_CLUSTERS
-from snr.utils.constants_tasks import MC_TASKS_COPY_COLORS, MISSING_EVALS
+from snr.constants.models import MODEL_LADDER_LIST, MODEL_LIST_MIXES_FINAL, MODEL_LIST_MIXES_FINAL_EXTENDED, MODEL_LIST_INTERMEDIATE, MODEL_LIST_INTERMEDIATE_13B, MODEL_LIST_MIXES, OE_EVAL_BASE_MODELS, OE_EVAL_INSTRUCT_MODELS, OE_EVAL_ALL_MODELS, OE_EVAL_BASE_MODELS_EXTENDED, OE_EVAL_BASE_MODELS_EXTENDED_2, MODEL_LIST_INTERMEDIATE_7B, MODEL_LIST_FINAL_30_1B, MODEL_LIST_FINAL_30_13B, MODEL_LIST_INTERMEDIATE_32B, MODEL_LIST_SEED_RUNS
+from snr.constants.model_ckpts import MODEL_LIST_FINAL_SIX_CKPTS, DATADECIDE_FINAL_FIVE_CKPTS, MODEL_MERGED_DATADECIDE, MODEL_MERGED_LADDER
+from snr.constants.models import WEKA_CLUSTERS, GCP_CLUSTERS
+from snr.constants.tasks import MC_TASKS_COPY_COLORS, MISSING_EVALS
 
 # OLMES Core Tasks
-from snr.utils.constants_tasks import RC_TASKS_OLMES, MC_TASKS_OLMES, PARA_TASKS_OLMES, ENLARGE_TASKS_OLMES, DISTRACTORS_TASKS_OLMES
+from snr.constants.tasks import RC_TASKS_OLMES, MC_TASKS_OLMES, PARA_TASKS_OLMES, ENLARGE_TASKS_OLMES, DISTRACTORS_TASKS_OLMES
 
 # OLMES Gen Tasks
-from snr.utils.constants_tasks import GEN_TASKS_OLMES, GEN_TASKS_OLMES_PERTURB_RC
+from snr.constants.tasks import GEN_TASKS_OLMES, GEN_TASKS_OLMES_PERTURB_RC
 
 # CoT tasks (mainly Tulu tasks)
-from snr.utils.constants_tasks import AGI_EVAL_MC, AGI_EVAL_RC, AGI_EVAL_COT
-from snr.utils.constants_tasks import MMLU_PRO_MC, MMLU_PRO_RC, MMLU_PRO_COT
-from snr.utils.constants_tasks import MINERVA_MC, MINERVA_COT
-from snr.utils.constants_tasks import BBH_MC, BBH_COT
-from snr.utils.constants_tasks import PERTURB_COT_TASKS
+from snr.constants.tasks import AGI_EVAL_MC, AGI_EVAL_RC, AGI_EVAL_COT
+from snr.constants.tasks import MMLU_PRO_MC, MMLU_PRO_RC, MMLU_PRO_COT
+from snr.constants.tasks import MINERVA_MC, MINERVA_COT
+from snr.constants.tasks import BBH_MC, BBH_COT
+from snr.constants.tasks import PERTURB_COT_TASKS
 
 # Perplexity tasks
-from snr.utils.constants_tasks import PALOMA, LLM_COMPRESSION, CUSTOM_LOSS
+from snr.constants.tasks import PALOMA, LLM_COMPRESSION, CUSTOM_LOSS
 
 MODEL_LIST_ALL = []
 MODEL_LIST_ALL += MODEL_LADDER_LIST

@@ -6,15 +6,15 @@ import matplotlib.pyplot as plt
 from scipy import stats
 from tqdm import tqdm
 
-from snr.utils import ROOT_DIR
+from snr.constants import ROOT_DIR
 from snr.dataloader import get_slice
 from snr.ladder_wrapper import run_ladder
 from snr.stats import compute_total_variation
 from snr.datadecide import compute_2_class, get_compute
 from snr.plot import plot_task_accuracy
-from snr.utils import get_title_from_task, extract_size, extract_flops
-from snr.utils.constants_models import DDOS_MODEL_NAMES
-from snr.utils.constants_olmes import PRIMARY_METRICS_OLMES
+from snr.constants import get_title_from_task, extract_size, extract_flops
+from snr.constants.models import DDOS_MODEL_NAMES
+from snr.constants.olmes import PRIMARY_METRICS_OLMES
 from snr.ladder_wrapper import sort_experiment_names
 from snr.download.preprocess import is_excluded_from_lite
 
