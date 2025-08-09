@@ -18,6 +18,7 @@ from snr.constants.models import DDOS_MODEL_NAMES
 from snr.constants.olmes import PRIMARY_METRICS_OLMES
 from snr.ladder_wrapper import sort_experiment_names
 from snr.download.preprocess import is_excluded_from_lite
+from snr.constants.datadecide import DDOS_SIZES, DDOS_COMPUTE_SIZES
 
 os.environ["MallocStackLogging"] = "0" # disable malloc logs for macos
 
@@ -25,9 +26,6 @@ DEFAULT_LADDER_CONFIG_PATH = f'{ROOT_DIR}/analysis/utils/ladder_config.json'
 
 ALL_METRICS = ['logits_per_char_corr', 'primary_score']
 REVERSED_METRICS = ['margin_per_byte', 'norm_correct_prob_per_byte', 'correct_prob_per_byte', 'correct_logit_per_byte', 'logits_per_byte_corr']
-
-DDOS_SIZES = ['4M', '20M', '60M', '90M', '150M', '300M', '530M', '750M', '1B']
-DDOS_COMPUTE_SIZES = tuple(get_compute(size) for size in DDOS_SIZES)
 
 def get_perf_size(df, size, task, metric, models=DDOS_MODEL_NAMES, agg_method='max_n'):
     """ Get performance of all models at a specific size """
@@ -77,41 +75,6 @@ def get_perf_size(df, size, task, metric, models=DDOS_MODEL_NAMES, agg_method='m
     _slice['compute'] = _slice['size'].apply(lambda x: get_compute(x) if '-' in x else x)
     _slice = _slice.sort_values(metric, ignore_index=True)
     return _slice
-
-
-def get_df_benchmarks_subset(df_instances: pd.DataFrame, n_instances: int):
-    """ Compute benchmark averages for a random subset of instances """
-    # Sample n instances from each group
-    df_instances_subset = df_instances.groupby(['task', 'model', 'step', 'mix'], dropna=False, group_keys=False).apply(
-        lambda x: x.sample(n=min(len(x), n_instances), random_state=42)
-    )
-
-    # Compute aggregate metrics
-    df_benchmarks_subset = df_instances_subset.groupby(level=['task', 'model', 'step', 'mix'], dropna=False).agg({
-        'primary_score': 'mean',
-        'logits_per_byte_corr': 'mean',
-        'logits_per_char_corr': 'mean',
-        'size': 'first', 
-        'token_ratio': 'first'
-    }).reset_index()
-    
-    # Get actual number of instances for each group
-    instance_counts = df_instances_subset.groupby(['task', 'model', 'step', 'mix'], dropna=False).size().reset_index(name='num_instances')
-    df_benchmarks_subset = df_benchmarks_subset.merge(instance_counts, on=['task', 'model', 'step', 'mix'])
-
-    return df_instances_subset, df_benchmarks_subset
-
-
-def assert_same_models(df_instances: pd.MultiIndex, df_benchmarks: pd.DataFrame):
-    ''' Assert the model sets are the same for different df types '''
-    MODELS_BENCHMARKS = list(df_benchmarks['model'].unique())
-    MODELS_INSTANCES = df_instances.index.get_level_values('model').unique().to_list()
-
-    benchmarks_set = set(MODELS_BENCHMARKS)
-    instances_set = set(MODELS_INSTANCES)
-
-    assert len(benchmarks_set - instances_set) == 0, f"Found models in BENCHMARKS but not in INSTANCES: {benchmarks_set - instances_set}"
-    assert len(instances_set - benchmarks_set) == 0, f"Found models in INSTANCES but not in BENCHMARKS: {instances_set - benchmarks_set}"
 
 
 def construct_2class_table(
@@ -233,93 +196,6 @@ def construct_2class_table(
     metric_pivot = best_metric_df.pivot(index='task', columns=['size', 'compute'], values='metric')[model_sizes]
 
     return two_class, acc_pivot, metric_pivot
-
-
-def set_title_from_task(ax: plt.Axes, task):
-    ax.set_title(get_title_from_task(task))
-
-
-def get_task_correlations(df_benchmarks, selected_tasks, pred_metric='logits_per_char_corr', target_metric='primary_score'):
-    """Calculate correlation matrix between tasks based on how well models rank on pred_metric vs target_metric."""
-    # Get model names from df_benchmarks
-    models = sorted(list(df_benchmarks['model'].unique()))
-    ladder_models = [model for model in models if "peteish-moreeval" in model]
-    external_models = sorted([
-        model for model in models 
-        if model not in
-            DDOS_MODEL_NAMES + # exclude 1B-5xC models
-            ladder_models + # exclude ladder models
-            ['peteish13-highlr'] # exclude intermediate checkpoints from 13B
-        and not is_excluded_from_lite(model)
-    ])
-    
-    # Get data slice for analysis
-    flattened_tasks = [subtask for task in selected_tasks for subtask in (task if isinstance(task, list) else [task])]
-    _slice = get_slice(df_benchmarks, model=external_models, task=flattened_tasks)
-
-    # Pre-compute scores dictionary for better performance
-    pred_scores_dict = {}
-    target_scores_dict = {}
-    for task in selected_tasks:
-        if isinstance(task, list):
-            # For task lists, calculate average score across all subtasks
-            task_name = get_title_from_task(task)
-            pred_task_scores = []
-            target_task_scores = []
-            for subtask in task:
-                subtask_pred = _slice[_slice['task'] == subtask].set_index('model')[pred_metric]
-                subtask_target = _slice[_slice['task'] == subtask].set_index('model')[target_metric]
-                if not subtask_pred.empty and not subtask_target.empty:
-                    pred_task_scores.append(subtask_pred)
-                    target_task_scores.append(subtask_target)
-            
-            if pred_task_scores and target_task_scores:
-                pred_scores_dict[task_name] = pd.concat(pred_task_scores, axis=1).mean(axis=1)
-                target_scores_dict[task_name] = pd.concat(target_task_scores, axis=1).mean(axis=1)
-        else:
-            # Negate scores for paloma tasks (lower is better)
-            if task.startswith('paloma_'):
-                pred_scores = -_slice[_slice['task'] == task].set_index('model')[pred_metric]
-                target_scores = -_slice[_slice['task'] == task].set_index('model')[target_metric]
-            else:
-                pred_scores = _slice[_slice['task'] == task].set_index('model')[pred_metric]
-                target_scores = _slice[_slice['task'] == task].set_index('model')[target_metric]
-            pred_scores_dict[task] = pred_scores
-            target_scores_dict[task] = target_scores
-
-    # Calculate correlations
-    task_names = [get_title_from_task(task) if isinstance(task, list) else task for task in selected_tasks]
-    n_tasks = len(selected_tasks)
-    corr_matrix = np.zeros((n_tasks, n_tasks))
-    for i in tqdm(range(n_tasks)):
-        task1 = selected_tasks[i]
-        task1_name = task_names[i]
-        task1_pred = pred_scores_dict[task1_name if isinstance(task1, list) else task1]
-        
-        # Only compute upper triangle for efficiency
-        for j in range(i, n_tasks):
-            task2 = selected_tasks[j]
-            task2_name = task_names[j]
-            task2_target = target_scores_dict[task2_name if isinstance(task2, list) else task2]
-            
-            # Find models with scores for both tasks
-            common_models = task1_pred.index.intersection(task2_target.index)
-            
-            if len(common_models) > 1:
-                # Get scores for common models
-                pred1 = task1_pred[common_models].dropna()
-                target2 = task2_target[common_models].dropna()
-                
-                # Find common models after dropping NaN values
-                valid_models = pred1.index.intersection(target2.index)
-                
-                if len(valid_models) > 1:
-                    # Calculate correlation between rankings on pred_metric for task1 vs target_metric for task2
-                    tau, _ = stats.kendalltau(pred1[valid_models], target2[valid_models])
-                    tau = abs(tau) # lazy way to deal with inverted metrics
-                    corr_matrix[i,j] = corr_matrix[j,i] = tau
-
-    return corr_matrix, task_names
 
 
 def run_analysis(
