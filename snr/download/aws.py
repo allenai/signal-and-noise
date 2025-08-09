@@ -9,7 +9,7 @@ import boto3
 parent_dir = Path(__file__).resolve().parent.parent
 sys.path.append(str(parent_dir))
 
-from constants import DATA_DIR
+from snr.constants import DATA_DIR
 
 EXCLUDED_FILE_NAMES = [
     'requests.jsonl',

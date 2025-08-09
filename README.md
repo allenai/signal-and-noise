@@ -45,7 +45,13 @@ def signal_to_noise_ratio(signal_scores: np.ndarray, noise_scores: np.ndarray) -
 
 ### Evaluating a benchmark
 
-**@davidheineman TODO: How to evaluate YOUR benchmark with our tool**
+**@davidheineman TODO: How to evaluate YOUR benchmark with our tool (maybe with minieval?)**
+
+1. Running and calculating decision accuracy (with HF models)
+2. Running and fitting prediction error (with HF models)
+3. Running and calculating SNR (with HF models)
+
+**One way to get more usage is put together a quick demo!**
 
 ---
 
@@ -77,7 +83,8 @@ mkdir deps # directory for olmo repos
 
 # Install scaling law code
 git clone -b signal-to-noise https://github.com/allenai/OLMo-ladder deps/OLMo-ladder
-pip install -e "deps/OLMo-ladder.[plotting]"
+cd deps/OLMo-ladder
+pip install -e ".[all]"
 
 # Install eval code
 git clone -b signal-to-noise https://github.com/allenai/oe-eval-internal deps/oe-eval-internal

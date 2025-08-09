@@ -17,7 +17,7 @@ sys.path.append(str(parent_dir))
 parent_dir = Path(__file__).resolve().parent
 sys.path.append(str(parent_dir))
 
-from constants import DATA_DIR, weka_to_gcs, fix_model_path
+from snr.constants import DATA_DIR, weka_to_gcs, fix_model_path
 from snr.constants.tasks import RC_TASKS_OLMES, MC_TASKS_OLMES, GEN_TASKS_OLMES, MINERVA_COT
 from snr.constants.olmes import PRIMARY_METRICS_OLMES
 
