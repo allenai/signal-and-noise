@@ -1,1 +1,0 @@
-python math_autobencher.py --exp_mode autobencher --test_taker_modelname gpt-4o-mini --use_helm no --agent_modelname gpt-4o-mini --outfile_prefix1 MATH/.

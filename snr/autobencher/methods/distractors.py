@@ -1,15 +1,9 @@
 import re
-import json
 import random
 import copy
 
-from pathlib import Path
-
 from utils.gpt import generate_gpt, print_estimate_cost
 from utils.parser import _parse_choices
-from utils import DATA_DIR
-
-from oe_eval.tasks.base_task import Task
 
 random.seed(42)
 
@@ -57,34 +51,6 @@ DEFAULT_EXAMPLE_DISTRACTORS = ["""
 - the distribution of a null hypothesis [REASON] a distribution is best represented with a histogram [/REASON]
 - a linear regression for the relationship between two variables [REASON] this is best expressed using a scatter plot to show different values of points [/REASON]
 """]
-
-
-
-def add_distractors_task(task: Task, n_new_distractors: int, limit=None):
-    task.download()
-
-    docs = task.get_eval_docs(limit=limit)
-
-    docs = _run_add_distractors_task(n_new_distractors, docs)
-
-    filepath = f'{DATA_DIR}/distractors/{task.task_config["task_name"]}:distractors/{task.task_config["split"]}.json'
-
-    # save reformatted benchmark
-    Path(filepath).parent.mkdir(parents=True, exist_ok=True)
-    with open(filepath, 'w', encoding='utf-8') as f:
-        json.dump(docs, f, ensure_ascii=False, indent=4)
-
-
-def add_distractors_task_few_shot(task: Task, few_shot_examples: list[dict], n_new_distractors: int = 4): 
-    docs = [task._process_doc(doc) for doc in few_shot_examples]
-
-    docs = _run_add_distractors_task(n_new_distractors, docs)
-    for i, example in enumerate(few_shot_examples):
-        few_shot_examples[i]['choices'] = docs[i]['choices']
-
-    few_shot_examples = docs
-
-    return few_shot_examples
 
 
 def get_id(doc):
