@@ -17,5 +17,11 @@ SMOOTH_SUBTASKS = {
         "logical_fallacies",
         "human_aging",
     ],
-    "autobencher": ["science", "history", "biology", "cognitive", "chemistry"],
+    "autobencher": [
+        "science", 
+        "history", 
+        "biology", 
+        "cognitive", 
+        "chemistry"
+    ],
 }
