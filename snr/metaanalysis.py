@@ -10,7 +10,8 @@ from snr.constants import ROOT_DIR
 from snr.dataloader import get_slice
 from snr.ladder_wrapper import run_ladder
 from snr.stats import compute_total_variation
-from snr.datadecide import compute_2_class, get_compute
+from snr.datadecide import compute_2_class
+from snr.constants.datadecide import get_compute
 from snr.plot import plot_task_accuracy
 from snr.constants import get_title_from_task, extract_size, extract_flops
 from snr.constants.models import DDOS_MODEL_NAMES
