@@ -5,155 +5,118 @@ from pathlib import Path
 parent_dir = Path(__file__).resolve().parent.parent
 sys.path.append(str(parent_dir))
 
-from analysis.utils import weka_to_gcs
+from snr.utils import weka_to_gcs
 
-from analysis.utils.constants_models import MODEL_LADDER_LIST, MODEL_LIST_MIXES_FINAL, MODEL_LIST_MIXES_FINAL_EXTENDED, MODEL_LIST_INTERMEDIATE, MODEL_LIST_INTERMEDIATE_13B, MODEL_LIST_MIXES, OE_EVAL_BASE_MODELS, OE_EVAL_INSTRUCT_MODELS, OE_EVAL_ALL_MODELS, OE_EVAL_BASE_MODELS_EXTENDED, OE_EVAL_BASE_MODELS_EXTENDED_2, MODEL_LIST_INTERMEDIATE_7B, MODEL_LIST_FINAL_30_1B, MODEL_LIST_FINAL_30_13B, MODEL_LIST_INTERMEDIATE_32B, MODEL_LIST_SEED_RUNS
-from analysis.utils.constants_model_ckpts import MODEL_LIST_FINAL_SIX_CKPTS, DATADECIDE_FINAL_FIVE_CKPTS, MODEL_MERGED_DATADECIDE, MODEL_MERGED_LADDER
-from analysis.utils.constants_models import WEKA_CLUSTERS, GCP_CLUSTERS
-from analysis.utils.constants_tasks import MC_TASKS_COPY_COLORS, MISSING_EVALS
+from snr.utils.constants_models import MODEL_LADDER_LIST, MODEL_LIST_MIXES_FINAL, MODEL_LIST_MIXES_FINAL_EXTENDED, MODEL_LIST_INTERMEDIATE, MODEL_LIST_INTERMEDIATE_13B, MODEL_LIST_MIXES, OE_EVAL_BASE_MODELS, OE_EVAL_INSTRUCT_MODELS, OE_EVAL_ALL_MODELS, OE_EVAL_BASE_MODELS_EXTENDED, OE_EVAL_BASE_MODELS_EXTENDED_2, MODEL_LIST_INTERMEDIATE_7B, MODEL_LIST_FINAL_30_1B, MODEL_LIST_FINAL_30_13B, MODEL_LIST_INTERMEDIATE_32B, MODEL_LIST_SEED_RUNS
+from snr.utils.constants_model_ckpts import MODEL_LIST_FINAL_SIX_CKPTS, DATADECIDE_FINAL_FIVE_CKPTS, MODEL_MERGED_DATADECIDE, MODEL_MERGED_LADDER
+from snr.utils.constants_models import WEKA_CLUSTERS, GCP_CLUSTERS
+from snr.utils.constants_tasks import MC_TASKS_COPY_COLORS, MISSING_EVALS
 
 # OLMES Core Tasks
-from analysis.utils.constants_tasks import RC_TASKS_OLMES, MC_TASKS_OLMES, PARA_TASKS_OLMES, ENLARGE_TASKS_OLMES, DISTRACTORS_TASKS_OLMES
+from snr.utils.constants_tasks import RC_TASKS_OLMES, MC_TASKS_OLMES, PARA_TASKS_OLMES, ENLARGE_TASKS_OLMES, DISTRACTORS_TASKS_OLMES
 
 # OLMES Gen Tasks
-from analysis.utils.constants_tasks import GEN_TASKS_OLMES, GEN_TASKS_OLMES_PERTURB_RC
+from snr.utils.constants_tasks import GEN_TASKS_OLMES, GEN_TASKS_OLMES_PERTURB_RC
 
 # CoT tasks (mainly Tulu tasks)
-from analysis.utils.constants_tasks import AGI_EVAL_MC, AGI_EVAL_RC, AGI_EVAL_COT
-from analysis.utils.constants_tasks import MMLU_PRO_MC, MMLU_PRO_RC, MMLU_PRO_COT
-from analysis.utils.constants_tasks import MINERVA_MC, MINERVA_COT
-from analysis.utils.constants_tasks import BBH_MC, BBH_COT
-from analysis.utils.constants_tasks import PERTURB_COT_TASKS
+from snr.utils.constants_tasks import AGI_EVAL_MC, AGI_EVAL_RC, AGI_EVAL_COT
+from snr.utils.constants_tasks import MMLU_PRO_MC, MMLU_PRO_RC, MMLU_PRO_COT
+from snr.utils.constants_tasks import MINERVA_MC, MINERVA_COT
+from snr.utils.constants_tasks import BBH_MC, BBH_COT
+from snr.utils.constants_tasks import PERTURB_COT_TASKS
 
 # Perplexity tasks
-from analysis.utils.constants_tasks import PALOMA, LLM_COMPRESSION, CUSTOM_LOSS
+from snr.utils.constants_tasks import PALOMA, LLM_COMPRESSION, CUSTOM_LOSS
 
 MODEL_LIST_ALL = []
-# MODEL_LIST_ALL += MODEL_LADDER_LIST
-# MODEL_LIST_ALL += MODEL_LIST_INTERMEDIATE
-# MODEL_LIST_ALL += OE_EVAL_BASE_MODELS
-# MODEL_LIST_ALL += MODEL_LIST_INTERMEDIATE_13B # 13B intermediate ckpts
-# MODEL_LIST_ALL += MODEL_LIST_MIXES_FINAL # ian's new mixes
-# MODEL_LIST_ALL += MODEL_LIST_MIXES_FINAL_EXTENDED # extended set of data mixes
-# MODEL_LIST_ALL += OE_EVAL_BASE_MODELS_EXTENDED # OLL 2 leaderboard models
-# MODEL_LIST_ALL += OE_EVAL_BASE_MODELS_EXTENDED_2 # Additional external models
-# MODEL_LIST_ALL += MODEL_LIST_INTERMEDIATE_7B # 7B Final 30 ckpts (1000 steps apart)
-# MODEL_LIST_ALL += MODEL_LIST_INTERMEDIATE_32B # 32B Final 30 ckpts (1000 steps apart)
+MODEL_LIST_ALL += MODEL_LADDER_LIST
+MODEL_LIST_ALL += MODEL_LIST_INTERMEDIATE
+MODEL_LIST_ALL += OE_EVAL_BASE_MODELS
+MODEL_LIST_ALL += MODEL_LIST_INTERMEDIATE_13B # 13B intermediate ckpts
+MODEL_LIST_ALL += MODEL_LIST_MIXES_FINAL # ian's new mixes
+MODEL_LIST_ALL += MODEL_LIST_MIXES_FINAL_EXTENDED # extended set of data mixes
+MODEL_LIST_ALL += OE_EVAL_BASE_MODELS_EXTENDED # OLL 2 leaderboard models
+MODEL_LIST_ALL += OE_EVAL_BASE_MODELS_EXTENDED_2 # Additional external models
+MODEL_LIST_ALL += MODEL_LIST_INTERMEDIATE_7B # 7B Final 30 ckpts (1000 steps apart)
+MODEL_LIST_ALL += MODEL_LIST_INTERMEDIATE_32B # 32B Final 30 ckpts (1000 steps apart)
 
-# MODEL_LIST_ALL += MODEL_LIST_FINAL_30_13B # 13B Final 30 ckpts (1000 steps apart)
-# MODEL_LIST_ALL += MODEL_LIST_FINAL_30_1B # 1.5B-4T Final 30 ckpts (1000 steps apart)
-# MODEL_LIST_ALL += [
-#     'weka://oe-eval-default/ai2-llm/checkpoints/OLMo-medium/peteish7/last-5-model-merged',
-#     'weka://oe-eval-default/ai2-llm/checkpoints/OLMo-medium/peteish7/last-30-model-merged',
-#     'weka://oe-eval-default/ai2-llm/checkpoints/OLMo-medium/peteish13-highlr/last-5-model-merged',
-#     'weka://oe-eval-default/ai2-llm/checkpoints/OLMo-medium/peteish13-highlr/last-30-model-merged',
-#     'weka://oe-eval-default/ai2-llm/checkpoints/OLMo-large/peteish32/last-5-model-merged',
-#     'weka://oe-eval-default/ai2-llm/checkpoints/OLMo-large/peteish32/last-29-model-merged',
-# ] # merged models (weka only)
+MODEL_LIST_ALL += MODEL_LIST_FINAL_30_13B # 13B Final 30 ckpts (1000 steps apart)
+MODEL_LIST_ALL += MODEL_LIST_FINAL_30_1B # 1.5B-4T Final 30 ckpts (1000 steps apart)
+MODEL_LIST_ALL += [
+    'weka://oe-eval-default/ai2-llm/checkpoints/OLMo-medium/peteish7/last-5-model-merged',
+    'weka://oe-eval-default/ai2-llm/checkpoints/OLMo-medium/peteish7/last-30-model-merged',
+    'weka://oe-eval-default/ai2-llm/checkpoints/OLMo-medium/peteish13-highlr/last-5-model-merged',
+    'weka://oe-eval-default/ai2-llm/checkpoints/OLMo-medium/peteish13-highlr/last-30-model-merged',
+    'weka://oe-eval-default/ai2-llm/checkpoints/OLMo-large/peteish32/last-5-model-merged',
+    'weka://oe-eval-default/ai2-llm/checkpoints/OLMo-large/peteish32/last-29-model-merged',
+] # merged models (weka only)
 
-# MODEL_LIST_ALL += MODEL_LIST_FINAL_SIX_CKPTS # (200) Model ladder final 6 ckpts
-# MODEL_LIST_ALL += MODEL_LIST_SEED_RUNS # (20) Seed runs (weka only)
+MODEL_LIST_ALL += MODEL_LIST_FINAL_SIX_CKPTS # (200) Model ladder final 6 ckpts
+MODEL_LIST_ALL += MODEL_LIST_SEED_RUNS # (20) Seed runs (weka only)
 
-# MODEL_LIST_ALL += DATADECIDE_FINAL_FIVE_CKPTS # (1125) DataDecide final 5 ckpts (only have rc_basic, rc_difficult, autobench, part of mc_basic)
+MODEL_LIST_ALL += DATADECIDE_FINAL_FIVE_CKPTS # (1125) DataDecide final 5 ckpts (only have rc_basic, rc_difficult, autobench, part of mc_basic)
 
 MODEL_LIST_ALL += MODEL_MERGED_DATADECIDE # (225) Merged DataDecide   -- only have rc basic, rc_difficult
 MODEL_LIST_ALL += MODEL_MERGED_LADDER # (27) Merged ladder (gcs only) -- only have rc basic, rc_difficult
 
 TASK_LIST_ALL = []
 
-# TASK_LIST_ALL += RC_TASKS_OLMES
-# TASK_LIST_ALL += PARA_TASKS_OLMES 
-# TASK_LIST_ALL += ENLARGE_TASKS_OLMES
-# TASK_LIST_ALL += DISTRACTORS_TASKS_OLMES
-# TASK_LIST_ALL += MC_TASKS_OLMES
+TASK_LIST_ALL += RC_TASKS_OLMES
+TASK_LIST_ALL += PARA_TASKS_OLMES 
+TASK_LIST_ALL += ENLARGE_TASKS_OLMES
+TASK_LIST_ALL += DISTRACTORS_TASKS_OLMES
+TASK_LIST_ALL += MC_TASKS_OLMES
 
-# TASK_LIST_ALL += MC_TASKS_COPY_COLORS
-# TASK_LIST_ALL += GEN_TASKS_OLMES
-# TASK_LIST_ALL += AGI_EVAL_MC + MMLU_PRO_MC # + MINERVA_MC
-# TASK_LIST_ALL += AGI_EVAL_COT # + MMLU_PRO_COT
-# TASK_LIST_ALL += BBH_MC # BPB verison of BBH
-# TASK_LIST_ALL += BBH_COT
+TASK_LIST_ALL += MC_TASKS_COPY_COLORS
+TASK_LIST_ALL += GEN_TASKS_OLMES
+TASK_LIST_ALL += AGI_EVAL_MC + MMLU_PRO_MC # + MINERVA_MC
+TASK_LIST_ALL += AGI_EVAL_COT # + MMLU_PRO_COT
+TASK_LIST_ALL += BBH_MC # BPB verison of BBH
+TASK_LIST_ALL += BBH_COT
 
-# TASK_LIST_ALL += MMLU_PRO_RC + AGI_EVAL_RC
-# TASK_LIST_ALL += GEN_TASKS_OLMES_PERTURB_RC
-# TASK_LIST_ALL += PERTURB_COT_TASKS
+TASK_LIST_ALL += MMLU_PRO_RC + AGI_EVAL_RC
+TASK_LIST_ALL += GEN_TASKS_OLMES_PERTURB_RC
+TASK_LIST_ALL += PERTURB_COT_TASKS
 
-# TASK_LIST_ALL += ['autobencher::none', 'autobencher:mc::none']
+TASK_LIST_ALL += ['autobencher::none', 'autobencher:mc::none']
 
-# TASK_LIST_ALL += [
-#     # GSM CoT
-#     "gsm8k::olmes:full",
-#     # Minerva CoT (olmes version)
-#     "minerva_math_algebra::olmes:full",
-#     "minerva_math_counting_and_probability::olmes:full",
-#     "minerva_math_geometry::olmes:full",
-#     "minerva_math_intermediate_algebra::olmes:full",
-#     "minerva_math_number_theory::olmes:full",
-#     "minerva_math_prealgebra::olmes:full",
-#     "minerva_math_precalculus::olmes:full",
-#     # Coding
-#     "mbpp::ladder",
-#     "mbppplus::ladder",
-#     "codex_humaneval:temp0.8",
-#     "codex_humanevalplus::ladder", 
-# ]
-
-# TASK_LIST_ALL += [
-#     'deepmind_math_large::none',
-#     'medmcqa:rc::none',
-#     'medmcqa:mc::none',
-#     'gsm_plus::none',
-#     'gsm_symbolic::none',
-#     'gsm_symbolic_p1::none',
-#     'gsm_symbolic_p2::none',
-#     # 'gpqa::none', # requires HF token
-#     'minerva_math_500::none', 
-# ]
-
-# TASK_LIST_ALL += [
-#     'aime::none',
-# ]
-
-# TASK_LIST_ALL += PALOMA
-# TASK_LIST_ALL += LLM_COMPRESSION
-# TASK_LIST_ALL += CUSTOM_LOSS
-
-TASK_LIST_ALL += [ # Custom suites to prevent gRPC overload on Beaker
-    'rc_basic::custom_suite',
-    # 'mc_basic::custom_suite',
-    'rc_difficult::custom_suite',
-    # 'autobench::custom_suite',
-    # 'gen::custom_suite',
-    # 'gen_difficult::custom_suite',
+TASK_LIST_ALL += [
+    # GSM CoT
+    "gsm8k::olmes:full",
+    # Minerva CoT (olmes version)
+    "minerva_math_algebra::olmes:full",
+    "minerva_math_counting_and_probability::olmes:full",
+    "minerva_math_geometry::olmes:full",
+    "minerva_math_intermediate_algebra::olmes:full",
+    "minerva_math_number_theory::olmes:full",
+    "minerva_math_prealgebra::olmes:full",
+    "minerva_math_precalculus::olmes:full",
+    # Coding
+    "mbpp::ladder",
+    "mbppplus::ladder",
+    "codex_humaneval:temp0.8",
+    "codex_humanevalplus::ladder", 
 ]
 
-# # FOR TESTING
-# TASK_LIST_ALL = ["arc_challenge:rc::olmes:full"]
-# MODEL_LIST_ALL = [
-#     "weka://oe-eval-default/ai2-llm/checkpoints/OLMo-ladder/benb/prox_fineweb_pro-1B-5xC-2/step69369-unsharded-hf",
-#     "weka://oe-eval-default/ai2-llm/checkpoints/OLMo-ladder/benb/prox_fineweb_pro-750M-5xC-2/step63589-unsharded-hf",
-#     "weka://oe-eval-default/ai2-llm/checkpoints/OLMo-ladder/benb/prox_fineweb_pro-530M-5xC-2/step57776-unsharded-hf",
-#     "weka://oe-eval-default/ai2-llm/checkpoints/OLMo-ladder/benb/prox_fineweb_pro-300M-5xC-2/step45787-unsharded-hf",
-#     "weka://oe-eval-default/ai2-llm/checkpoints/OLMo-ladder/benb/prox_fineweb_pro-150M-5xC-2/step38157-unsharded-hf",
-#     "weka://oe-eval-default/ai2-llm/checkpoints/OLMo-ladder/davidh/prox_fineweb_pro-90M-5xC/step29901-unsharded-hf",
-#     "weka://oe-eval-default/ai2-llm/checkpoints/OLMo-ladder/davidh/prox_fineweb_pro-60M-5xC/step29042-unsharded-hf",
-#     "weka://oe-eval-default/ai2-llm/checkpoints/OLMo-ladder/davidh/prox_fineweb_pro-20M-5xC/step14584-unsharded-hf",
-#     "weka://oe-eval-default/ai2-llm/checkpoints/OLMo-ladder/davidh/prox_fineweb_pro-4M-5xC/step5735-unsharded-hf",
-# ]
-# MODEL_LIST_ALL = [
-#     # "weka://oe-eval-default/ai2-llm/checkpoints/OLMo-large/peteish32/step720000",
-#     # "weka://oe-eval-default/ai2-llm/checkpoints/OLMo-large/peteish32/step705000",
-#     # "weka://oe-eval-default/ai2-llm/checkpoints/OLMo-large/peteish32/step701000",
-#     # "weka://oe-eval-default/ai2-llm/checkpoints/OLMo-large/peteish32/step696000",
-#     "weka://oe-eval-default/ai2-llm/checkpoints/OLMo-medium/peteish7/step919000",
-#     "weka://oe-eval-default/ai2-llm/checkpoints/OLMo-medium/peteish7/step917000"
-# ]
-# MODEL_LIST_ALL = [
-#     "mistral-small-3.1-24b-base-2503",
-#     "gemma-2-2b",
-# ]
-# MODEL_LIST_ALL = [model for model in MODEL_LIST_ALL if '/DCLM-baseline-' not in model] # DCLM only
-# MODEL_LIST_ALL = MODEL_MERGED_DATADECIDE[:2] + MODEL_MERGED_LADDER[:2]
+TASK_LIST_ALL += [
+    'deepmind_math_large::none',
+    'medmcqa:rc::none',
+    'medmcqa:mc::none',
+    'gsm_plus::none',
+    'gsm_symbolic::none',
+    'gsm_symbolic_p1::none',
+    'gsm_symbolic_p2::none',
+    # 'gpqa::none', # requires HF token
+    'minerva_math_500::none', 
+]
+
+TASK_LIST_ALL += [
+    'aime::none',
+]
+
+TASK_LIST_ALL += PALOMA
+TASK_LIST_ALL += LLM_COMPRESSION
+TASK_LIST_ALL += CUSTOM_LOSS
 
 
 def run_eval(model_list, task_list, model_type='hf', gpus=1, gpu_memory_utilization=0.7, limit=None, batch_size=None, save_requests=True):
