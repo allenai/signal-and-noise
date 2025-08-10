@@ -193,14 +193,20 @@ EXCLUDED_OBS_MODELS = [
     'gemma-7b'
 ]
 
-def extract_flops(model_alias):
+def extract_toks_params(model_alias):
     if model_alias not in MODEL_SIZES:
-        return None, False
+        return None, None
     
     is_excluded_observational = any(excluded_alias in model_alias.lower() for excluded_alias in EXCLUDED_OBS_MODELS)
     if is_excluded_observational:
-        return None, False
+        return None, None
     
     active_params = MODEL_SIZES[model_alias]["active_params_B"] * 1e9  # Convert B to raw number
     tokens = MODEL_SIZES[model_alias]["toks_T"] * 1e12 if MODEL_SIZES[model_alias]["toks_T"] else 0  # Convert T to raw number
+    return active_params, tokens
+
+def extract_flops(model_alias):
+    active_params, tokens = extract_toks_params(model_alias)
+    if active_params is None:
+        return None, False
     return 6 * active_params * tokens, True  # 6ND calculation and observational status

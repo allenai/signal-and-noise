@@ -43,6 +43,23 @@ def signal_to_noise_ratio(signal_scores: np.ndarray, noise_scores: np.ndarray) -
 
 ---
 
+### Using the evaluation dataset
+
+Pull all the model evaluations used in this project:
+
+```python
+import pandas as pd
+from snr.download.hf import pull_predictions_from_hf
+
+local_path = pull_predictions_from_hf("allenai/signal-and-noise", split_name='core')
+df = pd.read_parquet(local_path)
+
+print(f'Loaded {len(df):,} model evaluations')
+>>> Loaded 388,924 model evaluations
+```
+
+---
+
 ### Evaluating a benchmark
 
 **@davidheineman TODO: How to evaluate YOUR benchmark with our tool (maybe with minieval?)**

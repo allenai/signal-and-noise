@@ -13,7 +13,7 @@ from snr.stats import compute_total_variation
 from snr.datadecide import compute_2_class
 from snr.constants.datadecide import get_compute
 from snr.plot import plot_task_accuracy
-from snr.constants import get_title_from_task, extract_size, extract_flops
+from snr.constants import get_title_from_task
 from snr.constants.models import DDOS_MODEL_NAMES
 from snr.constants.olmes import PRIMARY_METRICS_OLMES
 from snr.ladder_wrapper import sort_experiment_names
@@ -204,32 +204,6 @@ def run_analysis(
         ladder_config_path=DEFAULT_LADDER_CONFIG_PATH
     ):
     results = {}
-
-    ### FIXES ###
-
-    # Remove duplicate entries for peteish7 at step 928646.0, keeping first occurrence
-    mask = ~(
-        (df['model'] == 'peteish7') & 
-        (df['step'] == 928646.0) & 
-        (df.duplicated(['model', 'step'], keep='first'))
-    )
-    df = df[mask]
-
-    # Remove peteish32 entries at step 716000.0
-    mask = ~(
-        (df['model'] == 'peteish32') & 
-        (df['step'] == 716000.0)
-    )
-    df = df[mask]
-
-    #############
-
-    if 'extraced_size' not in df.columns:
-        df['extracted_size'] = df['model'].apply(extract_size)
-
-    if 'flops' not in df.columns:
-        df["model_path"] = df["model_config"].apply(lambda x: x["model_path"])
-        df[["flops", "observational_model"]] = df["model_path"].apply(extract_flops).apply(pd.Series)
 
     # Observational noise
     observational_models = external_ladder_models+eval_ladder_models+DDOS_MODEL_NAMES
@@ -675,9 +649,6 @@ def compute_metaproperties(
             merged_models # exclude merged models
         and not is_excluded_from_lite(model)
     ])
-
-    # Add extracted size
-    df_benchmarks['extracted_size'] = df_benchmarks['model'].apply(extract_size)
 
     benchmark_results = []
     instance_results = []

@@ -1,5 +1,4 @@
 DDOS_SIZES = ['4M', '20M', '60M', '90M', '150M', '300M', '530M', '750M', '1B']
-DDOS_COMPUTE_SIZES = tuple(get_compute(size) for size in DDOS_SIZES)
 
 FULL_SCHEDULE = {
     '4M': 5725,
@@ -48,6 +47,13 @@ MODEL_TO_PARAMETERS = {
     '1B': 1_176_832_000
 }
 
+def get_toks_params(scale):
+    toks = 2048 * MODEL_TO_BATCH[scale] * FULL_SCHEDULE[scale]
+    params = MODEL_TO_PARAMETERS[scale]
+    return toks, params
 
 def get_compute(scale):
-    return 2048 * 6 * MODEL_TO_BATCH[scale] * MODEL_TO_PARAMETERS[scale] * FULL_SCHEDULE[scale]
+    toks, params = get_toks_params(scale)
+    return 6 * toks * params
+
+DDOS_COMPUTE_SIZES = tuple(get_compute(size) for size in DDOS_SIZES)
