@@ -1,5 +1,5 @@
 import itertools
-import os, time, sys
+import os, sys
 from pathlib import Path
 
 parent_dir = Path(__file__).resolve().parent.parent
@@ -7,25 +7,16 @@ sys.path.append(str(parent_dir))
 
 from snr.constants import weka_to_gcs
 
-from snr.constants.models import MODEL_LADDER_LIST, MODEL_LIST_MIXES_FINAL, MODEL_LIST_MIXES_FINAL_EXTENDED, MODEL_LIST_INTERMEDIATE, MODEL_LIST_INTERMEDIATE_13B, MODEL_LIST_MIXES, OE_EVAL_BASE_MODELS, OE_EVAL_INSTRUCT_MODELS, OE_EVAL_ALL_MODELS, OE_EVAL_BASE_MODELS_EXTENDED, OE_EVAL_BASE_MODELS_EXTENDED_2, MODEL_LIST_INTERMEDIATE_7B, MODEL_LIST_FINAL_30_1B, MODEL_LIST_FINAL_30_13B, MODEL_LIST_INTERMEDIATE_32B, MODEL_LIST_SEED_RUNS
+from snr.constants.models import MODEL_LADDER_LIST, MODEL_LIST_MIXES_FINAL, MODEL_LIST_MIXES_FINAL_EXTENDED, MODEL_LIST_INTERMEDIATE, MODEL_LIST_INTERMEDIATE_13B, MODEL_LIST_MIXES, OE_EVAL_BASE_MODELS, OE_EVAL_ALL_MODELS, OE_EVAL_BASE_MODELS_EXTENDED, OE_EVAL_BASE_MODELS_EXTENDED_2, MODEL_LIST_INTERMEDIATE_7B, MODEL_LIST_FINAL_30_1B, MODEL_LIST_FINAL_30_13B, MODEL_LIST_INTERMEDIATE_32B, MODEL_LIST_SEED_RUNS
 from snr.constants.model_ckpts import MODEL_LIST_FINAL_SIX_CKPTS, DATADECIDE_FINAL_FIVE_CKPTS, MODEL_MERGED_DATADECIDE, MODEL_MERGED_LADDER
-from snr.constants.models import WEKA_CLUSTERS, GCP_CLUSTERS
-from snr.constants.tasks import MC_TASKS_COPY_COLORS, MISSING_EVALS
+from snr.constants.models import GCP_CLUSTERS
 
-# OLMES Core Tasks
-from snr.constants.tasks import RC_TASKS_OLMES, MC_TASKS_OLMES, PARA_TASKS_OLMES, ENLARGE_TASKS_OLMES, DISTRACTORS_TASKS_OLMES
-
-# OLMES Gen Tasks
-from snr.constants.tasks import GEN_TASKS_OLMES, GEN_TASKS_OLMES_PERTURB_RC
-
-# CoT tasks (mainly Tulu tasks)
+from snr.constants.tasks import MC_TASKS_COPY_COLORS
+from snr.constants.tasks import RC_TASKS_OLMES, MC_TASKS_OLMES
+from snr.constants.tasks import GEN_TASKS_OLMES
 from snr.constants.tasks import AGI_EVAL_MC, AGI_EVAL_RC, AGI_EVAL_COT
-from snr.constants.tasks import MMLU_PRO_MC, MMLU_PRO_RC, MMLU_PRO_COT
-from snr.constants.tasks import MINERVA_MC, MINERVA_COT
-from snr.constants.tasks import BBH_MC, BBH_COT
-from snr.constants.tasks import PERTURB_COT_TASKS
-
-# Perplexity tasks
+from snr.constants.tasks import MMLU_PRO_MC, MMLU_PRO_RC
+from snr.constants.tasks import BBH_COT
 from snr.constants.tasks import PALOMA, LLM_COMPRESSION, CUSTOM_LOSS
 
 MODEL_LIST_ALL = []
@@ -39,18 +30,8 @@ MODEL_LIST_ALL += OE_EVAL_BASE_MODELS_EXTENDED # OLL 2 leaderboard models
 MODEL_LIST_ALL += OE_EVAL_BASE_MODELS_EXTENDED_2 # Additional external models
 MODEL_LIST_ALL += MODEL_LIST_INTERMEDIATE_7B # 7B Final 30 ckpts (1000 steps apart)
 MODEL_LIST_ALL += MODEL_LIST_INTERMEDIATE_32B # 32B Final 30 ckpts (1000 steps apart)
-
 MODEL_LIST_ALL += MODEL_LIST_FINAL_30_13B # 13B Final 30 ckpts (1000 steps apart)
 MODEL_LIST_ALL += MODEL_LIST_FINAL_30_1B # 1.5B-4T Final 30 ckpts (1000 steps apart)
-MODEL_LIST_ALL += [
-    'weka://oe-eval-default/ai2-llm/checkpoints/OLMo-medium/peteish7/last-5-model-merged',
-    'weka://oe-eval-default/ai2-llm/checkpoints/OLMo-medium/peteish7/last-30-model-merged',
-    'weka://oe-eval-default/ai2-llm/checkpoints/OLMo-medium/peteish13-highlr/last-5-model-merged',
-    'weka://oe-eval-default/ai2-llm/checkpoints/OLMo-medium/peteish13-highlr/last-30-model-merged',
-    'weka://oe-eval-default/ai2-llm/checkpoints/OLMo-large/peteish32/last-5-model-merged',
-    'weka://oe-eval-default/ai2-llm/checkpoints/OLMo-large/peteish32/last-29-model-merged',
-] # merged models (weka only)
-
 MODEL_LIST_ALL += MODEL_LIST_FINAL_SIX_CKPTS # (200) Model ladder final 6 ckpts
 MODEL_LIST_ALL += MODEL_LIST_SEED_RUNS # (20) Seed runs (weka only)
 
@@ -62,21 +43,15 @@ MODEL_LIST_ALL += MODEL_MERGED_LADDER # (27) Merged ladder (gcs only) -- only ha
 TASK_LIST_ALL = []
 
 TASK_LIST_ALL += RC_TASKS_OLMES
-TASK_LIST_ALL += PARA_TASKS_OLMES 
-TASK_LIST_ALL += ENLARGE_TASKS_OLMES
-TASK_LIST_ALL += DISTRACTORS_TASKS_OLMES
 TASK_LIST_ALL += MC_TASKS_OLMES
 
 TASK_LIST_ALL += MC_TASKS_COPY_COLORS
 TASK_LIST_ALL += GEN_TASKS_OLMES
-TASK_LIST_ALL += AGI_EVAL_MC + MMLU_PRO_MC # + MINERVA_MC
+TASK_LIST_ALL += AGI_EVAL_MC + MMLU_PRO_MC
 TASK_LIST_ALL += AGI_EVAL_COT # + MMLU_PRO_COT
-TASK_LIST_ALL += BBH_MC # BPB verison of BBH
 TASK_LIST_ALL += BBH_COT
 
 TASK_LIST_ALL += MMLU_PRO_RC + AGI_EVAL_RC
-TASK_LIST_ALL += GEN_TASKS_OLMES_PERTURB_RC
-TASK_LIST_ALL += PERTURB_COT_TASKS
 
 TASK_LIST_ALL += ['autobencher::none', 'autobencher:mc::none']
 

@@ -1,15 +1,4 @@
-from . import DATA_DIR, fix_model_path
-
-RC_TASKS_OLMES = [
-    "arc_challenge:rc::olmes:full",
-    "arc_easy:rc::olmes:full",
-    "boolq:rc::olmes:full",
-    "csqa:rc::olmes:full",
-    "hellaswag:rc::olmes:full",
-    "openbookqa:rc::olmes:full",
-    "piqa:rc::olmes:full",
-    "socialiqa:rc::olmes:full",
-    "winogrande:rc::olmes:full",
+RC_TASKS_MMLU = [
     "mmlu_abstract_algebra:rc::olmes:full",
     "mmlu_anatomy:rc::olmes:full",
     "mmlu_astronomy:rc::olmes:full",
@@ -69,18 +58,22 @@ RC_TASKS_OLMES = [
     "mmlu_world_religions:rc::olmes:full",
 ]
 
-MC_TASKS_OLMES          = [task.replace(":rc", ":mc") for task in RC_TASKS_OLMES]
-PARA_TASKS_OLMES        = [task.replace(":rc", ":para") for task in RC_TASKS_OLMES]
-ENLARGE_TASKS_OLMES     = [task.replace(":rc", ":enlarge") for task in RC_TASKS_OLMES if 'winogrande' not in task and 'mmlu' not in task]
-DISTRACTORS_TASKS_OLMES = [task.replace(":rc", ":distractors") for task in RC_TASKS_OLMES if 'winogrande' not in task and 'mmlu' not in task]
+RC_TASKS_OLMES = [
+    "arc_challenge:rc::olmes:full",
+    "arc_easy:rc::olmes:full",
+    "boolq:rc::olmes:full",
+    "csqa:rc::olmes:full",
+    "hellaswag:rc::olmes:full",
+    "openbookqa:rc::olmes:full",
+    "piqa:rc::olmes:full",
+    "socialiqa:rc::olmes:full",
+    "winogrande:rc::olmes:full",
+] + RC_TASKS_MMLU
+
+MC_TASKS_OLMES = [task.replace(":rc", ":mc") for task in RC_TASKS_OLMES]
 
 MC_TASKS_COPY_COLORS = [
-    # "copycolors_2way:mc::none",
-    # "copycolors_cyclic_2way:mc::none",
     "copycolors_4way:mc::none",
-    # "copycolors_cyclic_4way:mc::none",
-    # "copycolors_8way:mc::none",
-    # "copycolors_cyclic_8way:mc::none",
 ]
 
 PALOMA = [
@@ -113,7 +106,6 @@ CUSTOM_LOSS = [
 ]
 
 GEN_TASKS_OLMES = [
-    # Core generation-based benchmarks
     # "coqa::olmes:full", # <- coqa is not setup properly (no few shot examples)
     "drop::olmes:full",
     # "gsm8k::olmes:full", # <- already included elsewhere under a different name
@@ -122,7 +114,6 @@ GEN_TASKS_OLMES = [
     "squad::olmes:full",
     "triviaqa::olmes:full",
 ]
-GEN_TASKS_OLMES_PERTURB_RC = [task.replace('::olmes', ':perturb_rc::olmes') for task in GEN_TASKS_OLMES]
 
 MMLU_PRO_MC = [
     "mmlu_pro_math:mc::none",
@@ -140,10 +131,8 @@ MMLU_PRO_MC = [
     "mmlu_pro_psychology:mc::none",
     "mmlu_pro_law:mc::none",
 ]
-MMLU_PRO_RC          = [task.replace(":mc::none", ":rc::none") for task in MMLU_PRO_MC]
-MMLU_PRO_COT         = [task.replace(":mc::none", ":cot::none") for task in MMLU_PRO_MC]
-# MMLU_PRO_COT         = [task.replace(":mc::none", ":cot::llama3.1") for task in MMLU_PRO_MC] # <- broken on base models
-# MMLU_PRO_PERTURB_COT = [task.replace(":mc", ":perturb_cot") for task in MMLU_PRO_MC] # <- does not exist yet!
+MMLU_PRO_RC  = [task.replace(":mc::none", ":rc::none") for task in MMLU_PRO_MC]
+MMLU_PRO_COT = [task.replace(":mc::none", ":cot::none") for task in MMLU_PRO_MC]
 
 AGI_EVAL_MC = [
     # AGI Eval MC
@@ -157,15 +146,10 @@ AGI_EVAL_MC = [
     "agi_eval_sat-en-without-passage::olmes:full",
     "agi_eval_gaokao-english::olmes:full",
 ]
-AGI_EVAL_RC = [task.replace("::olmes:full", ":rc::none") for task in AGI_EVAL_MC]
-AGI_EVAL_COT = [task.replace("::olmes:full", ":cot::none") for task in AGI_EVAL_MC] # ::tulu3 does not work on base models. only this config works currently
-
-MINERVA_MC = [
-    # Minerva does not have MC
-]
+AGI_EVAL_RC  = [task.replace("::olmes:full", ":rc::none") for task in AGI_EVAL_MC]
+AGI_EVAL_COT = [task.replace("::olmes:full", ":cot::none") for task in AGI_EVAL_MC]
 
 MINERVA_COT = [
-    # Minerva CoT (there's also a tulu and llama config)
     "minerva_math_algebra::olmes:full",
     "minerva_math_counting_and_probability::olmes:full",
     "minerva_math_geometry::olmes:full",
@@ -176,7 +160,6 @@ MINERVA_COT = [
 ]
 
 BBH_COT = [
-    # BBH COT (generation-based)
     "bbh_boolean_expressions:cot::olmes:full",
     "bbh_causal_judgement:cot::olmes:full",
     "bbh_date_understanding:cot::olmes:full",
@@ -206,115 +189,7 @@ BBH_COT = [
     "bbh_word_sorting:cot::olmes:full",
 ]
 
-BBH_MC = [
-    # QA Variants of BBH Tasks
-    "bbh_boolean_expressions:qa::none",
-    "bbh_causal_judgement:qa::none",
-    "bbh_date_understanding:qa::none",
-    "bbh_disambiguation_qa:qa::none",
-    "bbh_dyck_languages:qa::none",
-    "bbh_formal_fallacies:qa::none",
-    "bbh_geometric_shapes:qa::none",
-    "bbh_hyperbaton:qa::none",
-    "bbh_logical_deduction_five_objects:qa::none",
-    "bbh_logical_deduction_seven_objects:qa::none",
-    "bbh_logical_deduction_three_objects:qa::none",
-    "bbh_movie_recommendation:qa::none",
-    "bbh_multistep_arithmetic_two:qa::none",
-    "bbh_navigate:qa::none",
-    "bbh_object_counting:qa::none",
-    "bbh_penguins_in_a_table:qa::none",
-    "bbh_reasoning_about_colored_objects:qa::none",
-    "bbh_ruin_names:qa::none",
-    "bbh_salient_translation_error_detection:qa::none",
-    "bbh_snarks:qa::none",
-    "bbh_sports_understanding:qa::none",
-    "bbh_temporal_sequences:qa::none",
-    "bbh_tracking_shuffled_objects_five_objects:qa::none",
-    "bbh_tracking_shuffled_objects_seven_objects:qa::none",
-    "bbh_tracking_shuffled_objects_three_objects:qa::none",
-    "bbh_web_of_lies:qa::none",
-    "bbh_word_sorting:qa::none",
-]
-
-PERTURB_COT_TASKS = [
-    'agi_eval_aqua-rat:perturb_cot::olmes', 
-    'agi_eval_gaokao-english:perturb_cot::olmes', 
-    'agi_eval_logiqa-en:perturb_cot::olmes', 
-    'agi_eval_lsat-ar:perturb_cot::olmes', 
-    'agi_eval_lsat-lr:perturb_cot::olmes', 
-    'agi_eval_lsat-rc:perturb_cot::olmes', 
-    'agi_eval_sat-en-without-passage:perturb_cot::olmes', 
-    'agi_eval_sat-en:perturb_cot::olmes', 
-    'agi_eval_sat-math:perturb_cot::olmes', 
-    
-    'bbh_boolean_expressions:perturb_cot::olmes', 
-    'bbh_causal_judgement:perturb_cot::olmes', 
-    'bbh_date_understanding:perturb_cot::olmes', 
-    'bbh_disambiguation_qa:perturb_cot::olmes', 
-    'bbh_dyck_languages:perturb_cot::olmes', 
-    'bbh_formal_fallacies:perturb_cot::olmes', 
-    'bbh_geometric_shapes:perturb_cot::olmes', 
-    'bbh_hyperbaton:perturb_cot::olmes', 
-    'bbh_logical_deduction_five_objects:perturb_cot::olmes', 
-    'bbh_logical_deduction_seven_objects:perturb_cot::olmes', 
-    'bbh_logical_deduction_three_objects:perturb_cot::olmes', 
-    'bbh_movie_recommendation:perturb_cot::olmes', 
-    'bbh_multistep_arithmetic_two:perturb_cot::olmes', 
-    'bbh_navigate:perturb_cot::olmes', 
-    'bbh_object_counting:perturb_cot::olmes', 
-    'bbh_penguins_in_a_table:perturb_cot::olmes', 
-    'bbh_reasoning_about_colored_objects:perturb_cot::olmes', 
-    'bbh_ruin_names:perturb_cot::olmes', 
-    'bbh_salient_translation_error_detection:perturb_cot::olmes', 
-    'bbh_snarks:perturb_cot::olmes', 
-    'bbh_sports_understanding:perturb_cot::olmes', 
-    'bbh_temporal_sequences:perturb_cot::olmes', 
-    'bbh_tracking_shuffled_objects_five_objects:perturb_cot::olmes', 
-    'bbh_tracking_shuffled_objects_seven_objects:perturb_cot::olmes', 
-    'bbh_tracking_shuffled_objects_three_objects:perturb_cot::olmes', 
-    'bbh_web_of_lies:perturb_cot::olmes', 
-    'bbh_word_sorting:perturb_cot::olmes', 
-    
-    'gsm8k:perturb_cot::olmes', 
-    
-    'minerva_math_algebra:perturb_cot::olmes', 
-    'minerva_math_counting_and_probability:perturb_cot::olmes', 
-    'minerva_math_geometry:perturb_cot::olmes', 
-    'minerva_math_intermediate_algebra:perturb_cot::olmes', 
-    'minerva_math_number_theory:perturb_cot::olmes', 
-    'minerva_math_prealgebra:perturb_cot::olmes', 
-    # TODO: Add the final minerva tasks
-]
-
-ADDITIONAL_TASKS_TULU_3 = [
-    # (Additional Tulu tasks I've excluded for now)
-
-    # CoT (exact match)
-    "tydiqa_english::tulu",
-    "ifeval::tulu",
-    "truthfulqa::tulu",
-    "alpaca_eval_v2::tulu",
-
-    # CoT Long Context (exact match)
-    "zero_scrolls_gov_report::tulu",
-    "zero_scrolls_summ_screen_fd::tulu",
-    "zero_scrolls_qmsum::tulu",
-    "zero_scrolls_qasper::tulu",
-    "zero_scrolls_narrative_qa::tulu",
-    "zero_scrolls_quality::tulu",
-
-    # Code benchmarks
-    "bigcodebench::tulu",
-    "bigcodebench_hard::tulu",
-    "codex_humaneval:temp0.1",
-    "codex_humaneval:temp0.8",
-    "codex_humaneval::tulu",
-    "codex_humanevalplus::tulu"
-]
-
 AGI_EVAL_TULU_3 = [
-    # AGI Eval CoT (only ::tulu3 has proper configs) -- broken
     "agi_eval_lsat-ar:0shot_cot::tulu3",
     "agi_eval_lsat-lr:0shot_cot::tulu3",
     "agi_eval_lsat-rc:0shot_cot::tulu3",
@@ -325,39 +200,3 @@ AGI_EVAL_TULU_3 = [
     "agi_eval_sat-en-without-passage:0shot_cot::tulu3",
     "agi_eval_gaokao-english:0shot_cot::tulu3",
 ]
-
-from pathlib import Path
-def load_missing_tasks(load_path):
-    """
-    load Path(DATA_DIR) / aws_missing_tasks.json. This is a dict of model to task list. 
-    Convert it to a list of tuples of (model, task_list) where there's a seperate tuple 
-    for each unique prefix before the first _ in the task list
-    """
-    import json
-    from collections import defaultdict
-
-    if not load_path.exists():
-        return []
-
-    with open(load_path) as f:
-        data = json.load(f)
-    
-    # Group tasks by prefix before first _
-    model_prefix_tasks = defaultdict(list)
-    for model, tasks in data.items():
-        for task in tasks:
-            prefix = task.split("_")[0]
-            model_path = fix_model_path(model)
-            model_prefix_tasks[(model_path, prefix)].append(task)
-
-    # Convert to list of tuples
-    missing_tasks = [
-        (model, task_list) for (model, _), task_list in model_prefix_tasks.items() \
-            if len(task_list) > 0 \
-            # and 'weka://' not in model
-    ]
-    
-    return missing_tasks
-
-MISSING_EVALS = load_missing_tasks(Path(DATA_DIR) / "aws_missing_tasks.json")
-MISSING_EVALS = MISSING_EVALS

@@ -17,15 +17,13 @@ def get_selected_tasks(tasks):
     mmlu      = [t for t in tasks if 'mmlu' in t and ':' not in t and '_pro_' not in t]
     minerva   = [t for t in tasks if 'minerva' in t and ':' not in t and 'math_500' not in t and t != 'minerva']
     mmlu_pro  = [t for t in tasks if '_pro_' in t and ':rc' in t]
-    mmlu_mc   = [t for t in tasks if 'mmlu' in t and ':mc' in t and '_pro_' not in t]
     olmes     = ['arc_challenge', 'arc_easy', 'boolq', 'csqa', 'hellaswag', 'openbookqa', 'piqa', 'socialiqa', 'winogrande']
-    olmes_mc  = [f'{task}:mc' for task in olmes]
-    olmes_para        = [f'{task}:para' for task in olmes]
-    olmes_distractors = [f'{task}:distractors' for task in olmes]
-    olmes_enlarge     = [f'{task}:enlarge' for task in olmes]
     olmes_gen = ['drop', 'gsm8k', 'jeopardy', 'squad', 'triviaqa'] # naturalqs
     agi_eval  = [t for t in tasks if 'agi_eval' in t and ':rc' in t]
     bbh       = [t for t in tasks if 'bbh' in t and ':' not in t]
+    
+    mmlu_mc   = [t for t in tasks if 'mmlu' in t and ':mc' in t and '_pro_' not in t]
+    olmes_mc  = [f'{task}:mc' for task in olmes]
     paloma    = [t for t in tasks if 'paloma' in t]
     llm_compression = [t for t in tasks if 'llm_compression' in t]
     custom_loss = [t for t in tasks if 'custom_loss' in t]

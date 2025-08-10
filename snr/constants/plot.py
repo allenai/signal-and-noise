@@ -113,3 +113,22 @@ SIZE_COLORS = {
     '750M': '#d62728',
     '1B': '#9467bd'
 }
+
+MODEL_FAMILY_COLORS = {
+    'codeqwen': '#2ca02c',
+    'codestral': '#ff7f0e',
+    'deepseek': '#1f77b4',
+    'gemma': '#9467bd',
+    'llama': '#d62728',
+    'mathstral': '#e377c2',
+    'meta': '#7f7f7f',
+    'mistral': '#bcbd22',
+    'mixtral': '#17becf',
+    'olmo': '#8c564b',
+    'orca': '#e7ba52',
+    'phi': '#393b79',
+    'qwen': '#637939',
+    'smollm': '#b5cf6b',
+    'stablelm': '#843c39',
+    'yi': '#9c9ede'
+}
