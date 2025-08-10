@@ -9,6 +9,7 @@ from collections import defaultdict
 from snr.dataloader import get_nd_array
 from snr.download.preprocess import SIZE_PREFIXES, SIZE_PREFIXES_FIX, str_find
 from snr.constants.ladder import DATA_BY_NAME_LADDER
+from snr.constants.plot import EXTERNAL_SCALING_COLOR_MAP
 
 from scaling.utils import FinalConfig
 from scaling.utils import get_final_configs
@@ -32,26 +33,6 @@ TASK_KEY_MAP = {
     "openbookqa": "openbookqa_test_5shot",
     "winogrande": "winogrande_val_5shot",
     "piqa": "piqa_val_5shot",
-}
-
-COLOR_MAP = {
-    'Qwen': 'green',
-    'Llama': 'blue',
-    'LLaMA': 'blue',
-    'Mistral': 'orange',
-    '3B': 'black',
-    'OLMo': 'pink',
-    'pythia': 'brown',
-    'gemma': 'teal',
-    'phi': 'black',
-    'deepseek': 'pink',
-    'zephyr': 'green',
-    'neo': 'orange',
-    'falcon': 'blue',
-
-    # code models 
-    'starcoder': 'grey',
-    'stablelm': 'grey',
 }
 
 
@@ -327,7 +308,7 @@ def create_ladder_config(config_path, task_name, train_models, eval_models):
         if model not in configs.keys():
             # Get model color
             color = 'red'
-            for key, value in COLOR_MAP.items():
+            for key, value in EXTERNAL_SCALING_COLOR_MAP.items():
                 if key in model:
                     color = value
                     break

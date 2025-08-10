@@ -7,17 +7,23 @@ sys.path.append(str(parent_dir))
 
 from snr.constants import weka_to_gcs
 
-from snr.constants.models import MODEL_LADDER_LIST, MODEL_LIST_MIXES_FINAL, MODEL_LIST_MIXES_FINAL_EXTENDED, MODEL_LIST_INTERMEDIATE, MODEL_LIST_INTERMEDIATE_13B, MODEL_LIST_MIXES, OE_EVAL_BASE_MODELS, OE_EVAL_ALL_MODELS, OE_EVAL_BASE_MODELS_EXTENDED, OE_EVAL_BASE_MODELS_EXTENDED_2, MODEL_LIST_INTERMEDIATE_7B, MODEL_LIST_FINAL_30_1B, MODEL_LIST_FINAL_30_13B, MODEL_LIST_INTERMEDIATE_32B, MODEL_LIST_SEED_RUNS
-from snr.constants.model_ckpts import MODEL_LIST_FINAL_SIX_CKPTS, DATADECIDE_FINAL_FIVE_CKPTS, MODEL_MERGED_DATADECIDE, MODEL_MERGED_LADDER
-from snr.constants.models import GCP_CLUSTERS
+WEKA_CLUSTERS = ",".join(
+    ["ai2/jupiter-cirrascale-2", "ai2/saturn-cirrascale", "ai2/ceres-cirrascale"]
+)
+GCP_CLUSTERS = ",".join(
+    ["ai2/augusta-google-1"]
+)
 
-from snr.constants.tasks import MC_TASKS_COPY_COLORS
-from snr.constants.tasks import RC_TASKS_OLMES, MC_TASKS_OLMES
-from snr.constants.tasks import GEN_TASKS_OLMES
-from snr.constants.tasks import AGI_EVAL_MC, AGI_EVAL_RC, AGI_EVAL_COT
-from snr.constants.tasks import MMLU_PRO_MC, MMLU_PRO_RC
-from snr.constants.tasks import BBH_COT
-from snr.constants.tasks import PALOMA, LLM_COMPRESSION, CUSTOM_LOSS
+from snr.constants.models import MODEL_LADDER_LIST, MODEL_LIST_MIXES_FINAL, MODEL_LIST_MIXES_FINAL_EXTENDED, MODEL_LIST_INTERMEDIATE, MODEL_LIST_INTERMEDIATE_13B, MODEL_LIST_MIXES, OE_EVAL_BASE_MODELS, OE_EVAL_ALL_MODELS, MODEL_LIST_INTERMEDIATE_7B, MODEL_LIST_FINAL_30_1B, MODEL_LIST_FINAL_30_13B, MODEL_LIST_INTERMEDIATE_32B, MODEL_LIST_SEED_RUNS
+
+from snr.scripts.model_ckpts import MODEL_LIST_FINAL_SIX_CKPTS, DATADECIDE_FINAL_FIVE_CKPTS, MODEL_MERGED_DATADECIDE, MODEL_MERGED_LADDER
+from snr.scripts.tasks import MC_TASKS_COPY_COLORS
+from snr.scripts.tasks import RC_TASKS_OLMES, MC_TASKS_OLMES
+from snr.scripts.tasks import GEN_TASKS_OLMES
+from snr.scripts.tasks import AGI_EVAL_MC, AGI_EVAL_RC, AGI_EVAL_COT
+from snr.scripts.tasks import MMLU_PRO_MC, MMLU_PRO_RC
+from snr.scripts.tasks import BBH_COT
+from snr.scripts.tasks import PALOMA, LLM_COMPRESSION, CUSTOM_LOSS
 
 MODEL_LIST_ALL = []
 MODEL_LIST_ALL += MODEL_LADDER_LIST
@@ -26,19 +32,15 @@ MODEL_LIST_ALL += OE_EVAL_BASE_MODELS
 MODEL_LIST_ALL += MODEL_LIST_INTERMEDIATE_13B # 13B intermediate ckpts
 MODEL_LIST_ALL += MODEL_LIST_MIXES_FINAL # ian's new mixes
 MODEL_LIST_ALL += MODEL_LIST_MIXES_FINAL_EXTENDED # extended set of data mixes
-MODEL_LIST_ALL += OE_EVAL_BASE_MODELS_EXTENDED # OLL 2 leaderboard models
-MODEL_LIST_ALL += OE_EVAL_BASE_MODELS_EXTENDED_2 # Additional external models
 MODEL_LIST_ALL += MODEL_LIST_INTERMEDIATE_7B # 7B Final 30 ckpts (1000 steps apart)
 MODEL_LIST_ALL += MODEL_LIST_INTERMEDIATE_32B # 32B Final 30 ckpts (1000 steps apart)
 MODEL_LIST_ALL += MODEL_LIST_FINAL_30_13B # 13B Final 30 ckpts (1000 steps apart)
 MODEL_LIST_ALL += MODEL_LIST_FINAL_30_1B # 1.5B-4T Final 30 ckpts (1000 steps apart)
 MODEL_LIST_ALL += MODEL_LIST_FINAL_SIX_CKPTS # (200) Model ladder final 6 ckpts
 MODEL_LIST_ALL += MODEL_LIST_SEED_RUNS # (20) Seed runs (weka only)
-
-MODEL_LIST_ALL += DATADECIDE_FINAL_FIVE_CKPTS # (1125) DataDecide final 5 ckpts (only have rc_basic, rc_difficult, autobench, part of mc_basic)
-
-MODEL_LIST_ALL += MODEL_MERGED_DATADECIDE # (225) Merged DataDecide   -- only have rc basic, rc_difficult
-MODEL_LIST_ALL += MODEL_MERGED_LADDER # (27) Merged ladder (gcs only) -- only have rc basic, rc_difficult
+MODEL_LIST_ALL += DATADECIDE_FINAL_FIVE_CKPTS # (1125) DataDecide final 5 ckpts
+MODEL_LIST_ALL += MODEL_MERGED_DATADECIDE # (225) Merged DataDecide
+MODEL_LIST_ALL += MODEL_MERGED_LADDER # (27) Merged ladder (gcs only)
 
 TASK_LIST_ALL = []
 
@@ -53,12 +55,13 @@ TASK_LIST_ALL += BBH_COT
 
 TASK_LIST_ALL += MMLU_PRO_RC + AGI_EVAL_RC
 
-TASK_LIST_ALL += ['autobencher::none', 'autobencher:mc::none']
+TASK_LIST_ALL += [
+    'autobencher::none', 
+    'autobencher:mc::none'
+]
 
 TASK_LIST_ALL += [
-    # GSM CoT
     "gsm8k::olmes:full",
-    # Minerva CoT (olmes version)
     "minerva_math_algebra::olmes:full",
     "minerva_math_counting_and_probability::olmes:full",
     "minerva_math_geometry::olmes:full",
@@ -66,7 +69,6 @@ TASK_LIST_ALL += [
     "minerva_math_number_theory::olmes:full",
     "minerva_math_prealgebra::olmes:full",
     "minerva_math_precalculus::olmes:full",
-    # Coding
     "mbpp::ladder",
     "mbppplus::ladder",
     "codex_humaneval:temp0.8",
@@ -201,7 +203,7 @@ def main():
                 gpus = 4
             elif '110b' in model.lower() or '405b' in model.lower() or '8x22b' in model.lower() or ('gemma-3-' in model and '1b' not in model):
                 gpus = 8
-            elif model in ['gemma-7b', 'gemma2-9b', "gemma2-2b-instruct", "gemma2-9b-instruct", "gemma2-9b-instruct-SimPO", "llama2-13b", "llama3-70b", "llama3.1-70b", "qwen2.5-14b", "qwen2.5-32b", "qwen2.5-72b", "llama3.1-70b-instruct", "qwen2.5-14b-instruct"] or '32B' in model or '72B' in model or '22B' in model or '15b' in model or '40b' in model or '70B' in model or model in OE_EVAL_BASE_MODELS_EXTENDED_2:
+            elif model in ['gemma-7b', 'gemma2-9b', "gemma2-2b-instruct", "gemma2-9b-instruct", "gemma2-9b-instruct-SimPO", "llama2-13b", "llama3-70b", "llama3.1-70b", "qwen2.5-14b", "qwen2.5-32b", "qwen2.5-72b", "llama3.1-70b-instruct", "qwen2.5-14b-instruct"] or '32B' in model or '72B' in model or '22B' in model or '15b' in model or '40b' in model or '70B' in model:
                 gpus = 4
             else:
                 gpus = 1 # don't need many GPUs for small models

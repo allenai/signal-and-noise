@@ -132,3 +132,23 @@ MODEL_FAMILY_COLORS = {
     'stablelm': '#843c39',
     'yi': '#9c9ede'
 }
+
+EXTERNAL_SCALING_COLOR_MAP = {
+    'Qwen': 'green',
+    'Llama': 'blue',
+    'LLaMA': 'blue',
+    'Mistral': 'orange',
+    '3B': 'black',
+    'OLMo': 'pink',
+    'pythia': 'brown',
+    'gemma': 'teal',
+    'phi': 'black',
+    'deepseek': 'pink',
+    'zephyr': 'green',
+    'neo': 'orange',
+    'falcon': 'blue',
+
+    # code models 
+    'starcoder': 'grey',
+    'stablelm': 'grey',
+}
