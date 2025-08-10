@@ -9,10 +9,6 @@ PLOT_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.
 os.makedirs(DATA_DIR, exist_ok=True)
 os.makedirs(PLOT_DIR, exist_ok=True)
 
-# Load observational model sizes data
-with open(os.path.join(ROOT_DIR, 'snr/constants/model_sizes.json')) as f:
-    MODEL_SIZES = json.load(f)
-
 def get_selected_tasks(tasks):
     mmlu      = [t for t in tasks if 'mmlu' in t and ':' not in t and '_pro_' not in t]
     minerva   = [t for t in tasks if 'minerva' in t and ':' not in t and 'math_500' not in t and t != 'minerva']
@@ -162,49 +158,3 @@ def fix_model_path(name):
     name = name.replace('Qwen2.5-3B', 'qwen2.5-3b')
     name = name.replace('deepseek-7b', 'deepseek-llm-7b-base')
     return name
-
-def extract_size(model_name):
-    """ Extract size from model name 'falcon-11B' => 11_000_000_000 """
-    parts = model_name.split('-')
-    for part in parts:
-        if part.endswith('M') or part.endswith('m'):
-            try:
-                return float(part[:-1]) * 1e6
-            except ValueError as e:
-                continue
-        elif part.endswith('B') or part.endswith('b'):
-            try:
-                return float(part[:-1]) * 1e9
-            except ValueError as e:
-                continue
-    return None
-
-
-# Observational models excluded for low performance / broken evals
-EXCLUDED_OBS_MODELS = [
-    'pythia',
-    'phi-1',
-    'olmo-1b-0724-hf',
-    'stablelm-base-alpha-7b',
-    'gemma-2-27b',
-    'gemma-2',
-    'gemma-7b'
-]
-
-def extract_toks_params(model_alias):
-    if model_alias not in MODEL_SIZES:
-        return None, None
-    
-    is_excluded_observational = any(excluded_alias in model_alias.lower() for excluded_alias in EXCLUDED_OBS_MODELS)
-    if is_excluded_observational:
-        return None, None
-    
-    active_params = MODEL_SIZES[model_alias]["active_params_B"] * 1e9  # Convert B to raw number
-    tokens = MODEL_SIZES[model_alias]["toks_T"] * 1e12 if MODEL_SIZES[model_alias]["toks_T"] else 0  # Convert T to raw number
-    return active_params, tokens
-
-def extract_flops(model_alias):
-    active_params, tokens = extract_toks_params(model_alias)
-    if active_params is None:
-        return None, False
-    return 6 * active_params * tokens, True  # 6ND calculation and observational status
