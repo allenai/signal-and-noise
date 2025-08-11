@@ -1,7 +1,5 @@
 import numpy as np
 
-FONTSIZE = 8
-
 def compute_2_class(ranking_a, ranking_b):
     """ Compute 2-class accuracy """
     ranking_a = list(ranking_a)
@@ -33,12 +31,3 @@ def decision_acc_fast(scores_small, scores_target):
     mask = np.triu(np.ones_like(small_diffs), k=1).astype(bool)
     agreements = (small_diffs == target_diffs)[mask]
     return np.mean(agreements)
-
-
-def get_slice(df, model, task):
-    try:
-        df = df.loc[(task, model)]
-    except KeyError:
-        return df.iloc[0:0]
-    df = df.reset_index()
-    return df

@@ -78,6 +78,24 @@ print(arr)
 >>> [0.63993174 0.88425926]
 ```
 
+**Compute metrics with eval results**
+
+```python
+from snr.dataloader import get_slice
+from snr.datadecide import decision_acc_fast
+
+scores_small  = get_slice(df, size='150M', task='arc_easy', step=38157)
+scores_target = get_slice(df, size='1B', task='arc_easy', step=69369)
+
+decision_acc = decision_acc_fast(
+    scores_small = scores_small.sort_values('model')['primary_score'],
+    scores_target = scores_target.sort_values('model')['primary_score']
+)
+
+print(decision_acc)
+>>> 0.93
+```
+
 ---
 
 ### Evaluating a benchmark

@@ -614,7 +614,8 @@ def run_analysis(
                 # override for SQuAD
                 task_results.loc[task_results['task'] == 'squad', 'num_instances'] = 10570 
             
-            assert (task_results['num_instances'] == num_instances).all(), f"num_instances should be constant across task={subtask} for task_as_list={task_as_list}"
+            assert (task_results['num_instances'] == num_instances).all(), \
+                f"num_instances should be constant across task={subtask} for task_as_list={task_as_list}"
             total_instances += num_instances
         total_instances = int(total_instances)
         results.update({
