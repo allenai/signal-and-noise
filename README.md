@@ -77,6 +77,8 @@ python snr/snr_simple.py
 ```
 </details>
 
+---
+
 ### Calculating SNR
 
 Our core signal to noise calculation can be produced in a few lines. Given a scores from a population of models (`signal_scores`) and intermediate checkpoints (`noise_scores`), pseudocode is as follows:
