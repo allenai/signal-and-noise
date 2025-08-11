@@ -388,10 +388,6 @@ def run_analysis(
             ax.legend(fontsize=6)
             ax.set_title('Scaling Law Prediction')
 
-        # fig, ax = plt.subplots(figsize=(10, 6))
-        # plt.savefig(os.path.join(PLOT_DIR, f'debug:{task}:{metric}.pdf'))
-        # plt.close()
-
         # Stacked prediction -- C4 as intermediate feature
         rel_error_step_1, _, rel_error_stacked = run_ladder(
             df,
