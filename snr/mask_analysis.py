@@ -51,7 +51,7 @@ def compute_pred_error(
         eval_models, # ladder models
         eval_steps, # steps of eval model
         mask=None,
-        ladder_config_path=f'{ROOT_DIR}/analysis/utils/ladder_config.json'
+        ladder_config_path=f'{ROOT_DIR}/snr/constants/ladder_config.json'
     ):
     """ Compute prediction error for a subset of instances. """
     if mask is None:

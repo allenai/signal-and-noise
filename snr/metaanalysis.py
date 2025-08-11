@@ -10,17 +10,17 @@ from snr.constants import ROOT_DIR
 from snr.dataloader import get_slice
 from snr.ladder_wrapper import run_ladder
 from snr.stats import compute_total_variation
-# from snr.constants.datadecide import get_compute
 from snr.constants.datadecide import DATADECIDE_MODEL_NAMES
 from snr.plot import plot_task_accuracy
 from snr.constants import get_title_from_task
 from snr.constants.models import MODEL_LIST_DATADECIDE_FINAL
+from snr.metrics import decision_acc_fast
 from snr.ladder_wrapper import sort_experiment_names
-from snr.constants.datadecide import DATADECIDE_SIZES # , DATADECIDE_COMPUTE
+from snr.constants.datadecide import DATADECIDE_SIZES, DATADECIDE_COMPUTE
 
 os.environ["MallocStackLogging"] = "0" # disable malloc logs for macos
 
-DEFAULT_LADDER_CONFIG_PATH = f'{ROOT_DIR}/analysis/utils/ladder_config.json'
+DEFAULT_LADDER_CONFIG_PATH = f'{ROOT_DIR}/snr/constants/ladder_config.json'
 
 ALL_METRICS = ['logits_per_char_corr', 'primary_score']
 REVERSED_METRICS = ['margin_per_byte', 'norm_correct_prob_per_byte', 'correct_prob_per_byte', 'correct_logit_per_byte', 'logits_per_byte_corr']
@@ -94,7 +94,7 @@ def get_perf_size(df, size, task, metric, models=DATADECIDE_MODEL_NAMES, agg_met
         _slice['task_name'] = 'aggregate'
 
     _slice = _slice.reset_index().sort_values('step')[['model', 'mix', 'step', 'size', metric]]
-    _slice['compute'] = _slice['size'].apply(lambda x: get_compute(x) if '-' in x else x)
+    _slice['compute'] = _slice['flops']
     _slice = _slice.sort_values(metric, ignore_index=True)
     return _slice
 
@@ -166,13 +166,9 @@ def construct_2class_table(
                     sampled_scores_small = np.array([np.random.choice(values) for values in small_scale_array])
                     sampled_scores_1b = np.array([np.random.choice(values) for values in target_scale_array])
 
-                    if metric in REVERSED_METRICS and target_metric not in REVERSED_METRICS: sampled_scores_small = -sampled_scores_small # (this might be wrong?)
-
-                    # print(sampled_scores_small)
-                    # print(sampled_scores_1b)
+                    if metric in REVERSED_METRICS and target_metric not in REVERSED_METRICS: sampled_scores_small = -sampled_scores_small
                     
                     # Compute decision accuracy between sampled values
-                    from datadecide import decision_acc_fast
                     acc = decision_acc_fast(sampled_scores_small, sampled_scores_1b)
                     trial_accuracies.append(acc)
 
@@ -192,7 +188,7 @@ def construct_2class_table(
             step_slice = _slice[_slice['step'] == float(step)]
             step_slice = step_slice.reset_index(drop=True)
             try:
-                compute = get_compute(step_slice['size'][0])
+                compute = step_slice['flops'][0]
             except Exception as e:
                 print((metric, size, task), e)
                 compute = float('-inf')
@@ -658,21 +654,10 @@ def compute_metaproperties(
     ):
     task_names = [get_title_from_task(task) for task in selected_tasks]
 
-    # Get model names from df_benchmarks
-    models = sorted(list(df_benchmarks['model'].unique()))
-    ladder_models = [model for model in models if "peteish-moreeval" in model and '-model-merged' not in model]
+    external_models = list(df_benchmarks[df_benchmarks['model_type'] == 'external']['model'].unique())
+    ladder_models = list(df_benchmarks[df_benchmarks['model_type'] == 'ladder']['model'].unique())
+    llama_3_models = [model for model in external_models if "Llama-3" in model]
     ladder_models = sort_experiment_names(ladder_models)
-    merged_models = [model for model in models if '-model-merged' in model]
-    llama_3_models = [model for model in models if "Llama-3" in model]
-    external_models = sorted([
-        model for model in models 
-        if model not in
-            DATADECIDE_MODEL_NAMES + # exclude 1B-5xC models
-            ladder_models + # exclude ladder models
-            ['peteish13-highlr'] + # exclude intermediate checkpoints from 13B
-            merged_models # exclude merged models
-        and not is_excluded_from_lite(model)
-    ])
 
     benchmark_results = []
     instance_results = []
