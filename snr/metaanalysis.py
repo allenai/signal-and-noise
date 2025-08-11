@@ -14,10 +14,8 @@ from snr.datadecide import compute_2_class
 from snr.constants.datadecide import get_compute
 from snr.plot import plot_task_accuracy
 from snr.constants import get_title_from_task
-from snr.constants.models import DDOS_MODEL_NAMES
-from snr.constants.olmes import PRIMARY_METRICS_OLMES
+from snr.constants.models import MODEL_LIST_DATADECIDE_FINAL
 from snr.ladder_wrapper import sort_experiment_names
-from snr.download.preprocess import is_excluded_from_lite
 from snr.constants.datadecide import DDOS_SIZES, DDOS_COMPUTE_SIZES
 
 os.environ["MallocStackLogging"] = "0" # disable malloc logs for macos
@@ -236,7 +234,8 @@ def run_analysis(
             })
     
     # Scaling laws
-    primary_score_name = PRIMARY_METRICS_OLMES[task] if isinstance(task, str) and task in PRIMARY_METRICS_OLMES else 'primary_score'
+    # primary_score_name = PRIMARY_METRICS_OLMES[task] if isinstance(task, str) and task in PRIMARY_METRICS_OLMES else 'primary_score'
+    primary_score_name = 'primary_score'
     try:
         import warnings
         warnings.filterwarnings("ignore", category=RuntimeWarning)  # ignore fitting warnings

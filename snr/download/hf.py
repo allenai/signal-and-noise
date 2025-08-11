@@ -1,43 +1,10 @@
-import sys, os
+import os
 import pandas as pd
-
-# Add the parent directory to sys.path
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 from huggingface_hub import HfApi, login, hf_hub_download
 from snr.constants import DATA_DIR
 
 
-def convert_csv_to_parquet(csv_file_path):
-    parquet_file_path = csv_file_path.replace(".csv", ".parquet")
-    print(f"Converting '{csv_file_path}' -> '{parquet_file_path}'")
-    df = pd.read_csv(csv_file_path, encoding='utf-8')
-
-    # Remove fake added index
-    df = df.drop(columns=["Unnamed: 0"], errors='ignore')
-
-    # Remove erroneous columns (mostly document-level results for perplexity)
-    exclude_patterns = [
-        '_bits_per_byte',
-        '_ppl_byte',
-        '_ppl_word', 
-        '_ppl_char',
-        '_ppl_token',
-        '_sub_'
-    ]
-    df = df[[col for col in df.columns if not any(pattern in col for pattern in exclude_patterns)]]
-    
-    df.to_parquet(parquet_file_path, index=False)
-    return parquet_file_path
-
-
 def push_parquet_to_hf(parquet_file_path, hf_dataset_name, split_name='main', private=True, overwrite=False):
-    if parquet_file_path.endswith(".csv"):
-        parquet_file_path = convert_csv_to_parquet(parquet_file_path)
-        parquet_file_path = parquet_file_path.replace('.csv', '.parquet')
-
-    file_name = os.path.basename(parquet_file_path)
-
     import pyarrow.parquet as pq
     print('Loading sanity check...')
     df = pq.read_table(parquet_file_path).slice(0, 100).to_pandas()
@@ -54,8 +21,8 @@ def push_parquet_to_hf(parquet_file_path, hf_dataset_name, split_name='main', pr
         api.create_repo(repo_id=hf_dataset_name, private=private, repo_type="dataset", exist_ok=True)
 
     # Determine the target file path in the repository
-    
-    path_in_repo = os.path.join('data', f'{split_name}-00000-of-00001.parquet') # https://huggingface.co/docs/hub/en/datasets-file-names-and-splits
+    # https://huggingface.co/docs/hub/en/datasets-file-names-and-splits
+    path_in_repo = os.path.join('data', f'{split_name}-00000-of-00001.parquet') 
 
     # Check if the file exists in the repository
     repo_files = api.list_repo_files(repo_id=hf_dataset_name, repo_type="dataset")
@@ -94,49 +61,3 @@ def pull_predictions_from_hf(repo_id, split_name, local_path=DATA_DIR):
     download_parquet_from_hf(repo_id, file_name, local_path)
     local_file_name = os.path.join(local_path, file_name)
     return local_file_name
-
-
-def main():
-    push_parquet_to_hf(
-        parquet_file_path='analysis/data/aws_metrics.parquet',
-        hf_dataset_name='allenai/ladder-evals',
-        split_name='benchmarks',
-        overwrite=True
-    )
-    push_parquet_to_hf(
-        parquet_file_path='analysis/data/aws_lite_predictions.parquet',
-        hf_dataset_name='allenai/ladder-evals',
-        split_name='instanceslite',
-        overwrite=True
-    )
-    push_parquet_to_hf(
-        parquet_file_path='analysis/data/aws_medium_predictions.parquet',
-        hf_dataset_name='allenai/ladder-evals',
-        split_name='instancesmedium',
-        overwrite=True
-    )
-    # push_parquet_to_hf(
-    #     parquet_file_path='analysis/data/aws_predictions.parquet',
-    #     hf_dataset_name='allenai/ladder-evals',
-    #     split_name='instances',
-    #     overwrite=True
-    # )
-    push_parquet_to_hf(
-        parquet_file_path='analysis/data/aws_questions.parquet',
-        hf_dataset_name='allenai/ladder-evals',
-        split_name='questions',
-        overwrite=True
-    )
-
-    # for org_name in ['allenai', 'davidheineman']:
-    #     is_private = (org_name != 'davidheineman') # make everything not davidheineman private
-    #     push_parquet_to_hf(
-    #         parquet_file_path='analysis/data/consistent_ranking_metrics.parquet',
-    #         hf_dataset_name=f'{org_name}/consistent-ranking-evals',
-    #         split_name='benchmarks',
-    #         overwrite=True,
-    #         private=is_private,
-    #     )
-
-
-if __name__ == '__main__': main()

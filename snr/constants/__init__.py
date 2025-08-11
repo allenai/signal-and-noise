@@ -142,12 +142,6 @@ def get_pretty_task_name(task):
         print(f"Task does not have pretty name: {task}")
     return mapping.get(task, task)
 
-def weka_to_gcs(model_name):
-    if 'weka://' in model_name:
-        return f"gs://ai2-llm/checkpoints/davidh/{model_name.split('checkpoints/')[1]}"
-    else:
-        return model_name
-
 def fix_model_path(name):
     if name.endswith('peteish7/step928646-hf'):
         name = 'peteish7/step928646-hf-vllm-2'

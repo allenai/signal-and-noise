@@ -1,20 +1,7 @@
 import itertools
-import os, sys
-from pathlib import Path
+import os
 
-parent_dir = Path(__file__).resolve().parent.parent
-sys.path.append(str(parent_dir))
-
-from snr.constants import weka_to_gcs
-
-WEKA_CLUSTERS = ",".join(
-    ["ai2/jupiter-cirrascale-2", "ai2/saturn-cirrascale", "ai2/ceres-cirrascale"]
-)
-GCP_CLUSTERS = ",".join(
-    ["ai2/augusta-google-1"]
-)
-
-from snr.constants.models import MODEL_LADDER_LIST, MODEL_LIST_MIXES_FINAL, MODEL_LIST_MIXES_FINAL_EXTENDED, MODEL_LIST_INTERMEDIATE, MODEL_LIST_INTERMEDIATE_13B, MODEL_LIST_MIXES, OE_EVAL_BASE_MODELS, OE_EVAL_ALL_MODELS, MODEL_LIST_INTERMEDIATE_7B, MODEL_LIST_FINAL_30_1B, MODEL_LIST_FINAL_30_13B, MODEL_LIST_INTERMEDIATE_32B, MODEL_LIST_SEED_RUNS
+from snr.constants.models import MODEL_LADDER_LIST, MODEL_LIST_DATADECIDE_FINAL, MODEL_LIST_INTERMEDIATE_1B, MODEL_LIST_INTERMEDIATE_13B, MODEL_LIST_EXTERNAL, MODEL_LIST_FINAL_30_7B, MODEL_LIST_FINAL_30_1B, MODEL_LIST_FINAL_30_13B, MODEL_LIST_FINAL_30_32B, MODEL_LIST_SEED_RUNS
 
 from snr.scripts.model_ckpts import MODEL_LIST_FINAL_SIX_CKPTS, DATADECIDE_FINAL_FIVE_CKPTS, MODEL_MERGED_DATADECIDE, MODEL_MERGED_LADDER
 from snr.scripts.tasks import MC_TASKS_COPY_COLORS
@@ -27,13 +14,12 @@ from snr.scripts.tasks import PALOMA, LLM_COMPRESSION, CUSTOM_LOSS
 
 MODEL_LIST_ALL = []
 MODEL_LIST_ALL += MODEL_LADDER_LIST
-MODEL_LIST_ALL += MODEL_LIST_INTERMEDIATE
-MODEL_LIST_ALL += OE_EVAL_BASE_MODELS
+MODEL_LIST_ALL += MODEL_LIST_EXTERNAL
+MODEL_LIST_ALL += MODEL_LIST_INTERMEDIATE_1B # 1B intermediate ckpts
 MODEL_LIST_ALL += MODEL_LIST_INTERMEDIATE_13B # 13B intermediate ckpts
-MODEL_LIST_ALL += MODEL_LIST_MIXES_FINAL # ian's new mixes
-MODEL_LIST_ALL += MODEL_LIST_MIXES_FINAL_EXTENDED # extended set of data mixes
-MODEL_LIST_ALL += MODEL_LIST_INTERMEDIATE_7B # 7B Final 30 ckpts (1000 steps apart)
-MODEL_LIST_ALL += MODEL_LIST_INTERMEDIATE_32B # 32B Final 30 ckpts (1000 steps apart)
+MODEL_LIST_ALL += MODEL_LIST_DATADECIDE_FINAL # DataDecide models
+MODEL_LIST_ALL += MODEL_LIST_FINAL_30_7B # 7B Final 30 ckpts (1000 steps apart)
+MODEL_LIST_ALL += MODEL_LIST_FINAL_30_32B # 32B Final 30 ckpts (1000 steps apart)
 MODEL_LIST_ALL += MODEL_LIST_FINAL_30_13B # 13B Final 30 ckpts (1000 steps apart)
 MODEL_LIST_ALL += MODEL_LIST_FINAL_30_1B # 1.5B-4T Final 30 ckpts (1000 steps apart)
 MODEL_LIST_ALL += MODEL_LIST_FINAL_SIX_CKPTS # (200) Model ladder final 6 ckpts
@@ -96,21 +82,11 @@ TASK_LIST_ALL += LLM_COMPRESSION
 TASK_LIST_ALL += CUSTOM_LOSS
 
 
-def run_eval(model_list, task_list, model_type='hf', gpus=1, gpu_memory_utilization=0.7, limit=None, batch_size=None, save_requests=True):
+def run_eval(model_list, task_list, model_type='hf', gpus=1, gpu_memory_utilization=0.7, batch_size=None):
     if isinstance(task_list, list): 
         task_list = ' '.join([f'"{task}"' for task in task_list])
     if not isinstance(model_list, list): 
         model_list = [model_list]
-
-    # # Use WEKA
-    # cluster_list = WEKA_CLUSTERS
-    # model_list = [model.replace('weka://', '/weka-mount/') for model in model_list] # beaker
-    # # model_list = [model.replace('weka://', '/') for model in model_list] # local
-
-    # Use GCP
-    cluster_list = GCP_CLUSTERS
-    if any('weka://' in model for model in model_list):
-        model_list = [weka_to_gcs(model) for model in model_list]
 
     if len(model_list) == 1: # convert back list -> str
         model_list = model_list[0]
@@ -127,7 +103,6 @@ def run_eval(model_list, task_list, model_type='hf', gpus=1, gpu_memory_utilizat
     oe-eval \
         --model {model_list} \
         --task {task_list} \
-        --cluster {cluster_list} \
         --model-type {model_type} \
         --gpus {gpus} \
         --beaker-workspace {WORKSPACE} \
@@ -141,44 +116,20 @@ def run_eval(model_list, task_list, model_type='hf', gpus=1, gpu_memory_utilizat
         {VLLM_MEMORY_USE} \
         --beaker-priority {PRIORITY}
     """
-    # --gantry-secret-hf-read-only lucas_HUGGING_FACE_HUB_TOKEN \
+    # --cluster {cluster_list} \
     # --run-local \
 
-    # oe-eval --model pythia-14m --task mmlu_high_school_european_history:rc::olmes:full --gpus 1 --model-type vllm --run-local
-
-    command = command.replace('\n', '').replace('  ', '') # remove extra spacing!
-    if limit is not None: 
-        print(f'🫢😧 Using a {limit} instance limit 🤫🫣')
-        command += f" --limit {limit}"
+    command = command.replace('\n', '').replace('  ', '')
     if batch_size is not None: 
-        print(f'Using a batch_size of {batch_size}')
         command += f" --batch-size {batch_size}"
-    if not save_requests:
-        command += ' --save-raw-requests false --delete-raw-requests'
-    mb = len(command.encode('utf-8')) / (1024 * 1024) # compute size of command
 
     print(f'Executing command:\n{command}')
-    print(f'Estimated size of all argument strings: {(mb * len(MODEL_LIST_ALL)):.2f} MB (4 MB will crash beaker)')
     
     os.system(command)
 
 
 def main():
-    print(f'Launching {len(MODEL_LIST_ALL)} models on {len(TASK_LIST_ALL)} tasks (5 second sleep to confirm...)')
-    # time.sleep(5)
-
-    # for (model, missing_tasks) in MISSING_EVALS:
-    #     task_list = []
-    #     for missing_task in missing_tasks:
-    #         task_list += [task_name for task_name in TASK_LIST_ALL if missing_task in task_name]
-
-    #     if len(task_list) == 0:
-    #         # print(f'Cant find tasks for {missing_task}')
-    #         continue
-    #         # raise
-
-    # task_list = TASK_LIST_ALL
-    # for model in MODEL_LIST_ALL:
+    print(f'Launching {len(MODEL_LIST_ALL)} models on {len(TASK_LIST_ALL)} tasks')
 
     for task, model in itertools.product(TASK_LIST_ALL, MODEL_LIST_ALL):
         task_list = [task]
@@ -189,7 +140,7 @@ def main():
 
         # batch_size = 4 # TMP OVERRIDE FOR LADDER MODELS
 
-        if model in OE_EVAL_ALL_MODELS:
+        if model in MODEL_LIST_EXTERNAL:
             # From my testing, looks like anything less than 4 GPUs on 13B+ models (or Gemma 7B+) breaks
             # Also 70B model do not work on neptune (L40s)
             model_type = 'vllm'
@@ -214,9 +165,8 @@ def main():
             model_type = 'vllm'
             gpus = 4
         elif model in \
-            MODEL_LIST_MIXES + MODEL_LIST_MIXES_FINAL + MODEL_LIST_MIXES_FINAL_EXTENDED + DATADECIDE_FINAL_FIVE_CKPTS + MODEL_MERGED_DATADECIDE or \
-            ('-3B-' in model) or \
-            model in [weka_to_gcs(m) for m in MODEL_LIST_MIXES + MODEL_LIST_MIXES_FINAL + MODEL_LIST_MIXES_FINAL_EXTENDED + DATADECIDE_FINAL_FIVE_CKPTS + MODEL_MERGED_DATADECIDE]:
+            MODEL_LIST_DATADECIDE_FINAL + DATADECIDE_FINAL_FIVE_CKPTS + MODEL_MERGED_DATADECIDE or \
+            ('-3B-' in model):
             # Our 3B models have a head size of 208. This is not supported by PagedAttention and will throw errors.
             model_type = 'hf'
             gpus = 1
@@ -247,7 +197,7 @@ def main():
         if any(task in PALOMA + LLM_COMPRESSION + CUSTOM_LOSS for task in task_list):
             save_requests = False # don't save the perplexity files
             model_type = 'hf' # we can only run perplexity on hf for now
-            if model in OE_EVAL_BASE_MODELS or '10xC' in model:
+            if model in MODEL_LIST_EXTERNAL or '10xC' in model:
                 batch_size = 1 # larger corpora will silent fail
 
         run_eval(
@@ -255,7 +205,6 @@ def main():
             task_list=task_list, 
             model_type=model_type, 
             gpus=gpus,
-            # limit=10_000,
             batch_size=batch_size,
             save_requests=save_requests,
             gpu_memory_utilization=gpu_memory_utilization
