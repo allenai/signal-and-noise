@@ -33,7 +33,40 @@ pip install -e ".[all]"
 **Quick Start**
 
 ```sh
+# Use the dataset to compute SNR across compute scales
 python snr/snr_table.py
+
+>>>                                                Signal-and-Noise Analysis by Task                                               
+>>> ┏━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━┳━━━━━━┳━━━━━━┳━━━━━━━┳━━━━━━┳━━━━━━━┳━━━━━━┓
+>>> ┃                     ┃ Decision ┃ Decision ┃ Decision ┃ Scaling ┃ Scaling ┃      ┃      ┃      ┃       ┃      ┃       ┃      ┃
+>>> ┃                     ┃ Acc      ┃ Acc      ┃ Acc      ┃ Law Err ┃ Law Err ┃ SNR  ┃ SNR  ┃ SNR  ┃ SNR   ┃ SNR  ┃ SNR   ┃ SNR  ┃
+>>> ┃ Task                ┃ 150M     ┃ 300M     ┃ 750M     ┃ 7B      ┃ 13B     ┃ 150M ┃ 300M ┃ 750M ┃ 1B    ┃ 7B   ┃ 13B   ┃ 32B  ┃
+>>> ┡━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━╇━━━━━━╇━━━━━━╇━━━━━━╇━━━━━━━╇━━━━━━╇━━━━━━━╇━━━━━━┩
+>>> │ agi_eval            │ 59%      │ 51%      │ 67%      │ 0.7%    │ 6.5%    │ 3.6  │ 4.0  │ 3.3  │ 15.8  │ 17.2 │ 30.9  │ 16.9 │
+>>> │ arc_challenge       │ 83%      │ 86%      │ 76%      │ 11.2%   │ 11.9%   │ 3.1  │ 3.5  │ 3.1  │ 28.9  │ 19.8 │ 47.7  │ 12.6 │
+>>> │ arc_easy            │ 93%      │ 95%      │ 78%      │ 4.0%    │ 5.5%    │ 3.4  │ 3.3  │ 3.4  │ 22.6  │ 19.0 │ 169.8 │ 16.9 │
+>>> │ autobencher         │ 89%      │ 92%      │ 80%      │ 5.3%    │ 7.0%    │ 3.2  │ 3.6  │ 3.4  │ 48.8  │ 35.4 │ 67.0  │ 10.7 │
+>>> │ boolq               │ 48%      │ 56%      │ 70%      │ 0.0%    │ 2.0%    │ 2.9  │ 3.2  │ 3.9  │ 14.3  │ 8.2  │ 45.4  │ 8.0  │
+>>> │ codex_humaneval     │ 80%      │ 83%      │ 71%      │ 34.1%   │ 19.0%   │ 4.5  │ 3.9  │ 3.1  │ 10.9  │ 30.8 │ 56.5  │ 8.8  │
+>>> │ codex_humanevalplus │ 71%      │ 81%      │ 74%      │ 7.3%    │ 2.5%    │ 5.0  │ 3.9  │ 3.2  │ 11.5  │ 34.1 │ 84.7  │ 9.6  │
+>>> │ csqa                │ 69%      │ 79%      │ 64%      │ 0.5%    │ 0.8%    │ 4.0  │ 4.1  │ 4.3  │ 32.2  │ 18.4 │ 95.2  │ 22.6 │
+>>> │ gsm8k               │ 46%      │ 49%      │ 59%      │ 9.8%    │ 7.7%    │ 3.9  │ 5.2  │ 4.2  │ 10.3  │ 38.3 │ 76.3  │ 18.1 │
+>>> │ gsm_plus            │ 60%      │ 52%      │ 43%      │ 22.3%   │ 24.1%   │ 4.4  │ 5.4  │ 4.7  │ 21.2  │ 62.1 │ 95.4  │ 23.3 │
+>>> │ gsm_symbolic_main   │ 51%      │ 44%      │ 56%      │ 171.6%  │ 144.0%  │ 3.9  │ 5.8  │ 4.1  │ 8.1   │ 45.7 │ 77.9  │ 11.3 │
+>>> │ gsm_symbolic_p1     │ 42%      │ 51%      │ 54%      │ 1666.8% │ 538.6%  │ 4.6  │ 5.7  │ 3.7  │ 18.9  │ 30.3 │ 81.0  │ 14.3 │
+>>> │ gsm_symbolic_p2     │ 40%      │ 61%      │ 43%      │ 62.9%   │ 74.7%   │ 4.4  │ 4.8  │ 3.7  │ 8.6   │ 17.9 │ 50.8  │ 14.9 │
+>>> │ hellaswag           │ 74%      │ 83%      │ 82%      │ 1.1%    │ 0.1%    │ 4.4  │ 4.6  │ 4.8  │ 101.8 │ 81.2 │ 242.1 │ 21.8 │
+>>> │ mbpp                │ 75%      │ 77%      │ 78%      │ 19.1%   │ 15.7%   │ 4.7  │ 3.9  │ 3.2  │ 2.7   │ 32.4 │ 50.4  │ 9.1  │
+>>> │ mbppplus            │ 69%      │ 77%      │ 75%      │ 28.0%   │ 2.8%    │ 3.7  │ 3.8  │ 3.2  │ 2.2   │ 24.0 │ 49.2  │ 8.0  │
+>>> │ medmcqa             │ 61%      │ 71%      │ 72%      │ 16.7%   │ 18.1%   │ 4.2  │ 3.6  │ 4.4  │ 24.2  │ 18.4 │ 60.9  │ 13.8 │
+>>> │ minerva             │ 48%      │ 63%      │ 52%      │ 7.3%    │ 24.8%   │ 3.3  │ 3.6  │ 3.3  │ 5.5   │ 50.6 │ 91.8  │ 24.8 │
+>>> │ minerva_math_500    │ 51%      │ 59%      │ 43%      │ 58.1%   │ 48.6%   │ 3.5  │ 3.7  │ 3.5  │ 2.7   │ 25.1 │ 58.9  │ 11.2 │
+>>> │ mmlu                │ 89%      │ 91%      │ 81%      │ 3.1%    │ 3.7%    │ 3.3  │ 3.3  │ 3.3  │ 40.8  │ 12.2 │ 106.8 │ 15.4 │
+>>> │ openbookqa          │ 65%      │ 70%      │ 63%      │ 5.6%    │ 2.6%    │ 4.1  │ 3.7  │ 4.2  │ 13.1  │ 8.8  │ 37.8  │ 8.8  │
+>>> │ piqa                │ 74%      │ 71%      │ 57%      │ 0.2%    │ 1.4%    │ 4.0  │ 4.1  │ 4.5  │ 37.9  │ 20.1 │ 96.4  │ 16.5 │
+>>> │ socialiqa           │ 55%      │ 76%      │ 66%      │ 1.0%    │ 2.4%    │ 3.5  │ 3.7  │ 3.7  │ 26.4  │ 17.8 │ 39.6  │ 6.9  │
+>>> │ winogrande          │ 50%      │ 57%      │ 62%      │ 13.8%   │ 14.3%   │ 3.7  │ 3.4  │ 4.3  │ 37.3  │ 24.3 │ 49.2  │ 18.2 │
+>>> └─────────────────────┴──────────┴──────────┴──────────┴─────────┴─────────┴──────┴──────┴──────┴───────┴──────┴───────┴──────┘
 ```
 
 ### Calculating SNR
@@ -181,9 +214,9 @@ print(snr)
 
 ---
 
-### Evaluating a benchmark
+### Evaluating a new benchmark
 
-We include the models used in our analysis in [snr/constants/models.py](snr/constants/models.py). They are organized by their huggingface `model` and `revision`.
+**Models.** We include the models used in our analysis in [snr/constants/models.py](snr/constants/models.py). They are organized by their huggingface `model` and `revision`.
 
 ```python
 # 225 DataDecide models (for decision accuracy)
@@ -206,21 +239,21 @@ print(MODEL_LIST_FINAL_30_1B[0])
 >>> {'model': 'allenai/OLMo-2-0425-1B', 'revision': 'stage1-step1610000-tokens3377B'}
 ```
 
-Our evaluation used [OLMES](https://github.com/allenai/olmes). To install the eval infrastructure:
-
-```sh
-git clone https://github.com/allenai/olmes.git deps/olmes
-cd deps/olmes
-pip install -e ".[all]"
-```
-
-A list of all task aliases we used in this work is in [`snr/scripts/oe_eval_tasks.py`](./snr/scripts/oe_eval_tasks.py)
+**Tasks.** A list of all task aliases we used in this work is in [`snr/scripts/oe_eval_tasks.py`](./snr/scripts/oe_eval_tasks.py)
 
 ```python
 from snr.scripts.oe_eval_tasks import RC_TASKS_OLMES
 
 print(RC_TASKS_OLMES)
 >>> ["arc_challenge:rc::olmes:full", "arc_easy:rc::olmes:full", "boolq:rc::olmes:full", ...]
+```
+
+**Eval Code.** Our evaluation used [OLMES](https://github.com/allenai/olmes). To install the eval infrastructure:
+
+```sh
+git clone https://github.com/allenai/olmes.git deps/olmes
+cd deps/olmes
+pip install -e ".[all]"
 ```
 
 Then, use launch with this run command:

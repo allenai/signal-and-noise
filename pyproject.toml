@@ -14,24 +14,21 @@ requires-python = ">=3.9"
 license = { file = "LICENSE" }
 dependencies = [
     "adjustText",
-    "boto3",
-    "comet_ml",
     "datasets",
-    "duckdb",
     "huggingface_hub",
     "ipykernel",
     "ipython",
+    "jupyter",
     "matplotlib",
     "numpy",
     "openai",
     "pandas",
     "psutil",
+    "rich",
     "scipy",
     "seaborn",
     "statsmodels",
     "tqdm",
-    "wandb",
-    "jupyter",
 ]
 
 [project.urls]
