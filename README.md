@@ -96,6 +96,10 @@ from snr.constants.models import MODEL_LIST_DATADECIDE_FINAL
 
 # Scaling law models (for prediction error)
 from snr.constants.models import MODEL_LADDER_LIST
+
+# Signal and noise models (for signal-to-noise ratio)
+from snr.constants.signal import SNR_MODELS
+from snr.constants.models import MODEL_LIST_FINAL_30_1B, MODEL_LIST_FINAL_30_7B, MODEL_LIST_FINAL_30_13B, MODEL_LIST_FINAL_30_32B
 ```
 
 ---

@@ -17,7 +17,7 @@ from snr.plot import plot_task_accuracy
 from snr.constants import get_title_from_task
 from snr.constants.models import MODEL_LIST_DATADECIDE_FINAL
 from snr.ladder_wrapper import sort_experiment_names
-from snr.constants.datadecide import DDOS_SIZES # , DDOS_COMPUTE_SIZES
+from snr.constants.datadecide import DATADECIDE_SIZES # , DATADECIDE_COMPUTE
 
 os.environ["MallocStackLogging"] = "0" # disable malloc logs for macos
 
@@ -79,7 +79,7 @@ def get_perf_size(df, size, task, metric, models=DATADECIDE_MODEL_NAMES, agg_met
 def construct_2class_table(
         df, selected_tasks, 
         small_metric=ALL_METRICS, target_metric='primary_metric', 
-        model_sizes=DDOS_SIZES, 
+        model_sizes=DATADECIDE_SIZES, 
         agg_method_pred='max_n',
         agg_method_target='max_n',
         merge_small_alias=None,
@@ -489,7 +489,7 @@ def run_analysis(
         two_class_results = acc_pivot_bpb_primary.loc[str(task)].unstack()
         if axes is not None and not small_fig:
             ax: plt.Axes = axes[1, 2]
-            plot_task_accuracy(ax, two_class_results, str(task), DDOS_COMPUTE_SIZES)
+            plot_task_accuracy(ax, two_class_results, str(task), DATADECIDE_COMPUTE)
             ax.set_ylabel(f'Decision Acc (BPB on {primary_score_name})')
             ax.set_ylim(0.75, 1)
 
@@ -499,7 +499,7 @@ def run_analysis(
         two_class_results = acc_pivot_best_metric.loc[str(task)].unstack()
         if axes is not None and not small_fig:
             ax: plt.Axes = axes[2, 2]
-            plot_task_accuracy(ax, two_class_results, str(task), DDOS_COMPUTE_SIZES)
+            plot_task_accuracy(ax, two_class_results, str(task), DATADECIDE_COMPUTE)
             ax.set_ylabel(f'Decision Acc (best on {primary_score_name})')
             ax.set_ylim(0.75, 1)
 
@@ -522,7 +522,7 @@ def run_analysis(
         two_class_results = acc_pivot_bpb.loc[str(task)].unstack()
         if axes is not None:
             ax: plt.Axes = axes[3, 2]
-            plot_task_accuracy(ax, two_class_results, str(task), DDOS_COMPUTE_SIZES, show_legend=True)
+            plot_task_accuracy(ax, two_class_results, str(task), DATADECIDE_COMPUTE, show_legend=True)
             ax.legend(fontsize=6, ncols=2)
             ax.set_ylabel('Decision Acc (BPB on BPB)')
             ax.set_ylim(0.75, 1)
@@ -559,7 +559,7 @@ def run_analysis(
 
         # Compute range and std dev between models at each compute scale
         for additional_metric in additional_metrics:
-            for size in DDOS_SIZES:
+            for size in DATADECIDE_SIZES:
                 scores = get_perf_size(df, size, task, additional_metric)[additional_metric]
                 if size == '1B':
                     size = '1B-100B' # rename to not confuse with OLMo 2 1B-4T
@@ -584,7 +584,7 @@ def run_analysis(
     # SNR
     snr_metrics = ['primary_score', 'logits_per_char_corr', 'logits_per_byte_corr']
     for snr_metric in snr_metrics:
-        for size in DDOS_SIZES + ['1B-100B', '1B', '7B', '13B', '32B']:
+        for size in DATADECIDE_SIZES + ['1B-100B', '1B', '7B', '13B', '32B']:
             if f'mean:{snr_metric}:{size}' in results and \
                 f'std_dev:{snr_metric}:{size}' in results and \
                 f'step_rel_std:last30:{snr_metric}:{size}' in results:
