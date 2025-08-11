@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from rich.table import Table
 from rich.console import Console
+from rich import box
 from tqdm import tqdm
 
 from snr.constants import get_selected_tasks, get_title_from_task
@@ -124,7 +125,7 @@ def calculate_results(df, tasks, small_sizes, large_sizes_scaling, large_sizes_s
 
 
 def render_table(results, small_sizes, large_sizes_scaling, large_sizes_snr):
-    table = Table(title="Signal-and-Noise Analysis by Task")
+    table = Table(title="Signal-and-Noise Analysis by Task", box=box.ASCII)
 
     # Add header
     decision_acc_headers = [f"{size}" for size in small_sizes]
