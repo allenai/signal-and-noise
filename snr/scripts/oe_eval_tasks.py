@@ -77,11 +77,12 @@ MC_TASKS_COPY_COLORS = [
 ]
 
 PALOMA = [
-    "paloma_4chan_meta_sep::paloma",
     # "paloma_c4_100_domains::paloma", # 28K
+    # "paloma_dolma_100_subreddits::paloma", # 92K
+    # "paloma_twitterAAE_HELM_fixed::paloma", # 100K
+    "paloma_4chan_meta_sep::paloma",
     "paloma_c4_en::paloma",
     "paloma_dolma_100_programing_languages::paloma",
-    # "paloma_dolma_100_subreddits::paloma", # 92K
     "paloma_dolma-v1_5::paloma",
     "paloma_falcon-refinedweb::paloma",
     "paloma_gab::paloma",
@@ -91,7 +92,6 @@ PALOMA = [
     "paloma_mc4::paloma",
     "paloma_ptb::paloma",
     "paloma_redpajama::paloma",
-    # "paloma_twitterAAE_HELM_fixed::paloma", # 100K
     "paloma_wikitext_103::paloma",
 ]
 LLM_COMPRESSION = [
@@ -107,8 +107,8 @@ CUSTOM_LOSS = [
 
 GEN_TASKS_OLMES = [
     # "coqa::olmes:full", # <- coqa is not setup properly (no few shot examples)
-    "drop::olmes:full",
     # "gsm8k::olmes:full", # <- already included elsewhere under a different name
+    "drop::olmes:full",
     "jeopardy::olmes:full",
     "naturalqs::olmes:full",
     "squad::olmes:full",
@@ -135,7 +135,6 @@ MMLU_PRO_RC  = [task.replace(":mc::none", ":rc::none") for task in MMLU_PRO_MC]
 MMLU_PRO_COT = [task.replace(":mc::none", ":cot::none") for task in MMLU_PRO_MC]
 
 AGI_EVAL_MC = [
-    # AGI Eval MC
     "agi_eval_lsat-ar::olmes:full",
     "agi_eval_lsat-lr::olmes:full",
     "agi_eval_lsat-rc::olmes:full",
@@ -189,14 +188,35 @@ BBH_COT = [
     "bbh_word_sorting:cot::olmes:full",
 ]
 
-AGI_EVAL_TULU_3 = [
-    "agi_eval_lsat-ar:0shot_cot::tulu3",
-    "agi_eval_lsat-lr:0shot_cot::tulu3",
-    "agi_eval_lsat-rc:0shot_cot::tulu3",
-    "agi_eval_logiqa-en:0shot_cot::tulu3",
-    "agi_eval_sat-math:0shot_cot::tulu3",
-    "agi_eval_sat-en:0shot_cot::tulu3",
-    "agi_eval_aqua-rat:0shot_cot::tulu3",
-    "agi_eval_sat-en-without-passage:0shot_cot::tulu3",
-    "agi_eval_gaokao-english:0shot_cot::tulu3",
+AUTOBENCHER = [
+    'autobencher::none', 
+    'autobencher:mc::none'
+]
+
+MATH_CODE = [
+    "gsm8k::olmes:full",
+    "minerva_math_algebra::olmes:full",
+    "minerva_math_counting_and_probability::olmes:full",
+    "minerva_math_geometry::olmes:full",
+    "minerva_math_intermediate_algebra::olmes:full",
+    "minerva_math_number_theory::olmes:full",
+    "minerva_math_prealgebra::olmes:full",
+    "minerva_math_precalculus::olmes:full",
+    "mbpp::ladder",
+    "mbppplus::ladder",
+    "codex_humaneval:temp0.8",
+    "codex_humanevalplus::ladder", 
+    'gsm_plus::none',
+    'gsm_symbolic::none',
+    'gsm_symbolic_p1::none',
+    'gsm_symbolic_p2::none',
+    'minerva_math_500::none', 
+]
+
+EXTA_TASKS = [
+    # 'gpqa::none', # requires HF token
+    'deepmind_math_large::none',
+    'medmcqa:rc::none',
+    'medmcqa:mc::none',
+    'aime::none',
 ]
