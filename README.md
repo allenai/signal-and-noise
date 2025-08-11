@@ -32,7 +32,7 @@ pip install -e ".[all]"
 
 **Quick Start**
 
-For a quick script to compute the benchmark properties we studied, see [snr_simple.py](./snr/snr_simple.py)
+For a quick script to compute the benchmark properties we studied, see [`snr_simple.py`](./snr/snr_simple.py)
 
 ```sh
 # Use our dataset to compute SNR across compute scales
@@ -226,7 +226,7 @@ print(snr)
 
 ### Evaluating a new benchmark
 
-**Models.** We include the models used in our analysis in [snr/constants/models.py](snr/constants/models.py). They are organized by their huggingface `model` and `revision`.
+**Models.** We include the models used in our analysis in [`snr/constants/models.py`](snr/constants/models.py). They are organized by their huggingface `model` and `revision`.
 
 ```python
 # 225 DataDecide models (for decision accuracy)
