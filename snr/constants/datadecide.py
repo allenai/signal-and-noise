@@ -58,7 +58,7 @@ DDOS_SIZES = ["4M", "20M", "60M", "90M", "150M", "300M", "530M", "750M", "1B"]
 
 # DDOS_COMPUTE_SIZES = tuple(get_compute(size) for size in DDOS_SIZES)
 
-DDOS_MODEL_NAMES = [
+DATADECIDE_MODEL_NAMES = [
     "DCLM-baseline",
     "dolma17",
     "c4",

@@ -11,12 +11,13 @@ from snr.dataloader import get_slice
 from snr.ladder_wrapper import run_ladder
 from snr.stats import compute_total_variation
 from snr.datadecide import compute_2_class
-from snr.constants.datadecide import get_compute
+# from snr.constants.datadecide import get_compute
+from snr.constants.datadecide import DATADECIDE_MODEL_NAMES
 from snr.plot import plot_task_accuracy
 from snr.constants import get_title_from_task
 from snr.constants.models import MODEL_LIST_DATADECIDE_FINAL
 from snr.ladder_wrapper import sort_experiment_names
-from snr.constants.datadecide import DDOS_SIZES, DDOS_COMPUTE_SIZES
+from snr.constants.datadecide import DDOS_SIZES # , DDOS_COMPUTE_SIZES
 
 os.environ["MallocStackLogging"] = "0" # disable malloc logs for macos
 
@@ -25,7 +26,7 @@ DEFAULT_LADDER_CONFIG_PATH = f'{ROOT_DIR}/analysis/utils/ladder_config.json'
 ALL_METRICS = ['logits_per_char_corr', 'primary_score']
 REVERSED_METRICS = ['margin_per_byte', 'norm_correct_prob_per_byte', 'correct_prob_per_byte', 'correct_logit_per_byte', 'logits_per_byte_corr']
 
-def get_perf_size(df, size, task, metric, models=DDOS_MODEL_NAMES, agg_method='max_n'):
+def get_perf_size(df, size, task, metric, models=DATADECIDE_MODEL_NAMES, agg_method='max_n'):
     """ Get performance of all models at a specific size """
     _slice: pd.DataFrame = get_slice(df, task=task)
     _slice = _slice[(_slice['model'].isin(models))]
@@ -93,7 +94,7 @@ def construct_2class_table(
 
     for metric, size, task in tqdm(combinations, desc='Computing two class accuracy', disable=(len(combinations) < 50)):
         _slice = get_slice(df, task=task)
-        _slice = _slice[((_slice['size'] == size)) & (_slice['model'].isin(DDOS_MODEL_NAMES))] # get data for small scale
+        _slice = _slice[((_slice['size'] == size)) & (_slice['model'].isin(DATADECIDE_MODEL_NAMES))] # get data for small scale
         if _slice.empty:
             raise RuntimeError(f"Empty slice for metric={metric}, size={size}, task={task}")
         steps = [sorted(_slice['step'].unique())[-1]]
@@ -107,7 +108,7 @@ def construct_2class_table(
                 _agg_method_target = None # disable aggregation within get_perf_size
 
             # get data at the small scale
-            small_models = DDOS_MODEL_NAMES
+            small_models = DATADECIDE_MODEL_NAMES
             if merge_small_alias is not None:
                 small_models = [f'{model}-{merge_small_alias}' for model in small_models]
             small_scale = get_perf_size(
@@ -116,7 +117,7 @@ def construct_2class_table(
             )
 
             # predict at the target scale (1B) 
-            target_models = DDOS_MODEL_NAMES
+            target_models = DATADECIDE_MODEL_NAMES
             if merge_target_alias is not None:
                 target_models = [f'{model}-{merge_target_alias}' for model in target_models]
             target_scale = get_perf_size(
@@ -204,7 +205,7 @@ def run_analysis(
     results = {}
 
     # Observational noise
-    observational_models = external_ladder_models+eval_ladder_models+DDOS_MODEL_NAMES
+    observational_models = external_ladder_models+eval_ladder_models+DATADECIDE_MODEL_NAMES
     _slice = get_slice(df, task=task, model=observational_models)
     numerical_cols     = [col for col in _slice.select_dtypes(include='number').columns if col != 'extracted_size']
     non_numerical_cols = _slice.select_dtypes(exclude='number').columns.tolist() + ['extracted_size']
@@ -642,7 +643,7 @@ def compute_metaproperties(
     external_models = sorted([
         model for model in models 
         if model not in
-            DDOS_MODEL_NAMES + # exclude 1B-5xC models
+            DATADECIDE_MODEL_NAMES + # exclude 1B-5xC models
             ladder_models + # exclude ladder models
             ['peteish13-highlr'] + # exclude intermediate checkpoints from 13B
             merged_models # exclude merged models

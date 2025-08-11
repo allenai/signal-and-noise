@@ -33,7 +33,7 @@ def signal_to_noise_ratio(signal_scores: np.ndarray, noise_scores: np.ndarray) -
     signal = \max_{j,k} |m_j - m_k| / m̄
     noise = σ_m / m̄
     snr = signal / noise
-    """"
+    """
     dispersion = np.max([np.abs(mj - mk) for mj in signal_scores for mk in signal_scores])
     signal = dispersion / np.mean(signal_scores)
     noise = np.std(noise_scores) / np.mean(noise_scores)
@@ -58,6 +58,26 @@ print(f'Loaded {len(df):,} model evaluations')
 >>> Loaded 388,924 model evaluations
 ```
 
+**Utilities for handling eval results**
+
+```python
+# Use get_slice() to get specific results
+from snr.dataloader import get_slice
+df_subset = get_slice(df, model='OLMo-2-1124-13B', task=['arc_challenge', 'arc_easy'])
+
+print(df_subset[['task', 'primary_score']])
+>>>          task  primary_score
+>>> arc_challenge       0.639932
+>>>      arc_easy       0.884259
+
+# Use get_nd_array() to get a numpy array of results
+from snr.dataloader import get_nd_array
+tasks, arr = get_nd_array(df, col='task', metric='primary_score', model='OLMo-2-1124-13B', task=['arc_challenge', 'arc_easy'])
+
+print(arr)
+>>> [0.63993174 0.88425926]
+```
+
 ---
 
 ### Evaluating a benchmark
@@ -69,6 +89,14 @@ print(f'Loaded {len(df):,} model evaluations')
 3. Running and calculating SNR (with HF models)
 
 **One way to get more usage is put together a quick demo!**
+
+```python
+# 225 DataDecide models (for decision accuracy)
+from snr.constants.models import MODEL_LIST_DATADECIDE_FINAL
+
+# Scaling law models (for prediction error)
+from snr.constants.models import MODEL_LADDER_LIST
+```
 
 ---
 

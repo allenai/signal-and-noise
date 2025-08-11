@@ -7,7 +7,7 @@ from tqdm import tqdm
 from collections import defaultdict
 
 from snr.dataloader import get_nd_array
-from snr.download.preprocess import SIZE_PREFIXES, SIZE_PREFIXES_FIX, str_find
+from snr.constants import str_find
 from snr.constants.ladder import DATA_BY_NAME_LADDER
 from snr.constants.plot import EXTERNAL_SCALING_COLOR_MAP
 
@@ -34,6 +34,12 @@ TASK_KEY_MAP = {
     "winogrande": "winogrande_val_5shot",
     "piqa": "piqa_val_5shot",
 }
+
+
+SIZE_PREFIXES = [
+    f'-{size}-' for size in ['3B', '1B', '760M', '750M', '530M', '370M', '300M', '190M', '150M', '90M', '60M', '20M', '16M', '14M', '10M', '8M', '6M', '4M']
+]
+SIZE_PREFIXES_FIX = {'3B': '3.2B', '1B': '1.3B'}
 
 
 def sort_experiment_names(experiments):

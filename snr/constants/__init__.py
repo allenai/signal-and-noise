@@ -43,3 +43,12 @@ def get_pretty_task_name(task):
     if task not in PRETTY_TASK_NAMES:
         print(f"Task does not have pretty name: {task}")
     return PRETTY_TASK_NAMES.get(task, task)
+
+
+def str_find(str_list, input_string):
+    """ Get if a list of strings exists in a string. Return first match """
+    hits = [item for item in str_list if item in input_string]
+    if len(hits) == 0: 
+        return None
+    else:
+        return hits[0]
