@@ -1,13 +1,14 @@
 from concurrent.futures import ProcessPoolExecutor
 import copy
 import random
+from matplotlib import pyplot as plt
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
 from collections import defaultdict
 
 from snr.dataloader import get_nd_array
-from snr.constants import str_find
+from snr.constants import ROOT_DIR, str_find
 from snr.constants.ladder import DATA_BY_NAME_LADDER
 from snr.constants.plot import EXTERNAL_SCALING_COLOR_MAP
 
@@ -20,6 +21,9 @@ from fitting.predict import predict_chained, plot_chained, str_chained_fit
 from fitting.step1_flops import fit_step1 as fit_step1_flops, predict_step1 as predict_step1_flops, plot_step1 as plot_step1_flops, str_chinchilla_flops_fit
 from fitting.predict_flops import predict_chained_flops, plot_chained as plot_chained_flops, str_chained_fit as str_chained_fit_flops
 from fitting.single_step import fit_single_step, predict_single_step, plot_single_step, str_combined_fit
+plt.close()
+
+LADDER_CONFIG_PATH = f'{ROOT_DIR}/snr/constants/ladder_config.json'
 
 FONTSIZE = 8
 
@@ -372,7 +376,7 @@ def aggregate_list(data_by_name, last_n_method_train, last_n_method_eval, last_n
 
 
 def run_ladder(
-    df, task_name, train_models, eval_models, config_path, 
+    df, task_name, train_models, eval_models, config_path=LADDER_CONFIG_PATH, 
     downstream_feature='primary_score', intermediate_feature='bpb', intermediate_task_name=None, y_metric='rc_bpb',  # "y_metric" is the metric type
     use_flops=False, use_single_step=False,
     last_n=None, last_n_method_train=None, last_n_method_eval=None, last_n_resample=None, # sample/avg last n checkpoints

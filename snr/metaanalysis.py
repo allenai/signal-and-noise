@@ -10,7 +10,6 @@ from snr.constants import ROOT_DIR
 from snr.dataloader import get_slice
 from snr.ladder_wrapper import run_ladder
 from snr.stats import compute_total_variation
-from snr.datadecide import compute_2_class
 # from snr.constants.datadecide import get_compute
 from snr.constants.datadecide import DATADECIDE_MODEL_NAMES
 from snr.plot import plot_task_accuracy
@@ -25,6 +24,30 @@ DEFAULT_LADDER_CONFIG_PATH = f'{ROOT_DIR}/analysis/utils/ladder_config.json'
 
 ALL_METRICS = ['logits_per_char_corr', 'primary_score']
 REVERSED_METRICS = ['margin_per_byte', 'norm_correct_prob_per_byte', 'correct_prob_per_byte', 'correct_logit_per_byte', 'logits_per_byte_corr']
+
+
+def compute_2_class(ranking_a, ranking_b):
+    """ Old version of decision accuracy """
+    ranking_a = list(ranking_a)
+    ranking_b = list(ranking_b)
+
+    assert len(ranking_b) == len(ranking_b)
+    
+    n = len(ranking_a)
+    same_order_count = 0
+    total_pairs = 0
+    
+    for i in range(n):
+        for j in range(i + 1, n):
+            i_pred = ranking_b.index(ranking_a[i])
+            j_pred = ranking_b.index(ranking_a[j])
+            
+            if (i < j and i_pred < j_pred) or (i > j and i_pred > j_pred):
+                same_order_count += 1
+            total_pairs += 1
+    
+    return same_order_count / total_pairs if total_pairs > 0 else 0.0
+
 
 def get_perf_size(df, size, task, metric, models=DATADECIDE_MODEL_NAMES, agg_method='max_n'):
     """ Get performance of all models at a specific size """

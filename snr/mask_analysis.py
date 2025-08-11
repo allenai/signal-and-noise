@@ -10,7 +10,7 @@ import random
 
 from snr.dataloader import get_nd_array
 from snr.ladder_wrapper import run_ladder
-from snr.datadecide import decision_acc_fast
+from snr.metrics import decision_acc_fast
 from snr.constants import ROOT_DIR, get_title_from_task
 from snr.constants.models import DDOS_MODEL_NAMES
 

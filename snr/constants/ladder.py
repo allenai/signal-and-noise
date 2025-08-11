@@ -123,3 +123,33 @@ DATA_BY_NAME_LADDER = {
         "mode": "eval",
     },
 }
+
+
+LADDER_MODEL_NAMES = [
+    "peteish-moreeval-190M-0.5xC",
+    "peteish-moreeval-rerun-190M-1xC",
+    "peteish-moreeval-190M-2xC",
+    "peteish-moreeval-190M-5xC",
+    "peteish-moreeval-190M-10xC",
+    "peteish-moreeval-370M-0.5xC",
+    "peteish-moreeval-rerun-370M-1xC",
+    "peteish-moreeval-370M-2xC",
+    "peteish-moreeval-370M-5xC",
+    "peteish-moreeval-370M-10xC",
+    "peteish-moreeval-760M-0.5xC",
+    "peteish-moreeval-rerun-760M-1xC",
+    "peteish-moreeval-760M-2xC",
+    "peteish-moreeval-760M-5xC",
+    "peteish-moreeval-760M-10xC",
+    "peteish-moreeval-1B-0.5xC",
+    "peteish-moreeval-1B-1xC",
+    "peteish-moreeval-rerun-1B-1xC",
+    "peteish-moreeval-1B-2xC",
+    "peteish-moreeval-1B-5xC",
+    "peteish-moreeval-1B-10xC",
+    "peteish-moreeval-3B-0.5xC",
+    "peteish-moreeval-rerun-3B-1xC",
+    "peteish-moreeval-3B-2xC",
+    "peteish-moreeval-3B-5xC",
+    "peteish-moreeval-3B-10xC",
+]

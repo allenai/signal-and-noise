@@ -21,6 +21,21 @@ git clone https://github.com/allenai/signal-and-noise
 pip install -e .
 ```
 
+<!-- ```sh
+mkdir deps # directory for olmo repos
+
+# Install scaling law code
+git clone -b signal-to-noise https://github.com/allenai/OLMo-ladder deps/OLMo-ladder
+cd deps/OLMo-ladder
+pip install -e ".[all]"
+``` -->
+
+**Quick Start**
+
+```sh
+python snr/snr_table.py
+```
+
 ### Calculating SNR
 
 Our core signal to noise calculation can be produced in a few lines. Given a scores from a population of models (`signal_scores`) and intermediate checkpoints (`noise_scores`), pseudocode is as follows:
@@ -78,11 +93,12 @@ print(arr)
 >>> [0.63993174 0.88425926]
 ```
 
-**Compute metrics with eval results**
+<details>
+<summary>Compute decision accuracy</summary>
 
 ```python
 from snr.dataloader import get_slice
-from snr.datadecide import decision_acc_fast
+from snr.metrics import decision_acc_fast
 
 scores_small  = get_slice(df, size='150M', task='arc_easy', step=38157)
 scores_target = get_slice(df, size='1B', task='arc_easy', step=69369)
@@ -96,29 +112,132 @@ print(decision_acc)
 >>> 0.93
 ```
 
+</details>
+
+<details>
+<summary>Compute scaling law error</summary>
+
+```python
+from snr.ladder_wrapper import run_ladder
+from snr.constants.ladder import LADDER_MODEL_NAMES
+
+_, _, (error_7b, error_13b) = run_ladder(
+    df,
+    task='arc_easy',
+    train_models=LADDER_MODEL_NAMES,
+    eval_models=["peteish7", "peteish13-highlr"]
+)
+
+print(error_7b, error_13b)
+>>> 0.0398 0.0553
+```
+
+</details>
+
+<details>
+<summary>Compute signal-to-noise ratio</summary>
+
+For models < 1B, we use the DataDecide data to compute SNR:
+
+```python
+import numpy as np
+from snr.metrics import signal_to_noise_ratio
+
+scores_df = get_slice(df, size='150M', task='arc_easy').sort_values('step')
+
+# numpy array of scores in shape (mix, checkpoint)
+scores_arr = np.array([lst for lst in scores_df.groupby('mix')['primary_score'].apply(list)])
+
+signal = [np.mean(scores) for scores in scores_arr]
+noise  = scores_arr.flatten()
+
+snr = signal_to_noise_ratio(signal, noise)
+
+print(snr)
+>>> 3.389
+```
+
+For models > 1B, we use the external model scores to compute SNR:
+
+```python
+from snr.constants.signal import SNR_MODELS
+from snr.metrics import signal_to_noise_ratio
+
+signal_models = SNR_MODELS['olmo2_13b']['models']
+
+noise_df = get_slice(df, model='peteish13-highlr', task=task)
+signal_df = df[df['model_path'].isin(signal_models) & (df['task'] == task)]
+
+signal = list(signal_df['primary_score'])
+noise  = list(noise_df.sort_values('step')['primary_score'])[-30:]
+
+snr = signal_to_noise_ratio(signal, noise)
+
+print(snr)
+>>> 169.776
+```
+
+</details>
+
 ---
 
 ### Evaluating a benchmark
 
-**@davidheineman TODO: How to evaluate YOUR benchmark with our tool (maybe with minieval?)**
-
-1. Running and calculating decision accuracy (with HF models)
-2. Running and fitting prediction error (with HF models)
-3. Running and calculating SNR (with HF models)
-
-**One way to get more usage is put together a quick demo!**
+We include the models used in our analysis in [snr/constants/models.py](snr/constants/models.py). They are organized by their huggingface `model` and `revision`.
 
 ```python
 # 225 DataDecide models (for decision accuracy)
 from snr.constants.models import MODEL_LIST_DATADECIDE_FINAL
 
+print(MODEL_LIST_DATADECIDE_FINAL[0])
+>>> {'model': 'allenai/DataDecide-c4-150M', 'revision': 'main'}
+
 # Scaling law models (for prediction error)
 from snr.constants.models import MODEL_LADDER_LIST
+
+print(MODEL_LADDER_LIST[0])
+>>> {'model': 'allenai/OLMo-Ladder-190M-0.5xC', 'revision': 'main'}
 
 # Signal and noise models (for signal-to-noise ratio)
 from snr.constants.signal import SNR_MODELS
 from snr.constants.models import MODEL_LIST_FINAL_30_1B, MODEL_LIST_FINAL_30_7B, MODEL_LIST_FINAL_30_13B, MODEL_LIST_FINAL_30_32B
+
+print(MODEL_LIST_FINAL_30_1B[0])
+>>> {'model': 'allenai/OLMo-2-0425-1B', 'revision': 'stage1-step1610000-tokens3377B'}
 ```
+
+Our evaluation used [OLMES](https://github.com/allenai/olmes). To install the eval infrastructure:
+
+```sh
+git clone https://github.com/allenai/olmes.git deps/olmes
+cd deps/olmes
+pip install -e ".[all]"
+```
+
+A list of all task aliases we used in this work is in [`snr/scripts/oe_eval_tasks.py`](./snr/scripts/oe_eval_tasks.py)
+
+```python
+from snr.scripts.oe_eval_tasks import RC_TASKS_OLMES
+
+print(RC_TASKS_OLMES)
+>>> ["arc_challenge:rc::olmes:full", "arc_easy:rc::olmes:full", "boolq:rc::olmes:full", ...]
+```
+
+Then, use launch with this run command:
+
+```sh
+# Run eval on a model / revision pair from HF
+oe-eval \
+  --model allenai/OLMo-2-0425-1B \
+  --revision stage1-step1610000-tokens3377B \
+  --task arc_challenge:rc::olmes:full \
+  --model-type vllm \
+  --gpus 1
+```
+
+We include an example script to mass-launch evals in [`snr/scripts/launch_eval.py`](./snr/scripts/launch_eval.py).
+
+Then, to compute decision accuracy, scaling laws and SNR, see the previous section!
 
 ---
 
@@ -144,54 +263,3 @@ The [`analysis/`](./analysis/) folder contains notebooks to reproduce the core f
 ```
 TODO
 ```
-
-<!-- ```sh
-mkdir deps # directory for olmo repos
-
-# Install scaling law code
-git clone -b signal-to-noise https://github.com/allenai/OLMo-ladder deps/OLMo-ladder
-cd deps/OLMo-ladder
-pip install -e ".[all]"
-
-# Install eval code
-git clone -b signal-to-noise https://github.com/allenai/oe-eval-internal deps/oe-eval-internal
-pip install -e "deps/oe-eval-internal.[all]"
-
-# Download seed / data order evals
-python analysis/utils/comet_utils.py --workspace ai2 --project olmo2-model-ladder-davidh --output-dir analysis/data/random_seeds --output-filename olmo2_random_seeds.csv
-```
-
----
-
-### Download Model Ladder Data
-```sh
-# Download wandb logs (see OLMo library for all downloads)
-python olmo/scaling/scaling_laws/download_wandb_logs.py -n 'ai2-llm/olmo-ladder/peteish-moreeval-3B-1xC' -y validation-and-downstream-v2 -o scripts/scaling/data/peteish-moreeval/3B-1xC.csv
-python olmo/scaling/scaling_laws/download_wandb_logs.py -n 'ai2-llm/olmo-ladder/peteish-moreeval-3B-2xC' -y validation-and-downstream-v2 -o scripts/scaling/data/peteish-moreeval/3B-2xC.csv
-python olmo/scaling/scaling_laws/download_wandb_logs.py -n 'ai2-llm/olmo-ladder/peteish-moreeval-3B-5xC' -y validation-and-downstream-v2 -o scripts/scaling/data/peteish-moreeval/3B-5xC.csv
-python olmo/scaling/scaling_laws/download_wandb_logs.py -n 'ai2-llm/olmo-ladder/peteish-moreeval-3B-10xC' -y validation-and-downstream-v2 -o scripts/scaling/data/peteish-moreeval/3B-10xC.csv
-
-# Sanity check: Run variance analysis + predictions
-python scripts/scaling/variance_analysis.py -k v2_main_variance -c scripts/scaling/final_variance.json -o figure/peteish-moreeval/variance.pdf --last_n_points 10 --run_prediction
-python scripts/scaling/step2.py -k v2_main -c scripts/scaling/step2.json -o figure/peteish-moreeval/step2_main.pdf --skip_perc 0.1 --moving_avg 5
-```
-
-### Launching & Processing Evals
-```sh
-python scripts/launch_evals.py # launch evals on beaker
-python analysis/download/aws.py # sync from s3
-python analysis/download/preprocess.py # convert to .parquet
-
-# Detatch from current session
-nohup python scripts/launch_eval.py > /tmp/out.out 2>&1 & tail -f /tmp/out.out
-nohup python analysis/download/aws.py > /tmp/out.out 2>&1 & tail -f /tmp/out.out
-
-# (in case I need it)
-nohup python analysis/download/preprocess.py > /tmp/out.out 2>&1 & tail -f /tmp/out.out
-nohup python analysis/download/hf.py > /tmp/out.out 2>&1 & tail -f /tmp/out.out
-nohup python scripts/download_checkpoints.py > /tmp/out.out 2>&1 & tail -f /tmp/out.out
-nohup python scripts/weight_merging/merge.py > /tmp/merge.out 2>&1 & tail -f /tmp/merge.out
-
-# Convert checkpoints
-nohup ./scripts/convert_checkpoints_peteish.sh > /tmp/out.out 2>&1 & tail -f /tmp/out.out
-``` -->
