@@ -20,7 +20,4 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          git remote add main https://davidheineman:$HF_TOKEN@huggingface.co/spaces/allenai/signal-and-noise
-          git fetch main
-          git pull main main --allow-unrelated-histories || true
-          git subtree push --prefix=viz main main
+          git push https://davidheineman:$HF_TOKEN@huggingface.co/spaces/allenai/signal-and-noise main
