@@ -16,3 +16,4 @@ generation/existing-methods/AutoBencher/KI
 *.egg-info
 release
 deps
+cartography

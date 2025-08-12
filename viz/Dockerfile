@@ -6,8 +6,8 @@ COPY ./requirements.txt /home/requirements.txt
 
 RUN pip install --no-cache-dir --upgrade -r /home/requirements.txt
 
-COPY ./data /data
+# COPY ./data /data
 
-COPY ./analysis /home
+COPY ./src /home
 
 CMD ["gunicorn", "main:server", "-b", "0.0.0.0:7860"]
