@@ -22,7 +22,7 @@ dependencies = [
     "matplotlib",
     "numpy",
     "openai",
-    "pandas",
+    "pandas<2.3.0",
     "psutil",
     "rich",
     "scipy",

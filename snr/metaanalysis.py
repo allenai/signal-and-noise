@@ -10,10 +10,8 @@ from snr.constants import ROOT_DIR
 from snr.dataloader import get_slice
 from snr.ladder_wrapper import run_ladder
 from snr.stats import compute_total_variation
-from snr.constants.datadecide import DATADECIDE_MODEL_NAMES
 from snr.plot import plot_task_accuracy
 from snr.constants import get_title_from_task
-from snr.constants.models import MODEL_LIST_DATADECIDE_FINAL
 from snr.metrics import decision_acc_fast
 from snr.ladder_wrapper import sort_experiment_names
 from snr.constants.datadecide import DATADECIDE_SIZES, DATADECIDE_COMPUTE
@@ -49,7 +47,7 @@ def compute_2_class(ranking_a, ranking_b):
     return same_order_count / total_pairs if total_pairs > 0 else 0.0
 
 
-def get_perf_size(df, size, task, metric, models=DATADECIDE_MODEL_NAMES, agg_method='max_n'):
+def get_perf_size(df, size, task, metric, models, agg_method='max_n'):
     """ Get performance of all models at a specific size """
     _slice: pd.DataFrame = get_slice(df, task=task)
     _slice = _slice[(_slice['model'].isin(models))]
@@ -86,14 +84,14 @@ def get_perf_size(df, size, task, metric, models=DATADECIDE_MODEL_NAMES, agg_met
 
     if agg_method is not None:
         # Aggregate points for different steps
-        _slice = _slice.groupby(['model', 'task'], as_index=False).apply(lambda x: agg_func(x, agg_method))
+        _slice = _slice.groupby(['model', 'task'], as_index=False).apply(lambda x: agg_func(x, agg_method), include_groups=True)
         
     if isinstance(task, list):
         # Aggregate points for different subtasks
-        _slice = _slice.groupby(['model', 'step'], as_index=False).apply(lambda x: agg_func(x, 'mean'))
+        _slice = _slice.groupby(['model', 'step'], as_index=False).apply(lambda x: agg_func(x, 'mean'), include_groups=True)
         _slice['task_name'] = 'aggregate'
 
-    _slice = _slice.reset_index().sort_values('step')[['model', 'mix', 'step', 'size', metric]]
+    _slice = _slice.reset_index().sort_values('step')[['model', 'mix', 'step', 'size', metric, 'flops']]
     _slice['compute'] = _slice['flops']
     _slice = _slice.sort_values(metric, ignore_index=True)
     return _slice
@@ -117,7 +115,8 @@ def construct_2class_table(
 
     for metric, size, task in tqdm(combinations, desc='Computing two class accuracy', disable=(len(combinations) < 50)):
         _slice = get_slice(df, task=task)
-        _slice = _slice[((_slice['size'] == size)) & (_slice['model'].isin(DATADECIDE_MODEL_NAMES))] # get data for small scale
+        datadecide = list(set(df[df['model_type'] == 'datadecide']['model']))
+        _slice = _slice[((_slice['size'] == size)) & (_slice['model'].isin(datadecide))] # get data for small scale
         if _slice.empty:
             raise RuntimeError(f"Empty slice for metric={metric}, size={size}, task={task}")
         steps = [sorted(_slice['step'].unique())[-1]]
@@ -131,30 +130,30 @@ def construct_2class_table(
                 _agg_method_target = None # disable aggregation within get_perf_size
 
             # get data at the small scale
-            small_models = DATADECIDE_MODEL_NAMES
+            small_models = [model for model in datadecide if size in model]
             if merge_small_alias is not None:
                 small_models = [f'{model}-{merge_small_alias}' for model in small_models]
             small_scale = get_perf_size(
-                df, size, task, metric, 
-                agg_method=_agg_method_pred, models=small_models
+                df, size, task, metric, small_models,
+                agg_method=_agg_method_pred,
             )
 
             # predict at the target scale (1B) 
-            target_models = DATADECIDE_MODEL_NAMES
+            target_models = [model for model in datadecide if '1B' in model]
             if merge_target_alias is not None:
                 target_models = [f'{model}-{merge_target_alias}' for model in target_models]
             target_scale = get_perf_size(
-                df, '1B', task, target_metric, 
-                agg_method=_agg_method_target, models=target_models
+                df, '1B', task, target_metric, target_models,
+                agg_method=_agg_method_target,
             )
 
             if agg_method_pred == 'sample' or agg_method_target == 'sample':
                 # Convert small_scale into 2d array: (# models, # steps) ndarrays
                 mixes = sorted(small_scale['mix'].unique())
-                steps_per_mix = small_scale.groupby('mix').apply(lambda x: list(x.sort_values('step')[metric]))
+                steps_per_mix = small_scale.groupby('mix').apply(lambda x: list(x.sort_values('step')[metric]), include_groups=True)
                 small_scale_array = [steps_per_mix[mix] for mix in mixes]
                 
-                target_steps_per_mix = target_scale.groupby('mix').apply(lambda x: list(x.sort_values('step')[metric]))
+                target_steps_per_mix = target_scale.groupby('mix').apply(lambda x: list(x.sort_values('step')[metric]), include_groups=True)
                 target_scale_array = [target_steps_per_mix[mix] for mix in mixes]
                 
                 # For each trial, sample one value per mix and compute decision accuracy
@@ -223,8 +222,10 @@ def run_analysis(
     ):
     results = {}
 
+    datadecide = list(set(df[df['model_type'] == 'datadecide']['model']))
+
     # Observational noise
-    observational_models = external_ladder_models+eval_ladder_models+DATADECIDE_MODEL_NAMES
+    observational_models = external_ladder_models+eval_ladder_models+datadecide
     _slice = get_slice(df, task=task, model=observational_models)
     numerical_cols     = [col for col in _slice.select_dtypes(include='number').columns if col != 'extracted_size']
     non_numerical_cols = _slice.select_dtypes(exclude='number').columns.tolist() + ['extracted_size']
@@ -575,7 +576,7 @@ def run_analysis(
         # Compute range and std dev between models at each compute scale
         for additional_metric in additional_metrics:
             for size in DATADECIDE_SIZES:
-                scores = get_perf_size(df, size, task, additional_metric)[additional_metric]
+                scores = get_perf_size(df, size, task, additional_metric, datadecide)[additional_metric]
                 if size == '1B':
                     size = '1B-100B' # rename to not confuse with OLMo 2 1B-4T
                 results.update({
@@ -584,8 +585,8 @@ def run_analysis(
                     f'std_dev:{additional_metric}:{size}': scores.std()
                 })
     except Exception as e:
-        print(task, 'failed on consistent ranking analysis', e)
-        # raise RuntimeError(task, 'failed on consistent ranking analysis', e)
+        # print(task, 'failed on consistent ranking analysis', e)
+        raise RuntimeError(task, 'failed on consistent ranking analysis', e)
 
     if axes is not None:
         for ax in axes.flat:

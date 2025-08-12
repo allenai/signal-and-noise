@@ -5,7 +5,6 @@ from rich.console import Console
 from rich import box
 from tqdm import tqdm
 
-from snr.constants import get_selected_tasks, get_title_from_task
 from snr.download.hf import pull_predictions_from_hf
 from snr.dataloader import get_slice
 from snr.metrics import decision_acc_fast
@@ -177,33 +176,14 @@ def main():
     df = pd.read_parquet(local_path)
 
     tasks = [
-        "minerva",
-        "mmlu",
-        "agi_eval",
-        "arc_challenge",
-        "arc_easy",
-        "boolq",
-        "csqa",
-        "hellaswag",
-        "openbookqa",
-        "piqa",
-        "socialiqa",
-        "winogrande",
-        "gsm8k",
-        "mbpp",
-        "mbppplus",
-        "codex_humaneval",
-        "codex_humanevalplus",
-        "autobencher",
-        "gsm_plus",
-        "gsm_symbolic_main",
-        "gsm_symbolic_p1",
-        "gsm_symbolic_p2",
-        "medmcqa",
-        "minerva_math_500",
+        "minerva", "mmlu", "agi_eval", "arc_challenge", "arc_easy", "boolq", 
+        "csqa", "hellaswag", "openbookqa", "piqa", "socialiqa", "winogrande", 
+        "gsm8k", "mbpp", "mbppplus", "codex_humaneval", "codex_humanevalplus", 
+        "autobencher", "gsm_plus", "gsm_symbolic_main", "gsm_symbolic_p1", 
+        "gsm_symbolic_p2", "medmcqa", "minerva_math_500",
     ]
 
-    small_sizes = ["150M", "300M", "750M"]
+    small_sizes = ["150M", "300M", "750M"] # ["4M", "20M", "60M", "90M", "150M", "300M", "530M", "750M"]
     large_sizes_scaling = ["7B", "13B"]
     large_sizes_snr = ["1B", "7B", "13B", "32B"]
 
