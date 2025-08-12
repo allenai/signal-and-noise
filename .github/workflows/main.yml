@@ -22,4 +22,4 @@ jobs:
         run: |
           git remote add hub https://davidheineman:$HF_TOKEN@huggingface.co/spaces/allenai/signal-and-noise
           git fetch hub
-          git subtree push --prefix=viz hub main --force
+          git subtree push --prefix=viz hub main
