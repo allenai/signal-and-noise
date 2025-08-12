@@ -2,6 +2,9 @@ name: Sync HF Space
 on:
   push:
     branches: [main]
+    paths:
+      - 'viz/**'
+      - '.github/workflows/**'
   # to run this workflow manually from the Actions tab
   workflow_dispatch:
 
@@ -18,4 +21,5 @@ jobs:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
           git remote add hub https://davidheineman:$HF_TOKEN@huggingface.co/spaces/allenai/signal-and-noise
-          git subtree push --prefix=viz hub main
+          git fetch hub
+          git subtree push --prefix=viz hub main --force
