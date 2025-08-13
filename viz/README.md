@@ -1,3 +1,12 @@
+---
+title: Signal and Noise in LM Evals
+emoji: 📊
+colorFrom: blue
+colorTo: red
+sdk: docker
+pinned: false
+---
+
 ### Visualizer for Signal and Noise data
 
 ```sh
