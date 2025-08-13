@@ -16,6 +16,9 @@ jobs:
         with:
           fetch-depth: 0
           lfs: true
+      - name: Configure Git LFS
+        run: |
+          git config lfs.allowincompletepush true
       - name: Push /viz to hub
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
