@@ -6,18 +6,24 @@ if [ -z "$GITHUB_TOKEN" ]; then
     exit 1
 fi
 
-# Check if signal-and-noise repo is already installed
-if [ ! -d "/home/signal-and-noise" ]; then
+# Create a temporary directory for cloning
+TEMP_DIR=$(mktemp -d)
+SNR_DIR="$TEMP_DIR/signal-and-noise"
+
+# Check if signal-and-noise is already installed by trying to import it
+if python -c "import snr.constants" 2>/dev/null; then
+    echo "signal-and-noise package already installed, skipping installation"
+else
     echo "Installing signal-and-noise repository..."
     
-    # Clone the repository using the GitHub token
-    git clone https://${GITHUB_TOKEN}@github.com/allenai/signal-and-noise.git /home/signal-and-noise
+    # Clone the repository using the GitHub token to temp directory
+    git clone https://${GITHUB_TOKEN}@github.com/allenai/signal-and-noise.git "$SNR_DIR"
     
     if [ $? -eq 0 ]; then
         echo "Successfully cloned signal-and-noise repository"
         
         # Install in editable mode
-        cd /home/signal-and-noise
+        cd "$SNR_DIR"
         pip install -e .
         
         if [ $? -eq 0 ]; then
@@ -29,13 +35,14 @@ if [ ! -d "/home/signal-and-noise" ]; then
         
         # Return to the working directory
         cd /home
+        
+        # Clean up the temporary directory (optional, since container will be destroyed anyway)
+        # rm -rf "$TEMP_DIR"
     else
         echo "Error: Failed to clone signal-and-noise repository"
         echo "Please check your GITHUB_TOKEN is valid and has access to the repository"
         exit 1
     fi
-else
-    echo "signal-and-noise repository already exists, skipping installation"
 fi
 
 # Start the gunicorn server
