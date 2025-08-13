@@ -47,10 +47,16 @@ def run_demo():
     layouts = []
 
     layouts += [html.Div([
-        html.H2("Signal and noise analysis of language model benchmarks", 
+        html.H2("Signal and noise data explorer", 
                 style={'fontFamily': 'Manrope', 'marginBottom': '20px'}),
-        html.P(
-            "Our work studies the ratio between signal, a benchmark's ability to separate models; and noise, a benchmark's sensitivity to random variability during training steps.",
+        html.P([
+            "Our work studies the ratio between signal, a benchmark's ability to separate models; and noise, a benchmark's sensitivity to random variability during training steps. This data is available at ",
+            html.A("https://huggingface.co/datasets/allenai/signal-and-noise", 
+                   href="https://huggingface.co/datasets/allenai/signal-and-noise",
+                   target="_blank",
+                   style={'color': '#0066cc', 'textDecoration': 'underline'}),
+            "."
+        ],
             style={'fontFamily': 'Manrope', 'marginBottom': '20px', 'color': '#666', 'maxWidth': '1000px'}
         )
     ])]
