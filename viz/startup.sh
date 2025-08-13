@@ -14,6 +14,21 @@ SNR_DIR="$TEMP_DIR/signal-and-noise"
 DATA_DIR="/home/data"
 export SNR_DATA_DIR="$DATA_DIR"
 
+# Set up Hugging Face cache directory to avoid permission issues
+export HF_HOME="$DATA_DIR/.cache/huggingface"
+export HUGGINGFACE_HUB_CACHE="$DATA_DIR/.cache/huggingface/hub"
+mkdir -p "$HF_HOME" "$HUGGINGFACE_HUB_CACHE"
+
+# Ensure data directory has proper permissions
+mkdir -p "$DATA_DIR"
+chmod -R 777 "$DATA_DIR"
+
+# Debug: Check directory permissions
+echo "Data directory permissions:"
+ls -la /home/data
+echo "Current user: $(whoami)"
+echo "Current user ID: $(id)"
+
 # Check if signal-and-noise is already installed by trying to import it
 if python -c "import snr.constants" 2>/dev/null; then
     echo "signal-and-noise package already installed, skipping installation"

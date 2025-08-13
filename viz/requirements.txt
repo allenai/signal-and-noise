@@ -3,3 +3,6 @@ pandas
 plotly
 dash
 gunicorn
+huggingface_hub
+datasets
+pyarrow
