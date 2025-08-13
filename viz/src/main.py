@@ -1,8 +1,5 @@
-import json
-import os
-# from utils import DATA_DIR
-# from cartography import plot_cartography_single
-from dash import Dash, html, dcc, Input, Output, State
+from dash import Dash, html
+from compute_plot import setup_compute_performance_app
 
 
 INDEX_STRING = '''
@@ -16,15 +13,46 @@ INDEX_STRING = '''
     <style>
         body {
             background-color: #faf2e9;
-            margin: 0;
+            margin: 0 32px;
             padding: 0;
+            position: relative;
         }
         .modebar-container { display: none !important; }
         ._dash-loading { display: none; }
         .plotly-notifier { display: none; }
+        .ribbon {
+            background-color: #FFD228;
+            overflow: hidden;
+            white-space: nowrap;
+            position: absolute;
+            right: -80px;
+            top: 30px;
+            -webkit-transform: rotate(45deg);
+               -moz-transform: rotate(45deg);
+                -ms-transform: rotate(45deg);
+                 -o-transform: rotate(45deg);
+                    transform: rotate(45deg);
+            -webkit-box-shadow: 0 0 10px #888;
+               -moz-box-shadow: 0 0 10px #888;
+                    box-shadow: 0 0 10px #888;
+        }
+        .ribbon a {
+            border: 1px solid #faa;
+            color: #fff;
+            display: block;
+            font: bold 81.25% 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            margin: 1px 0;
+            padding: 10px 50px;
+            text-align: center;
+            text-decoration: none;
+            text-shadow: 0 0 5px #444;
+        }
     </style>
 </head>
 <body>
+    <div class="ribbon">
+        <a href="#">Data on HuggingFace</a>
+    </div>
     {%app_entry%}
     <footer>
         {%config%}
@@ -36,41 +64,10 @@ INDEX_STRING = '''
 '''
 
 
-def load_file(config, filename):
-    with open(os.path.join(DATA_DIR, config.model_path, config.task_path, filename), 'r', encoding='utf-8') as f:
-        data = json.load(f)
-    return data
-
-
-def load_demo(app, config):
-    print(f'Loading {config.model_path}/{config.task_path}...')
-    instance_stats = load_file(config, 'instance_stats.json')
-    dataset_stats = load_file(config, 'dataset_stats.json')
-    requests = load_file(config, 'requests.json')
-
-    layout = plot_cartography_single(app, config, instance_stats, requests, dataset_stats, graph_type='correctness')
-
-    return layout
-
-
 def run_demo():
-    class DisplayConfig:
-        def __init__(self, task_name):
-            self.task_version = "mc"
-            self.model_path = 'olmo_7b_0724'
-            self.task_path = task_name
-            self.model_name = 'allenai/OLMo-7B-0724-hf'
-            self.task_name = f'{task_name}:mc::olmes:full'
-
-        def get_experiment_name(self):
-            return f"{self.model_name} on {self.task_name}"
-
-        def get_experiment_tag(self):
-            return f'{self.model_path}_{self.task_path}'
-            
     app = Dash(
         __name__,
-        title='Cartography',
+        title='Signal and Noise Analysis',
         external_stylesheets=[
         "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&family=Manrope:wght@200..800&display=swap"
     ])
@@ -80,17 +77,16 @@ def run_demo():
     layouts = []
 
     layouts += [html.Div([
-        html.H2("Dataset cartography on OLMo 7B 0724 MC", 
+        html.H2("Signal and noise analysis of language model benchmarks", 
                 style={'fontFamily': 'Manrope', 'marginBottom': '20px'}),
         html.P(
-            "The cartography plot represents confidence (the average prob on the correct answer) and variance (the variance around that average) across training. Click on an instance to view the training curve.",
+            "Our work studies the ratio between signal, a benchmark's ability to separate models; and noise, a benchmark's sensitivity to random variability during training steps.",
             style={'fontFamily': 'Manrope', 'marginBottom': '20px', 'color': '#666', 'maxWidth': '1000px'}
         )
     ])]
 
-    # for task in ['arc_easy', 'arc_challenge', 'boolq', 'hellaswag', 'piqa']:
-    #     config = DisplayConfig(task)
-    #     layouts += [load_demo(app, config)]
+    compute_layout = setup_compute_performance_app(app)
+    layouts.append(compute_layout)
 
     app.layout = html.Div([
         html.Div(layouts, style={'max-width': '1400px', 'margin': '0 auto'})

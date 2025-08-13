@@ -88,7 +88,20 @@ MODEL_FAMILY_COLORS = {
     'qwen': '#637939',
     'smollm': '#b5cf6b',
     'stablelm': '#843c39',
-    'yi': '#9c9ede'
+    'yi': '#9c9ede',
+
+    # by hf family
+    'allenai': '#f0529c',
+    'meta-llama': '#7f7f7f',
+    'microsoft': '#e7ba52',
+    'Qwen': '#637939',
+    'HuggingFaceTB': '#b5cf6b',
+    'deepseek-ai': '#1f77b4',
+    '01-ai': '#9c9ede',
+    'huggyllama': '#393b79',
+    'stabilityai': '#843c39',
+    'google': '#9467bd',
+    'mistral': '#bcbd22',
 }
 
 EXTERNAL_SCALING_COLOR_MAP = {
