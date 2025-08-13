@@ -24,5 +24,5 @@ jobs:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         # push the viz/ folder to the main branch of the hf space
         run: |
-          git push https://davidheineman:$HF_TOKEN@huggingface.co/spaces/allenai/signal-and-noise-viewer \
+          git push https://davidheineman:$HF_TOKEN@huggingface.co/spaces/allenai/signal-and-noise \
           `git subtree split --prefix=viz main`:main --force
