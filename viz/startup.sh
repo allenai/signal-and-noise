@@ -10,9 +10,8 @@ fi
 TEMP_DIR=$(mktemp -d)
 SNR_DIR="$TEMP_DIR/signal-and-noise"
 
-# Create a writable data directory
+# Set up data directory environment variable (directory created in Dockerfile)
 DATA_DIR="/home/data"
-mkdir -p "$DATA_DIR"
 export SNR_DATA_DIR="$DATA_DIR"
 
 # Check if signal-and-noise is already installed by trying to import it

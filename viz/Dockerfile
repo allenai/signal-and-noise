@@ -9,9 +9,11 @@ RUN pip install --no-cache-dir --upgrade -r /home/requirements.txt
 # Install git
 RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
 
-# Create directories with proper permissions for pip installation
+# Create directories with proper permissions for pip installation and data storage
 RUN mkdir -p /.local/lib/python3.9/site-packages && \
-    chmod -R 777 /.local
+    chmod -R 777 /.local && \
+    mkdir -p /home/data && \
+    chmod -R 777 /home/data
 
 # COPY ./data /data
 
