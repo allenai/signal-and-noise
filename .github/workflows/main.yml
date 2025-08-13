@@ -23,4 +23,4 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          git push https://davidheineman:$HF_TOKEN@huggingface.co/spaces/allenai/signal-and-noise main
+          git push https://davidheineman:$HF_TOKEN@huggingface.co/spaces/allenai/signal-and-noise-viewer main
