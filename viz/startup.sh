@@ -22,9 +22,19 @@ else
     if [ $? -eq 0 ]; then
         echo "Successfully cloned signal-and-noise repository"
         
-        # Install in editable mode
+        # Install in editable mode with proper permissions
         cd "$SNR_DIR"
-        pip install -e .
+        
+        # Try installing with --break-system-packages flag for newer pip versions
+        if pip install --break-system-packages -e . 2>/dev/null; then
+            echo "Installed with --break-system-packages flag"
+        elif pip install --user -e . 2>/dev/null; then
+            echo "Installed with --user flag"
+        else
+            # Fallback: install without editable mode
+            echo "Falling back to non-editable installation"
+            pip install --break-system-packages . || pip install --user .
+        fi
         
         if [ $? -eq 0 ]; then
             echo "Successfully installed signal-and-noise package"
