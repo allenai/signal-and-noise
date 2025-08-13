@@ -1,8 +1,9 @@
 import os
+from pathlib import Path
 
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'analysis', 'data')
-PLOT_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'img')
+ROOT_DIR = Path(__file__).parent.parent.parent
+DATA_DIR = Path(os.environ.get('SNR_DATA_DIR', ROOT_DIR / 'analysis' / 'data'))
+PLOT_DIR = ROOT_DIR / 'img'
 
 # Create directories if they don't exist
 os.makedirs(DATA_DIR, exist_ok=True)

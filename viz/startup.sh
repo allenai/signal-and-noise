@@ -10,6 +10,11 @@ fi
 TEMP_DIR=$(mktemp -d)
 SNR_DIR="$TEMP_DIR/signal-and-noise"
 
+# Create a writable data directory
+DATA_DIR="/home/data"
+mkdir -p "$DATA_DIR"
+export SNR_DATA_DIR="$DATA_DIR"
+
 # Check if signal-and-noise is already installed by trying to import it
 if python -c "import snr.constants" 2>/dev/null; then
     echo "signal-and-noise package already installed, skipping installation"
