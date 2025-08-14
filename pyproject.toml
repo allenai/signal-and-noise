@@ -29,6 +29,7 @@ dependencies = [
     "seaborn",
     "statsmodels",
     "tqdm",
+    "ladder @ git+https://github.com/allenai/OLMo-ladder@signal-to-noise",
 ]
 
 [project.urls]
@@ -39,12 +40,8 @@ beaker = [
     "beaker-py",
     "GitPython>=3.0,<4.0",
 ]
-olmo-ladder = [
-    "ladder @ git+https://github.com/allenai/OLMo-ladder@signal-to-noise",
-]
 all = [
     "snr[beaker]",
-    "snr[olmo-ladder]",
 ]
 
 [tool.setuptools]
