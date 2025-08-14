@@ -21,15 +21,6 @@ git clone https://github.com/allenai/signal-and-noise
 pip install -e .
 ```
 
-<!-- ```sh
-mkdir deps # directory for olmo repos
-
-# Install scaling law code
-git clone -b signal-to-noise https://github.com/allenai/OLMo-ladder deps/OLMo-ladder
-cd deps/OLMo-ladder
-pip install -e ".[all]"
-``` -->
-
 **Quick Start**
 
 For a quick script to compute the benchmark properties we studied, see [`snr_simple.py`](./snr/snr_simple.py)
