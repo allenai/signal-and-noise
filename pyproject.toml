@@ -10,7 +10,7 @@ description = ""
 authors = [
     { name = "David Heineman", email = "davidh@allenai.org" }
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.9,<3.13"
 license = { file = "LICENSE" }
 dependencies = [
     "adjustText",
@@ -29,7 +29,7 @@ dependencies = [
     "seaborn",
     "statsmodels",
     "tqdm",
-    "ladder @ git+https://github.com/allenai/OLMo-ladder@signal-to-noise",
+    "ladder[plotting] @ git+https://github.com/allenai/OLMo-ladder@signal-to-noise", # https://github.com/allenai/OLMo-ladder/tree/signal-to-noise
 ]
 
 [project.urls]
