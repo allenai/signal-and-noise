@@ -23,6 +23,7 @@ dependencies = [
     "numpy",
     "openai",
     "pandas<2.3.0",
+    "tabulate",
     "psutil",
     "rich",
     "scipy",
