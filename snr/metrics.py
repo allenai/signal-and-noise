@@ -3,7 +3,7 @@ import numpy as np
 
 def signal_to_noise_ratio(signal_scores: np.ndarray, noise_scores: np.ndarray) -> float:
     """
-    signal = \max_{j,k} |m_j - m_k| / m̄
+    signal = max_{j,k} |m_j - m_k| / m̄
     noise = σ_m / m̄
     snr = signal / noise
     """
