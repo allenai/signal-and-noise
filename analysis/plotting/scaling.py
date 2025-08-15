@@ -30,9 +30,9 @@ def _plt_stacked_predictions_clean(ax: plt.Axes, df, ladder_models, task):
     from matplotlib.lines import Line2D
     legend_elements = [
         Line2D([0], [0], marker='o', color='grey', label='Scaling Law Models', linestyle='None'),
-        Line2D([0], [0], marker='x', color='#1f77b4', label='Predicted 13B Model', linestyle='None'),
-        Line2D([0], [0], marker='o', color='#1f77b4', label='Real 13B Model', linestyle='None'),
-        Line2D([0], [0], color='#1f77b4', label='Scaling Law Fit', linestyle='-'),
+        Line2D([0], [0], marker='x', color='#0A3234', label='Predicted 13B Model', linestyle='None'),
+        Line2D([0], [0], marker='o', color='#F0519C', label='Real 13B Model', linestyle='None'),
+        Line2D([0], [0], color='#F0519C', label='Scaling Law Fit', linestyle='-'),
     ]
     ax.legend(handles=legend_elements, fontsize=7, loc='lower right')
 
@@ -61,7 +61,7 @@ def _plt_intermediate_checkpoints_13b(ax: plt.Axes, df, task, metric='primary_sc
     x = x[sorted_indices]
     y = y[sorted_indices]
 
-    ax.plot(x, y, color='#1f77b4', linewidth=0.25, marker='.', markersize=1)
+    ax.plot(x, y, color='#0A3234', linewidth=0.25, marker='.', markersize=1)
 
     final_scores = y[-30:]
     return final_scores
@@ -136,7 +136,7 @@ def _plot_with_inset(ax: plt.Axes, df, ladder_models, task, task_y, task_title):
     axins.get_legend().remove() if axins.get_legend() is not None else None
 
     ax.set_title(task_title, fontsize=14)
-    ax.set_xlabel('Compute', fontsize=12)
+    ax.set_xlabel('Compute (FLOPs)', fontsize=12)
     ax.set_ylabel(task_y, fontsize=12)
 
 def format_func(x, p): return f'{int(x/1000)}K'
@@ -160,7 +160,7 @@ def _plt_intermediate_checkpoints_1b(ax: plt.Axes, df, task, metric, show_legend
     step = step[mask]
     acc  = acc[mask]
     
-    ax.plot(step, acc, label='1B (100B)\ntraining curve', linewidth=0.7) # '1B-5xC\ntraining curve'
+    ax.plot(step, acc, label='Training curve\n(1B model)', linewidth=0.7, color='#0A3234') # '1B-5xC\ntraining curve'
 
     ### Plot DataDecide models
     datadecide = set(df[df['model_type'] == 'datadecide']['model'])
@@ -178,14 +178,14 @@ def _plt_intermediate_checkpoints_1b(ax: plt.Axes, df, task, metric, show_legend
         final_scores = scores
     final_scores = final_scores[~np.isnan(final_scores)]
 
-    ax.plot([step[-1]] * len(final_scores), final_scores, 'x', color='g', markersize=4, label='1B (100B) DataDecide\nfinal checkpoints', alpha=0.5)
+    ax.plot([step[-1]] * len(final_scores), final_scores, 'x', color='#F0519C', markersize=4, label='Final checkpoints\n(DataDecide 1B)', alpha=0.5)
 
     # Compute SNR
     signal = np.std(final_scores[-30:]) / np.mean(final_scores[-30:])
     noise  = np.std(acc[-30:]) / np.mean(acc[-30:])
     snr = signal / noise
 
-    ax.text(0.03, 0.97, f'SNR={snr:.2f}', transform=ax.transAxes, fontsize=10, verticalalignment='top')
+    ax.text(0.03, 0.97, f'Signal-to-noise ratio={snr:.2f}', transform=ax.transAxes, fontsize=10, verticalalignment='top')
     
     ax.tick_params(axis='both', which='major', labelsize=8)
     ax.xaxis.set_major_formatter(plt.FuncFormatter(format_func))
@@ -195,7 +195,7 @@ def _plt_intermediate_checkpoints_1b(ax: plt.Axes, df, task, metric, show_legend
     y_min, y_max = min(final_scores), max(final_scores)
     padding = (y_max - y_min) * 0.05
     ax.set_ylim(y_min - padding, y_max + padding)
-    ax.set_xlabel('Training Step')
+    ax.set_xlabel('Training Step (100B tokens)')
     if show_legend == 'two_col':
         ax.legend(loc='lower center', bbox_to_anchor=(1.15, -0.7), ncols=2, fontsize=8)
     elif show_legend == 'one_col':
@@ -213,8 +213,10 @@ def plot_task_observational(ax, task, df, observational_models, datadecide, mode
         for family in MODEL_FAMILY_COLORS:
             if family in model.lower():
                 color = MODEL_FAMILY_COLORS[family]
+                # color = "#F0519C"
                 break
         colors.append(color if color else 'grey')
+        # colors.append(color if color else '#0A3234')
 
     # Plot DataDecide models with triangles and others with x's
     dd_mask = data_7b['model'].isin(datadecide)

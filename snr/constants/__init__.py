@@ -8,6 +8,7 @@ PLOT_DIR = ROOT_DIR / 'img'
 # Create directories if they don't exist
 os.makedirs(DATA_DIR, exist_ok=True)
 os.makedirs(PLOT_DIR, exist_ok=True)
+os.makedirs(PLOT_DIR / 'blog', exist_ok=True)
 
 from snr.constants.plot import PRETTY_TASK_NAMES, SHORT_TASK_NAME
 from snr.constants.tasks import MMLU, MINERVA, MMLU_PRO, OLMES, OLMES_GEN, AGI_EVAL, BBH, MMLU_MC, OLMES_MC, PALOMA, CUSTOM_LOSS, MULTITASK_MATH, MULTITASK_CODE, MULTITASK_KNOWLEDGE, MULTITASK, OLMES_ALL, OLMES_ALL, MULTITASK

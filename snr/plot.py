@@ -232,8 +232,11 @@ def plot_task_scatter(
             v_adjust = 0.03 if xdesc is not None else 0
 
             ax.text(0.03, 0.97-v_adjust, f'R = {r:.3f} ± {stderr:.3f}\nR² = {r2:.3f}', 
-                    transform=ax.transAxes, fontsize=11, verticalalignment='top',
-                    bbox=background)
+                    transform=ax.transAxes, verticalalignment='top',
+                    bbox=background, 
+                    fontsize=10,
+                    # fontsize=11
+                    )
         
         plot_fit = compute_fit # looks odd, i know
         if plot_fit:
@@ -282,7 +285,10 @@ def plot_task_scatter(
            ((ylim[0] <= y <= ylim[1]) if not ax.yaxis_inverted() else (ylim[1] <= y <= ylim[0])):
             task_name = get_title_from_task(task)
             if labeled_tasks is None or task_name in labeled_tasks:
-                text = ax.text(x, y, get_pretty_task_name(task_name), fontsize=(7 if labeled_tasks is None else 10), clip_on=True, ha='right')
+                text = ax.text(x, y, get_pretty_task_name(task_name), 
+                                # fontsize=(7 if labeled_tasks is None else 10), 
+                                fontsize=8, alpha=0.7,
+                                clip_on=True, ha='right')
                 texts += [text] 
         
     adjustText(ax, texts)
