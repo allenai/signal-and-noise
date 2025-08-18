@@ -57,7 +57,7 @@ def adjustText(ax, texts):
             avoid_lines=True,
             existing_annotations=existing_annotations,
             autoalign="xy",
-            force_points=0.5,
+            force_points=1,
             force_text=0.2,
             expand_points=(1.5, 1.5),
             ax=ax,
@@ -211,7 +211,7 @@ def plot_task_scatter(
             y_log = np.log10(ys)
             z = np.polyfit(x_log, y_log, 1)
             p = np.poly1d(z)
-            x_line = np.logspace(np.log10(min(xs)), np.log10(max(xs)), 100)
+            x_line = np.logspace(np.log10(min(min(xs), 0.001)), np.log10(max(xs)), 100)
             y_line = 10**p(np.log10(x_line))
             
             n = len(xs)
@@ -229,13 +229,14 @@ def plot_task_scatter(
             else:
                 background = dict(facecolor='white', alpha=0.7, edgecolor='none')
 
-            v_adjust = 0.03 if xdesc is not None else 0
+            # v_adjust = 0.03 if xdesc is not None else 0
+            v_adjust = 0.03 if xdesc is not None else 0.88
 
             ax.text(0.03, 0.97-v_adjust, f'R = {r:.3f} ± {stderr:.3f}\nR² = {r2:.3f}', 
                     transform=ax.transAxes, verticalalignment='top',
                     bbox=background, 
-                    fontsize=10,
-                    # fontsize=11
+                    # fontsize=10,
+                    fontsize=11
                     )
         
         plot_fit = compute_fit # looks odd, i know
@@ -287,8 +288,10 @@ def plot_task_scatter(
             if labeled_tasks is None or task_name in labeled_tasks:
                 text = ax.text(x, y, get_pretty_task_name(task_name), 
                                 # fontsize=(7 if labeled_tasks is None else 10), 
-                                fontsize=8, alpha=0.7,
-                                clip_on=True, ha='right')
+                                # fontsize=10, 
+                                fontsize=9, 
+                                alpha=0.7,
+                                clip_on=True, ha='left')
                 texts += [text] 
         
     adjustText(ax, texts)
