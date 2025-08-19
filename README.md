@@ -4,7 +4,7 @@
   <a href="https://github.com/allenai/signal-and-noise/blob/main/LICENSE">
     <img alt="GitHub License" src="https://img.shields.io/badge/license-Apache 2.0-green">
   </a>
-  <a href="">
+  <a href="https://arxiv.org/abs/2508.13144">
     <img alt="Paper URL" src="https://img.shields.io/badge/paper-arxiv-red">
   </a>
   <a href="https://huggingface.co/datasets/allenai/signal-and-noise">
