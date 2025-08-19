@@ -295,5 +295,10 @@ The [`analysis/`](./analysis/) folder contains notebooks to reproduce the core f
 ### Citation
 
 ```
-TODO
+@article{heineman2025signal,
+  title={Signal and Noise: A Framework for Reducing Uncertainty in Language Model Evaluation},
+  author={Heineman, David and Hofmann, Valentin and Magnusson, Ian and Gu, Yuling and Smith, Noah A and Hajishirzi, Hannaneh and Lo, Kyle and Dodge, Jesse},
+  journal={arXiv preprint arXiv:2508.13144},
+  year={2025}
+}
 ```
