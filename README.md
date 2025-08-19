@@ -7,6 +7,9 @@
   <a href="https://arxiv.org/abs/2508.13144">
     <img alt="Paper URL" src="https://img.shields.io/badge/paper-arxiv-red">
   </a>
+  <a href="https://allenai.org/blog/signal-noise">
+    <img alt="Blog" src="https://img.shields.io/badge/blog-allenai-pink">
+  </a>
   <a href="https://huggingface.co/datasets/allenai/signal-and-noise">
     <img alt="Huggingface URL" src="https://img.shields.io/badge/data-huggingface-yellow">
   </a>
